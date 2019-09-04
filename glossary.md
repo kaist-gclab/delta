@@ -10,8 +10,9 @@
     - DELTA
     - ...
 - AssetType: 에셋 유형
-    - 3D 모델
-    - 이미지
+    - Model
+    - RenderedImage
+    - Texture
 - EncryptionKey: 암호화 키
 
 ## 처리기
@@ -24,7 +25,8 @@
     - 렌더러
     - 형식 변환기
     - 모델 처리기
-- ProcessorInputCapability: 처리기 입력 기능
+- ProcessorVersion: 처리기 버전
+- ProcessorVersionInputCapability: 처리기 버전 입력 기능
 
 ## 작업
 - Job: 작업

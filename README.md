@@ -1,7 +1,10 @@
 # delta
 
+SW스타랩 <3차원 기하 모델 프로세싱 프레임워크 개발>
+
 - https://github.com/kaist-gclab/delta
     - 현재 저장소
+    - 문서 및 웹 사이트 (예정)
     - https://kaist-gclab.github.io/delta
 
 ## 처리기

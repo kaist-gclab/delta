@@ -14,6 +14,7 @@
     - RenderedImage
     - Texture
 - EncryptionKey: 암호화 키
+    - Enabled: 활성 여부
 
 ## 처리기
 - ProcessorNodeStatus: 처리기 노드 상태

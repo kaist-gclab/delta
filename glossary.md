@@ -26,7 +26,7 @@
     - 형식 변환기
     - 모델 처리기
 - ProcessorVersion: 처리기 버전
-- ProcessorVersionInputCapability: 처리기 버전 입력 기능
+- ProcessorVersionInputCapability: 처리기 버전 입력 능력
 
 ## 작업
 - Job: 작업

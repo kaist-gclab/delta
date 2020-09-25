@@ -1,0 +1,37 @@
+PROJECT(Wavemesh)
+
+cmake_minimum_required(VERSION 2.4)
+if(COMMAND cmake_policy)
+	cmake_policy(SET CMP0003 NEW)
+endif(COMMAND cmake_policy)
+
+OPTION(BUILD_SHARED_LIBS "Build vtkSurface with shared libraries." ON)
+OPTION(BUILD_RANGECODING "Build Range Coder/Decoder." ON)
+OPTION(BUILD_WAVEMESH "Build Wavemesh and Compression Tools." ON)
+
+SET (VTK_DIR "D:/Program Files/VTK/lib/cmake/vtk-6.3")
+SET (EXECUTABLE_OUTPUT_PATH ${PROJECT_BINARY_DIR}/bin CACHE PATH "Single output directory for building all executables.")
+SET (LIBRARY_OUTPUT_PATH ${PROJECT_BINARY_DIR}/bin CACHE PATH "Single output directory for building all libraries.")
+MARK_AS_ADVANCED(LIBRARY_OUTPUT_PATH EXECUTABLE_OUTPUT_PATH)
+
+find_package(VTK REQUIRED NO_MODULE)
+include(${VTK_USE_FILE})
+
+SET(VTKSURFACE_PROJECT_DIR ${PROJECT_SOURCE_DIR})
+SET(VTKSURFACE_INCLUDE_DIR ${PROJECT_SOURCE_DIR}/Common)
+SET(VTKWAVEMESH_INCLUDE_DIR ${PROJECT_SOURCE_DIR}/Compression)
+SET(VTKRANGECODING_INCLUDE_DIR ${PROJECT_SOURCE_DIR}/RangeCoding)
+
+# The main library
+ADD_SUBDIRECTORY(Common)
+
+IF (BUILD_RANGECODING)
+    ADD_SUBDIRECTORY(RangeCoding)
+ENDIF (BUILD_RANGECODING)
+
+IF(BUILD_WAVEMESH)
+	IF(NOT BUILD_RANGECODING)
+	MESSAGE(FATAL_ERROR "You need to set RANGECODING build to ON in order to build Wavemesh")
+	ENDIF(NOT BUILD_RANGECODING)
+    ADD_SUBDIRECTORY(Compression)
+ENDIF(BUILD_WAVEMESH)

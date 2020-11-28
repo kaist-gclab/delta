@@ -356,7 +356,29 @@
                   "isDeferred": false,
                   "oldName": ""
                 },
-                "foreignKeys": [],
+                "foreignKeys": [
+                  {
+                    "objectType": "ForeignKey_PGSQL",
+                    "name": "fk_asset_tag_asset_1",
+                    "fields": [
+                      "asset_id"
+                    ],
+                    "referenceSchema": "Default",
+                    "referenceTable": "asset",
+                    "referenceFields": [
+                      "id"
+                    ],
+                    "onDelete": "",
+                    "onUpdate": "",
+                    "comment": "",
+                    "isMatchFull": false,
+                    "isDeferrable": false,
+                    "isDeferred": false,
+                    "sourceCardinality": "NoneRelationship",
+                    "targetCardinality": "NoneRelationship",
+                    "oldName": ""
+                  }
+                ],
                 "uniques": [],
                 "checks": [],
                 "excludes": [],
@@ -616,7 +638,71 @@
                   "isDeferred": false,
                   "oldName": ""
                 },
-                "foreignKeys": [],
+                "foreignKeys": [
+                  {
+                    "objectType": "ForeignKey_PGSQL",
+                    "name": "fk_asset_encryption_key_1",
+                    "fields": [
+                      "encryption_key_id"
+                    ],
+                    "referenceSchema": "Default",
+                    "referenceTable": "encryption_key",
+                    "referenceFields": [
+                      "id"
+                    ],
+                    "onDelete": "",
+                    "onUpdate": "",
+                    "comment": "",
+                    "isMatchFull": false,
+                    "isDeferrable": false,
+                    "isDeferred": false,
+                    "sourceCardinality": "NoneRelationship",
+                    "targetCardinality": "NoneRelationship",
+                    "oldName": ""
+                  },
+                  {
+                    "objectType": "ForeignKey_PGSQL",
+                    "name": "fk_asset_asset_type_1",
+                    "fields": [
+                      "asset_type_id"
+                    ],
+                    "referenceSchema": "Default",
+                    "referenceTable": "asset_type",
+                    "referenceFields": [
+                      "id"
+                    ],
+                    "onDelete": "",
+                    "onUpdate": "",
+                    "comment": "",
+                    "isMatchFull": false,
+                    "isDeferrable": false,
+                    "isDeferred": false,
+                    "sourceCardinality": "NoneRelationship",
+                    "targetCardinality": "NoneRelationship",
+                    "oldName": ""
+                  },
+                  {
+                    "objectType": "ForeignKey_PGSQL",
+                    "name": "fk_asset_job_execution_1",
+                    "fields": [
+                      "parent_job_execution_id"
+                    ],
+                    "referenceSchema": "Default",
+                    "referenceTable": "job_execution",
+                    "referenceFields": [
+                      "id"
+                    ],
+                    "onDelete": "",
+                    "onUpdate": "",
+                    "comment": "",
+                    "isMatchFull": false,
+                    "isDeferrable": false,
+                    "isDeferred": false,
+                    "sourceCardinality": "NoneRelationship",
+                    "targetCardinality": "NoneRelationship",
+                    "oldName": ""
+                  }
+                ],
                 "uniques": [],
                 "checks": [],
                 "excludes": [],
@@ -1066,7 +1152,29 @@
                   "isDeferred": false,
                   "oldName": ""
                 },
-                "foreignKeys": [],
+                "foreignKeys": [
+                  {
+                    "objectType": "ForeignKey_PGSQL",
+                    "name": "fk_processor_node_status_processor_node_1",
+                    "fields": [
+                      "processor_node_id"
+                    ],
+                    "referenceSchema": "Default",
+                    "referenceTable": "processor_node",
+                    "referenceFields": [
+                      "id"
+                    ],
+                    "onDelete": "",
+                    "onUpdate": "",
+                    "comment": "",
+                    "isMatchFull": false,
+                    "isDeferrable": false,
+                    "isDeferred": false,
+                    "sourceCardinality": "NoneRelationship",
+                    "targetCardinality": "NoneRelationship",
+                    "oldName": ""
+                  }
+                ],
                 "uniques": [],
                 "checks": [],
                 "excludes": [],
@@ -1266,7 +1374,71 @@
                   "isDeferred": false,
                   "oldName": ""
                 },
-                "foreignKeys": [],
+                "foreignKeys": [
+                  {
+                    "objectType": "ForeignKey_PGSQL",
+                    "name": "fk_processor_node_capability_processor_node_1",
+                    "fields": [
+                      "processor_node_id"
+                    ],
+                    "referenceSchema": "Default",
+                    "referenceTable": "processor_node",
+                    "referenceFields": [
+                      "id"
+                    ],
+                    "onDelete": "",
+                    "onUpdate": "",
+                    "comment": "",
+                    "isMatchFull": false,
+                    "isDeferrable": false,
+                    "isDeferred": false,
+                    "sourceCardinality": "NoneRelationship",
+                    "targetCardinality": "NoneRelationship",
+                    "oldName": ""
+                  },
+                  {
+                    "objectType": "ForeignKey_PGSQL",
+                    "name": "fk_processor_node_capability_job_type_1",
+                    "fields": [
+                      "job_type_id"
+                    ],
+                    "referenceSchema": "Default",
+                    "referenceTable": "job_type",
+                    "referenceFields": [
+                      "id"
+                    ],
+                    "onDelete": "",
+                    "onUpdate": "",
+                    "comment": "",
+                    "isMatchFull": false,
+                    "isDeferrable": false,
+                    "isDeferred": false,
+                    "sourceCardinality": "NoneRelationship",
+                    "targetCardinality": "NoneRelationship",
+                    "oldName": ""
+                  },
+                  {
+                    "objectType": "ForeignKey_PGSQL",
+                    "name": "fk_processor_node_capability_asset_type_1",
+                    "fields": [
+                      "asset_type_id"
+                    ],
+                    "referenceSchema": "Default",
+                    "referenceTable": "asset_type",
+                    "referenceFields": [
+                      "id"
+                    ],
+                    "onDelete": "",
+                    "onUpdate": "",
+                    "comment": "",
+                    "isMatchFull": false,
+                    "isDeferrable": false,
+                    "isDeferred": false,
+                    "sourceCardinality": "NoneRelationship",
+                    "targetCardinality": "NoneRelationship",
+                    "oldName": ""
+                  }
+                ],
                 "uniques": [],
                 "checks": [],
                 "excludes": [],
@@ -1636,7 +1808,71 @@
                   "isDeferred": false,
                   "oldName": ""
                 },
-                "foreignKeys": [],
+                "foreignKeys": [
+                  {
+                    "objectType": "ForeignKey_PGSQL",
+                    "name": "fk_job_job_type_1",
+                    "fields": [
+                      "job_type_id"
+                    ],
+                    "referenceSchema": "Default",
+                    "referenceTable": "job_type",
+                    "referenceFields": [
+                      "id"
+                    ],
+                    "onDelete": "",
+                    "onUpdate": "",
+                    "comment": "",
+                    "isMatchFull": false,
+                    "isDeferrable": false,
+                    "isDeferred": false,
+                    "sourceCardinality": "NoneRelationship",
+                    "targetCardinality": "NoneRelationship",
+                    "oldName": ""
+                  },
+                  {
+                    "objectType": "ForeignKey_PGSQL",
+                    "name": "fk_job_asset_1",
+                    "fields": [
+                      "input_asset_id"
+                    ],
+                    "referenceSchema": "Default",
+                    "referenceTable": "asset",
+                    "referenceFields": [
+                      "id"
+                    ],
+                    "onDelete": "",
+                    "onUpdate": "",
+                    "comment": "",
+                    "isMatchFull": false,
+                    "isDeferrable": false,
+                    "isDeferred": false,
+                    "sourceCardinality": "NoneRelationship",
+                    "targetCardinality": "NoneRelationship",
+                    "oldName": ""
+                  },
+                  {
+                    "objectType": "ForeignKey_PGSQL",
+                    "name": "fk_job_processor_node_1",
+                    "fields": [
+                      "assigned_processor_node_id"
+                    ],
+                    "referenceSchema": "Default",
+                    "referenceTable": "processor_node",
+                    "referenceFields": [
+                      "id"
+                    ],
+                    "onDelete": "",
+                    "onUpdate": "",
+                    "comment": "",
+                    "isMatchFull": false,
+                    "isDeferrable": false,
+                    "isDeferred": false,
+                    "sourceCardinality": "NoneRelationship",
+                    "targetCardinality": "NoneRelationship",
+                    "oldName": ""
+                  }
+                ],
                 "uniques": [],
                 "checks": [],
                 "excludes": [],
@@ -1806,7 +2042,29 @@
                   "isDeferred": false,
                   "oldName": ""
                 },
-                "foreignKeys": [],
+                "foreignKeys": [
+                  {
+                    "objectType": "ForeignKey_PGSQL",
+                    "name": "fk_job_execution_status_job_execution_1",
+                    "fields": [
+                      "job_execution_id"
+                    ],
+                    "referenceSchema": "Default",
+                    "referenceTable": "job_execution",
+                    "referenceFields": [
+                      "id"
+                    ],
+                    "onDelete": "",
+                    "onUpdate": "",
+                    "comment": "",
+                    "isMatchFull": false,
+                    "isDeferrable": false,
+                    "isDeferred": false,
+                    "sourceCardinality": "NoneRelationship",
+                    "targetCardinality": "NoneRelationship",
+                    "oldName": ""
+                  }
+                ],
                 "uniques": [],
                 "checks": [],
                 "excludes": [],
@@ -1946,7 +2204,50 @@
                   "isDeferred": false,
                   "oldName": ""
                 },
-                "foreignKeys": [],
+                "foreignKeys": [
+                  {
+                    "objectType": "ForeignKey_PGSQL",
+                    "name": "fk_job_execution_job_1",
+                    "fields": [
+                      "job_id"
+                    ],
+                    "referenceSchema": "Default",
+                    "referenceTable": "job",
+                    "referenceFields": [
+                      "id"
+                    ],
+                    "onDelete": "",
+                    "onUpdate": "",
+                    "comment": "",
+                    "isMatchFull": false,
+                    "isDeferrable": false,
+                    "isDeferred": false,
+                    "sourceCardinality": "NoneRelationship",
+                    "targetCardinality": "NoneRelationship",
+                    "oldName": ""
+                  },
+                  {
+                    "objectType": "ForeignKey_PGSQL",
+                    "name": "fk_job_execution_processor_node_1",
+                    "fields": [
+                      "processor_node_id"
+                    ],
+                    "referenceSchema": "Default",
+                    "referenceTable": "processor_node",
+                    "referenceFields": [
+                      "id"
+                    ],
+                    "onDelete": "",
+                    "onUpdate": "",
+                    "comment": "",
+                    "isMatchFull": false,
+                    "isDeferrable": false,
+                    "isDeferred": false,
+                    "sourceCardinality": "NoneRelationship",
+                    "targetCardinality": "NoneRelationship",
+                    "oldName": ""
+                  }
+                ],
                 "uniques": [],
                 "checks": [],
                 "excludes": [],
@@ -1966,7 +2267,7 @@
       "name": "Diagram 1",
       "paperWidth": 1,
       "paperHeight": 1,
-      "tableFont": "Arial Unicode MS",
+      "tableFont": "Roboto Mono Regular",
       "tableFontSize": 14,
       "isBalckWhite": false,
       "showDBSchemaName": false,
@@ -1979,10 +2280,10 @@
           "type": "table",
           "schemaName": "Default",
           "tableName": "asset",
-          "x": 30,
-          "y": 30,
-          "width": 199,
-          "height": 198,
+          "x": 540,
+          "y": 270,
+          "width": 253,
+          "height": 191,
           "isBold": false,
           "titleColor": {
             "r": 55,
@@ -1995,10 +2296,10 @@
           "type": "table",
           "schemaName": "Default",
           "tableName": "asset_type",
-          "x": 550,
-          "y": 300,
+          "x": 980,
+          "y": 310,
           "width": 150,
-          "height": 114,
+          "height": 111,
           "isBold": false,
           "titleColor": {
             "r": 55,
@@ -2011,10 +2312,10 @@
           "type": "table",
           "schemaName": "Default",
           "tableName": "encryption_key",
-          "x": 330,
+          "x": 150,
           "y": 300,
-          "width": 150,
-          "height": 135,
+          "width": 160,
+          "height": 131,
           "isBold": false,
           "titleColor": {
             "r": 55,
@@ -2027,10 +2328,10 @@
           "type": "table",
           "schemaName": "Default",
           "tableName": "processor_node",
-          "x": 560,
-          "y": 30,
+          "x": 410,
+          "y": 1140,
           "width": 150,
-          "height": 114,
+          "height": 111,
           "isBold": false,
           "titleColor": {
             "r": 55,
@@ -2043,10 +2344,10 @@
           "type": "table",
           "schemaName": "Default",
           "tableName": "job",
-          "x": 30,
-          "y": 300,
-          "width": 225,
-          "height": 177,
+          "x": 350,
+          "y": 630,
+          "width": 275,
+          "height": 171,
           "isBold": false,
           "titleColor": {
             "r": 55,
@@ -2059,10 +2360,10 @@
           "type": "table",
           "schemaName": "Default",
           "tableName": "job_execution",
-          "x": 30,
-          "y": 750,
-          "width": 171,
-          "height": 114,
+          "x": 670,
+          "y": 660,
+          "width": 210,
+          "height": 111,
           "isBold": false,
           "titleColor": {
             "r": 55,
@@ -2075,10 +2376,10 @@
           "type": "table",
           "schemaName": "Default",
           "tableName": "job_execution_status",
-          "x": 30,
-          "y": 550,
-          "width": 171,
-          "height": 135,
+          "x": 680,
+          "y": 820,
+          "width": 203,
+          "height": 131,
           "isBold": false,
           "titleColor": {
             "r": 55,
@@ -2091,10 +2392,10 @@
           "type": "table",
           "schemaName": "Default",
           "tableName": "asset_tag",
-          "x": 270,
-          "y": 550,
+          "x": 590,
+          "y": 90,
           "width": 150,
-          "height": 135,
+          "height": 131,
           "isBold": false,
           "titleColor": {
             "r": 55,
@@ -2107,10 +2408,10 @@
           "type": "table",
           "schemaName": "Default",
           "tableName": "processor_node_status",
-          "x": 490,
-          "y": 550,
-          "width": 171,
-          "height": 135,
+          "x": 380,
+          "y": 1330,
+          "width": 210,
+          "height": 131,
           "isBold": false,
           "titleColor": {
             "r": 55,
@@ -2123,10 +2424,10 @@
           "type": "table",
           "schemaName": "Default",
           "tableName": "processor_node_capability",
-          "x": 300,
-          "y": 30,
-          "width": 191,
-          "height": 156,
+          "x": 110,
+          "y": 1120,
+          "width": 237,
+          "height": 151,
           "isBold": false,
           "titleColor": {
             "r": 55,
@@ -2139,10 +2440,10 @@
           "type": "table",
           "schemaName": "Default",
           "tableName": "job_type",
-          "x": 270,
-          "y": 750,
+          "x": 150,
+          "y": 660,
           "width": 150,
-          "height": 114,
+          "height": 111,
           "isBold": false,
           "titleColor": {
             "r": 55,
@@ -2152,8 +2453,590 @@
           }
         }
       ],
-      "layers": [],
-      "relations": [],
+      "layers": [
+        {
+          "name": "Assets",
+          "x": 430,
+          "y": 40,
+          "width": 762,
+          "height": 482,
+          "layerColor": {
+            "r": 100,
+            "g": 234,
+            "b": 136,
+            "a": 1
+          },
+          "fontName": "Roboto Mono Regular",
+          "fontSize": 18,
+          "fontColor": {
+            "r": 51,
+            "g": 51,
+            "b": 51,
+            "a": 1
+          }
+        },
+        {
+          "name": "Security",
+          "x": 100,
+          "y": 250,
+          "width": 270,
+          "height": 241,
+          "layerColor": {
+            "r": 100,
+            "g": 234,
+            "b": 136,
+            "a": 1
+          },
+          "fontName": "Roboto Mono Regular",
+          "fontSize": 18,
+          "fontColor": {
+            "r": 51,
+            "g": 51,
+            "b": 51,
+            "a": 1
+          }
+        },
+        {
+          "name": "Jobs",
+          "x": 90,
+          "y": 580,
+          "width": 845,
+          "height": 432,
+          "layerColor": {
+            "r": 100,
+            "g": 234,
+            "b": 136,
+            "a": 1
+          },
+          "fontName": "Roboto Mono Regular",
+          "fontSize": 18,
+          "fontColor": {
+            "r": 51,
+            "g": 51,
+            "b": 51,
+            "a": 1
+          }
+        },
+        {
+          "name": "Processors",
+          "x": 50,
+          "y": 1070,
+          "width": 596,
+          "height": 442,
+          "layerColor": {
+            "r": 100,
+            "g": 234,
+            "b": 136,
+            "a": 1
+          },
+          "fontName": "Roboto Mono Regular",
+          "fontSize": 18,
+          "fontColor": {
+            "r": 51,
+            "g": 51,
+            "b": 51,
+            "a": 1
+          }
+        }
+      ],
+      "relations": [
+        {
+          "name": "fk_asset_encryption_key_1",
+          "sourceTableName": "asset",
+          "sourceSchemaName": "Default",
+          "lineWidth": 1,
+          "visible": true,
+          "vertices": [
+            {
+              "x": 525,
+              "y": 370
+            },
+            {
+              "x": 325,
+              "y": 370
+            }
+          ],
+          "label": {
+            "x": 535,
+            "y": 331,
+            "width": 175,
+            "height": 31,
+            "fontName": "Arial Unicode MS",
+            "fontSize": 14,
+            "fontColor": {
+              "r": 204,
+              "g": 204,
+              "b": 204,
+              "a": 1
+            },
+            "isFontBold": false,
+            "isFontItalic": false,
+            "isVisible": false
+          }
+        },
+        {
+          "name": "fk_asset_asset_type_1",
+          "sourceTableName": "asset",
+          "sourceSchemaName": "Default",
+          "lineWidth": 1,
+          "visible": true,
+          "vertices": [
+            {
+              "x": 808,
+              "y": 370
+            },
+            {
+              "x": 965,
+              "y": 370
+            }
+          ],
+          "label": {
+            "x": 804,
+            "y": 372,
+            "width": 149,
+            "height": 31,
+            "fontName": "Arial Unicode MS",
+            "fontSize": 14,
+            "fontColor": {
+              "r": 204,
+              "g": 204,
+              "b": 204,
+              "a": 1
+            },
+            "isFontBold": false,
+            "isFontItalic": false,
+            "isVisible": false
+          }
+        },
+        {
+          "name": "fk_asset_tag_asset_1",
+          "sourceTableName": "asset_tag",
+          "sourceSchemaName": "Default",
+          "lineWidth": 1,
+          "visible": true,
+          "vertices": [
+            {
+              "x": 670,
+              "y": 236
+            },
+            {
+              "x": 670,
+              "y": 255
+            }
+          ],
+          "label": {
+            "x": 678,
+            "y": 195,
+            "width": 142,
+            "height": 31,
+            "fontName": "Arial Unicode MS",
+            "fontSize": 14,
+            "fontColor": {
+              "r": 204,
+              "g": 204,
+              "b": 204,
+              "a": 1
+            },
+            "isFontBold": false,
+            "isFontItalic": false,
+            "isVisible": false
+          }
+        },
+        {
+          "name": "fk_asset_job_execution_1",
+          "sourceTableName": "asset",
+          "sourceSchemaName": "Default",
+          "lineWidth": 1,
+          "visible": true,
+          "vertices": [
+            {
+              "x": 780,
+              "y": 476
+            },
+            {
+              "x": 780,
+              "y": 645
+            }
+          ],
+          "label": {
+            "x": 782,
+            "y": 425,
+            "width": 167,
+            "height": 31,
+            "fontName": "Arial Unicode MS",
+            "fontSize": 14,
+            "fontColor": {
+              "r": 204,
+              "g": 204,
+              "b": 204,
+              "a": 1
+            },
+            "isFontBold": false,
+            "isFontItalic": false,
+            "isVisible": false
+          }
+        },
+        {
+          "name": "fk_processor_node_capability_processor_node_1",
+          "sourceTableName": "processor_node_capability",
+          "sourceSchemaName": "Default",
+          "lineWidth": 1,
+          "visible": true,
+          "vertices": [
+            {
+              "x": 362,
+              "y": 1200
+            },
+            {
+              "x": 395,
+              "y": 1200
+            }
+          ],
+          "label": {
+            "x": 358,
+            "y": 1202,
+            "width": 313,
+            "height": 31,
+            "fontName": "Arial Unicode MS",
+            "fontSize": 14,
+            "fontColor": {
+              "r": 204,
+              "g": 204,
+              "b": 204,
+              "a": 1
+            },
+            "isFontBold": false,
+            "isFontItalic": false,
+            "isVisible": false
+          }
+        },
+        {
+          "name": "fk_processor_node_status_processor_node_1",
+          "sourceTableName": "processor_node_status",
+          "sourceSchemaName": "Default",
+          "lineWidth": 1,
+          "visible": true,
+          "vertices": [
+            {
+              "x": 490,
+              "y": 1315
+            },
+            {
+              "x": 490,
+              "y": 1266
+            }
+          ],
+          "label": {
+            "x": 498,
+            "y": 1325,
+            "width": 292,
+            "height": 31,
+            "fontName": "Arial Unicode MS",
+            "fontSize": 14,
+            "fontColor": {
+              "r": 204,
+              "g": 204,
+              "b": 204,
+              "a": 1
+            },
+            "isFontBold": false,
+            "isFontItalic": false,
+            "isVisible": false
+          }
+        },
+        {
+          "name": "fk_processor_node_capability_job_type_1",
+          "sourceTableName": "processor_node_capability",
+          "sourceSchemaName": "Default",
+          "lineWidth": 1,
+          "visible": true,
+          "vertices": [
+            {
+              "x": 220,
+              "y": 1105
+            },
+            {
+              "x": 220,
+              "y": 786
+            }
+          ],
+          "label": {
+            "x": 222,
+            "y": 1074,
+            "width": 265,
+            "height": 31,
+            "fontName": "Arial Unicode MS",
+            "fontSize": 14,
+            "fontColor": {
+              "r": 204,
+              "g": 204,
+              "b": 204,
+              "a": 1
+            },
+            "isFontBold": false,
+            "isFontItalic": false,
+            "isVisible": false
+          }
+        },
+        {
+          "name": "fk_processor_node_capability_asset_type_1",
+          "sourceTableName": "processor_node_capability",
+          "sourceSchemaName": "Default",
+          "lineWidth": 1,
+          "visible": true,
+          "vertices": [
+            {
+              "x": 220,
+              "y": 1286
+            },
+            {
+              "x": 220,
+              "y": 1570
+            },
+            {
+              "x": 1060,
+              "y": 1570
+            },
+            {
+              "x": 1060,
+              "y": 436
+            }
+          ],
+          "label": {
+            "x": 222,
+            "y": 1235,
+            "width": 280,
+            "height": 31,
+            "fontName": "Arial Unicode MS",
+            "fontSize": 14,
+            "fontColor": {
+              "r": 204,
+              "g": 204,
+              "b": 204,
+              "a": 1
+            },
+            "isFontBold": false,
+            "isFontItalic": false,
+            "isVisible": false
+          }
+        },
+        {
+          "name": "fk_job_job_type_1",
+          "sourceTableName": "job",
+          "sourceSchemaName": "Default",
+          "lineWidth": 1,
+          "visible": true,
+          "vertices": [
+            {
+              "x": 335,
+              "y": 720
+            },
+            {
+              "x": 315,
+              "y": 720
+            }
+          ],
+          "label": {
+            "x": 226,
+            "y": 681,
+            "width": 119,
+            "height": 31,
+            "fontName": "Arial Unicode MS",
+            "fontSize": 14,
+            "fontColor": {
+              "r": 204,
+              "g": 204,
+              "b": 204,
+              "a": 1
+            },
+            "isFontBold": false,
+            "isFontItalic": false,
+            "isVisible": false
+          }
+        },
+        {
+          "name": "fk_job_asset_1",
+          "sourceTableName": "job",
+          "sourceSchemaName": "Default",
+          "lineWidth": 1,
+          "visible": true,
+          "vertices": [
+            {
+              "x": 490,
+              "y": 615
+            },
+            {
+              "x": 490,
+              "y": 450
+            },
+            {
+              "x": 525,
+              "y": 450
+            }
+          ],
+          "label": {
+            "x": 392,
+            "y": 584,
+            "width": 100,
+            "height": 31,
+            "fontName": "Arial Unicode MS",
+            "fontSize": 14,
+            "fontColor": {
+              "r": 204,
+              "g": 204,
+              "b": 204,
+              "a": 1
+            },
+            "isFontBold": false,
+            "isFontItalic": false,
+            "isVisible": false
+          }
+        },
+        {
+          "name": "fk_job_processor_node_1",
+          "sourceTableName": "job",
+          "sourceSchemaName": "Default",
+          "lineWidth": 1,
+          "visible": true,
+          "vertices": [
+            {
+              "x": 490,
+              "y": 816
+            },
+            {
+              "x": 490,
+              "y": 1125
+            }
+          ],
+          "label": {
+            "x": 492,
+            "y": 765,
+            "width": 166,
+            "height": 31,
+            "fontName": "Arial Unicode MS",
+            "fontSize": 14,
+            "fontColor": {
+              "r": 204,
+              "g": 204,
+              "b": 204,
+              "a": 1
+            },
+            "isFontBold": false,
+            "isFontItalic": false,
+            "isVisible": false
+          }
+        },
+        {
+          "name": "fk_job_execution_job_1",
+          "sourceTableName": "job_execution",
+          "sourceSchemaName": "Default",
+          "lineWidth": 1,
+          "visible": true,
+          "vertices": [
+            {
+              "x": 655,
+              "y": 720
+            },
+            {
+              "x": 640,
+              "y": 720
+            }
+          ],
+          "label": {
+            "x": 665,
+            "y": 681,
+            "width": 152,
+            "height": 31,
+            "fontName": "Arial Unicode MS",
+            "fontSize": 14,
+            "fontColor": {
+              "r": 204,
+              "g": 204,
+              "b": 204,
+              "a": 1
+            },
+            "isFontBold": false,
+            "isFontItalic": false,
+            "isVisible": false
+          }
+        },
+        {
+          "name": "fk_job_execution_processor_node_1",
+          "sourceTableName": "job_execution",
+          "sourceSchemaName": "Default",
+          "lineWidth": 1,
+          "visible": true,
+          "vertices": [
+            {
+              "x": 895,
+              "y": 720
+            },
+            {
+              "x": 1000,
+              "y": 720
+            },
+            {
+              "x": 1000,
+              "y": 1200
+            },
+            {
+              "x": 575,
+              "y": 1200
+            }
+          ],
+          "label": {
+            "x": 885,
+            "y": 681,
+            "width": 233,
+            "height": 31,
+            "fontName": "Arial Unicode MS",
+            "fontSize": 14,
+            "fontColor": {
+              "r": 204,
+              "g": 204,
+              "b": 204,
+              "a": 1
+            },
+            "isFontBold": false,
+            "isFontItalic": false,
+            "isVisible": false
+          }
+        },
+        {
+          "name": "fk_job_execution_status_job_execution_1",
+          "sourceTableName": "job_execution_status",
+          "sourceSchemaName": "Default",
+          "lineWidth": 1,
+          "visible": true,
+          "vertices": [
+            {
+              "x": 780,
+              "y": 805
+            },
+            {
+              "x": 780,
+              "y": 786
+            }
+          ],
+          "label": {
+            "x": 788,
+            "y": 784,
+            "width": 264,
+            "height": 31,
+            "fontName": "Arial Unicode MS",
+            "fontSize": 14,
+            "fontColor": {
+              "r": 204,
+              "g": 204,
+              "b": 204,
+              "a": 1
+            },
+            "isFontBold": false,
+            "isFontItalic": false,
+            "isVisible": false
+          }
+        }
+      ],
       "viewRelations": []
     }
   ]

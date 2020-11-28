@@ -4,11 +4,12 @@
 
 - Asset: 에셋
 - AssetTag: 에셋 태그
-- AssetContent: 에셋 내용
+- AssetType: 에셋 유형
   - Model
   - RenderedImage
+  - Image
   - Dictionary
-- AssetType: 에셋 형식
+- MediaType: 미디어 형식
   - text/plain
   - application/json
   - image/png
@@ -23,6 +24,8 @@
 ## 뷰어
 
 - Viewer: 뷰어
+  - AssetContent
+  - MediaType
 
 ## 처리기
 
@@ -32,12 +35,11 @@
   - ...
 - ProcessorNodeStatus: 처리기 노드 상태
 - ProcessorNodeCapability: 처리기 노드 능력
-  - ConvertToDelta, model/x.stl-ascii
-  - Render, model/delta
-  - Explain, model/delta
-  - Explain, image/png
-  - GetSize, image/png
-  - GetSize, image/bmp
+  - ConvertToDelta, Model, model/x.stl-ascii
+  - Render, Model, model/delta
+  - Explain, Model, model/delta
+  - GetSize, null, image/png
+  - GetSize, null, image/bmp
 
 ## 작업
 

@@ -2254,6 +2254,206 @@
                 "triggers": [],
                 "partitionKeys": [],
                 "partitions": []
+              },
+              {
+                "objectType": "TableNormal_PGSQL",
+                "name": "user",
+                "comment": "",
+                "tablespace": "",
+                "isUnlogged": false,
+                "owner": "",
+                "inheritFromTables": [],
+                "hasOIDs": false,
+                "fillFactor": -1,
+                "oldName": "",
+                "oid": 0,
+                "rows": 0,
+                "isInheritTables": false,
+                "cluster": "",
+                "ACL": "",
+                "isPartition": false,
+                "partitioningStrategy": "None",
+                "partitionOfSchema": "",
+                "partitionOfTable": "",
+                "partitionListValues": [],
+                "partitionRangeFromValues": [],
+                "partitionRangeToValues": [],
+                "foreignServer": "",
+                "foreignOptionDisplay": "",
+                "fields": [
+                  {
+                    "objectType": "TableField_PGSQL",
+                    "name": "id",
+                    "type": "int4",
+                    "length": -2147483648,
+                    "decimals": -2147483648,
+                    "dimensions": 0,
+                    "collation": "",
+                    "isNullable": false,
+                    "defaultType": "None",
+                    "defaultValue": "",
+                    "comment": "",
+                    "oldName": "id",
+                    "typeOID": 1,
+                    "fieldObjectType": "",
+                    "objectTypeSchema": "",
+                    "isDomainType": false,
+                    "collationSchema": "",
+                    "ordinalPosition": -1,
+                    "foreignOptions": [],
+                    "isIdentity": false,
+                    "identityGeneration": "None",
+                    "identityStart": 0,
+                    "identityIncrement": 0,
+                    "identityMinimum": 0,
+                    "hasNoIdentityMinValue": false,
+                    "identityMaximum": 0,
+                    "hasNoIdentityMaxValue": false,
+                    "isIdentityCycle": false
+                  },
+                  {
+                    "objectType": "TableField_PGSQL",
+                    "name": "username",
+                    "type": "text",
+                    "length": -2147483648,
+                    "decimals": 0,
+                    "dimensions": 0,
+                    "collation": "",
+                    "isNullable": false,
+                    "defaultType": "None",
+                    "defaultValue": "",
+                    "comment": "",
+                    "oldName": "username",
+                    "typeOID": 1,
+                    "fieldObjectType": "",
+                    "objectTypeSchema": "",
+                    "isDomainType": false,
+                    "collationSchema": "",
+                    "ordinalPosition": -1,
+                    "foreignOptions": [],
+                    "isIdentity": false,
+                    "identityGeneration": "None",
+                    "identityStart": 0,
+                    "identityIncrement": 0,
+                    "identityMinimum": 0,
+                    "hasNoIdentityMinValue": false,
+                    "identityMaximum": 0,
+                    "hasNoIdentityMaxValue": false,
+                    "isIdentityCycle": false
+                  },
+                  {
+                    "objectType": "TableField_PGSQL",
+                    "name": "name",
+                    "type": "text",
+                    "length": -2147483648,
+                    "decimals": 0,
+                    "dimensions": 0,
+                    "collation": "",
+                    "isNullable": false,
+                    "defaultType": "None",
+                    "defaultValue": "",
+                    "comment": "",
+                    "oldName": "name",
+                    "typeOID": 1,
+                    "fieldObjectType": "",
+                    "objectTypeSchema": "",
+                    "isDomainType": false,
+                    "collationSchema": "",
+                    "ordinalPosition": -1,
+                    "foreignOptions": [],
+                    "isIdentity": false,
+                    "identityGeneration": "None",
+                    "identityStart": 0,
+                    "identityIncrement": 0,
+                    "identityMinimum": 0,
+                    "hasNoIdentityMinValue": false,
+                    "identityMaximum": 0,
+                    "hasNoIdentityMaxValue": false,
+                    "isIdentityCycle": false
+                  },
+                  {
+                    "objectType": "TableField_PGSQL",
+                    "name": "password",
+                    "type": "text",
+                    "length": -2147483648,
+                    "decimals": 0,
+                    "dimensions": 0,
+                    "collation": "",
+                    "isNullable": true,
+                    "defaultType": "None",
+                    "defaultValue": "",
+                    "comment": "",
+                    "oldName": "password",
+                    "typeOID": 1,
+                    "fieldObjectType": "",
+                    "objectTypeSchema": "",
+                    "isDomainType": false,
+                    "collationSchema": "",
+                    "ordinalPosition": -1,
+                    "foreignOptions": [],
+                    "isIdentity": false,
+                    "identityGeneration": "None",
+                    "identityStart": 0,
+                    "identityIncrement": 0,
+                    "identityMinimum": 0,
+                    "hasNoIdentityMinValue": false,
+                    "identityMaximum": 0,
+                    "hasNoIdentityMaxValue": false,
+                    "isIdentityCycle": false
+                  },
+                  {
+                    "objectType": "TableField_PGSQL",
+                    "name": "salt",
+                    "type": "text",
+                    "length": -2147483648,
+                    "decimals": 0,
+                    "dimensions": 0,
+                    "collation": "",
+                    "isNullable": true,
+                    "defaultType": "None",
+                    "defaultValue": "",
+                    "comment": "",
+                    "oldName": "salt",
+                    "typeOID": 1,
+                    "fieldObjectType": "",
+                    "objectTypeSchema": "",
+                    "isDomainType": false,
+                    "collationSchema": "",
+                    "ordinalPosition": -1,
+                    "foreignOptions": [],
+                    "isIdentity": false,
+                    "identityGeneration": "None",
+                    "identityStart": 0,
+                    "identityIncrement": 0,
+                    "identityMinimum": 0,
+                    "hasNoIdentityMinValue": false,
+                    "identityMaximum": 0,
+                    "hasNoIdentityMaxValue": false,
+                    "isIdentityCycle": false
+                  }
+                ],
+                "indexes": [],
+                "rules": [],
+                "primaryKey": {
+                  "objectType": "PrimaryKey_PGSQL",
+                  "name": "",
+                  "fields": [
+                    "id"
+                  ],
+                  "fillFactor": -1,
+                  "indexTablespace": "",
+                  "comment": "",
+                  "isDeferrable": false,
+                  "isDeferred": false,
+                  "oldName": ""
+                },
+                "foreignKeys": [],
+                "uniques": [],
+                "checks": [],
+                "excludes": [],
+                "triggers": [],
+                "partitionKeys": [],
+                "partitions": []
               }
             ],
             "views": []
@@ -2280,8 +2480,8 @@
           "type": "table",
           "schemaName": "Default",
           "tableName": "asset",
-          "x": 540,
-          "y": 270,
+          "x": 1500,
+          "y": 410,
           "width": 253,
           "height": 191,
           "isBold": false,
@@ -2296,8 +2496,8 @@
           "type": "table",
           "schemaName": "Default",
           "tableName": "asset_type",
-          "x": 980,
-          "y": 310,
+          "x": 1550,
+          "y": 780,
           "width": 150,
           "height": 111,
           "isBold": false,
@@ -2312,8 +2512,8 @@
           "type": "table",
           "schemaName": "Default",
           "tableName": "encryption_key",
-          "x": 150,
-          "y": 300,
+          "x": 1550,
+          "y": 100,
           "width": 160,
           "height": 131,
           "isBold": false,
@@ -2329,7 +2529,7 @@
           "schemaName": "Default",
           "tableName": "processor_node",
           "x": 410,
-          "y": 1140,
+          "y": 340,
           "width": 150,
           "height": 111,
           "isBold": false,
@@ -2344,8 +2544,8 @@
           "type": "table",
           "schemaName": "Default",
           "tableName": "job",
-          "x": 350,
-          "y": 630,
+          "x": 990,
+          "y": 310,
           "width": 275,
           "height": 171,
           "isBold": false,
@@ -2360,8 +2560,8 @@
           "type": "table",
           "schemaName": "Default",
           "tableName": "job_execution",
-          "x": 670,
-          "y": 660,
+          "x": 1030,
+          "y": 540,
           "width": 210,
           "height": 111,
           "isBold": false,
@@ -2376,8 +2576,8 @@
           "type": "table",
           "schemaName": "Default",
           "tableName": "job_execution_status",
-          "x": 680,
-          "y": 820,
+          "x": 770,
+          "y": 530,
           "width": 203,
           "height": 131,
           "isBold": false,
@@ -2392,8 +2592,8 @@
           "type": "table",
           "schemaName": "Default",
           "tableName": "asset_tag",
-          "x": 590,
-          "y": 90,
+          "x": 1800,
+          "y": 440,
           "width": 150,
           "height": 131,
           "isBold": false,
@@ -2408,8 +2608,8 @@
           "type": "table",
           "schemaName": "Default",
           "tableName": "processor_node_status",
-          "x": 380,
-          "y": 1330,
+          "x": 150,
+          "y": 330,
           "width": 210,
           "height": 131,
           "isBold": false,
@@ -2424,8 +2624,8 @@
           "type": "table",
           "schemaName": "Default",
           "tableName": "processor_node_capability",
-          "x": 110,
-          "y": 1120,
+          "x": 370,
+          "y": 130,
           "width": 237,
           "height": 151,
           "isBold": false,
@@ -2440,10 +2640,26 @@
           "type": "table",
           "schemaName": "Default",
           "tableName": "job_type",
-          "x": 150,
-          "y": 660,
+          "x": 1060,
+          "y": 150,
           "width": 150,
           "height": 111,
+          "isBold": false,
+          "titleColor": {
+            "r": 55,
+            "g": 131,
+            "b": 192,
+            "a": 1
+          }
+        },
+        {
+          "type": "table",
+          "schemaName": "Default",
+          "tableName": "user",
+          "x": 1880,
+          "y": 90,
+          "width": 150,
+          "height": 151,
           "isBold": false,
           "titleColor": {
             "r": 55,
@@ -2456,10 +2672,10 @@
       "layers": [
         {
           "name": "Assets",
-          "x": 430,
-          "y": 40,
-          "width": 762,
-          "height": 482,
+          "x": 1380,
+          "y": 360,
+          "width": 623,
+          "height": 589,
           "layerColor": {
             "r": 100,
             "g": 234,
@@ -2477,8 +2693,8 @@
         },
         {
           "name": "Security",
-          "x": 100,
-          "y": 250,
+          "x": 1490,
+          "y": 50,
           "width": 270,
           "height": 241,
           "layerColor": {
@@ -2498,10 +2714,10 @@
         },
         {
           "name": "Jobs",
-          "x": 90,
-          "y": 580,
-          "width": 845,
-          "height": 432,
+          "x": 720,
+          "y": 90,
+          "width": 605,
+          "height": 623,
           "layerColor": {
             "r": 100,
             "g": 234,
@@ -2519,10 +2735,31 @@
         },
         {
           "name": "Processors",
-          "x": 50,
-          "y": 1070,
-          "width": 596,
+          "x": 100,
+          "y": 70,
+          "width": 563,
           "height": 442,
+          "layerColor": {
+            "r": 100,
+            "g": 234,
+            "b": 136,
+            "a": 1
+          },
+          "fontName": "Roboto Mono Regular",
+          "fontSize": 18,
+          "fontColor": {
+            "r": 51,
+            "g": 51,
+            "b": 51,
+            "a": 1
+          }
+        },
+        {
+          "name": "Users",
+          "x": 1820,
+          "y": 40,
+          "width": 260,
+          "height": 261,
           "layerColor": {
             "r": 100,
             "g": 234,
@@ -2548,17 +2785,17 @@
           "visible": true,
           "vertices": [
             {
-              "x": 525,
-              "y": 370
+              "x": 1630,
+              "y": 395
             },
             {
-              "x": 325,
-              "y": 370
+              "x": 1630,
+              "y": 246
             }
           ],
           "label": {
-            "x": 535,
-            "y": 331,
+            "x": 1632,
+            "y": 364,
             "width": 175,
             "height": 31,
             "fontName": "Arial Unicode MS",
@@ -2582,17 +2819,17 @@
           "visible": true,
           "vertices": [
             {
-              "x": 808,
-              "y": 370
+              "x": 1630,
+              "y": 616
             },
             {
-              "x": 965,
-              "y": 370
+              "x": 1630,
+              "y": 765
             }
           ],
           "label": {
-            "x": 804,
-            "y": 372,
+            "x": 1638,
+            "y": 606,
             "width": 149,
             "height": 31,
             "fontName": "Arial Unicode MS",
@@ -2616,17 +2853,17 @@
           "visible": true,
           "vertices": [
             {
-              "x": 670,
-              "y": 236
+              "x": 1785,
+              "y": 510
             },
             {
-              "x": 670,
-              "y": 255
+              "x": 1768,
+              "y": 510
             }
           ],
           "label": {
-            "x": 678,
-            "y": 195,
+            "x": 1801,
+            "y": 481,
             "width": 142,
             "height": 31,
             "fontName": "Arial Unicode MS",
@@ -2650,17 +2887,17 @@
           "visible": true,
           "vertices": [
             {
-              "x": 780,
-              "y": 476
+              "x": 1485,
+              "y": 590
             },
             {
-              "x": 780,
-              "y": 645
+              "x": 1255,
+              "y": 590
             }
           ],
           "label": {
-            "x": 782,
-            "y": 425,
+            "x": 1495,
+            "y": 551,
             "width": 167,
             "height": 31,
             "fontName": "Arial Unicode MS",
@@ -2684,17 +2921,17 @@
           "visible": true,
           "vertices": [
             {
-              "x": 362,
-              "y": 1200
+              "x": 490,
+              "y": 296
             },
             {
-              "x": 395,
-              "y": 1200
+              "x": 490,
+              "y": 325
             }
           ],
           "label": {
-            "x": 358,
-            "y": 1202,
+            "x": 498,
+            "y": 286,
             "width": 313,
             "height": 31,
             "fontName": "Arial Unicode MS",
@@ -2718,17 +2955,17 @@
           "visible": true,
           "vertices": [
             {
-              "x": 490,
-              "y": 1315
+              "x": 375,
+              "y": 390
             },
             {
-              "x": 490,
-              "y": 1266
+              "x": 395,
+              "y": 390
             }
           ],
           "label": {
-            "x": 498,
-            "y": 1325,
+            "x": 371,
+            "y": 392,
             "width": 292,
             "height": 31,
             "fontName": "Arial Unicode MS",
@@ -2752,17 +2989,17 @@
           "visible": true,
           "vertices": [
             {
-              "x": 220,
-              "y": 1105
+              "x": 622,
+              "y": 200
             },
             {
-              "x": 220,
-              "y": 786
+              "x": 1045,
+              "y": 200
             }
           ],
           "label": {
-            "x": 222,
-            "y": 1074,
+            "x": 612,
+            "y": 161,
             "width": 265,
             "height": 31,
             "fontName": "Arial Unicode MS",
@@ -2786,25 +3023,25 @@
           "visible": true,
           "vertices": [
             {
-              "x": 220,
-              "y": 1286
+              "x": 355,
+              "y": 200
             },
             {
-              "x": 220,
-              "y": 1570
+              "x": 40,
+              "y": 200
             },
             {
-              "x": 1060,
-              "y": 1570
+              "x": 40,
+              "y": 840
             },
             {
-              "x": 1060,
-              "y": 436
+              "x": 1535,
+              "y": 840
             }
           ],
           "label": {
-            "x": 222,
-            "y": 1235,
+            "x": 365,
+            "y": 161,
             "width": 280,
             "height": 31,
             "fontName": "Arial Unicode MS",
@@ -2828,17 +3065,17 @@
           "visible": true,
           "vertices": [
             {
-              "x": 335,
-              "y": 720
+              "x": 1130,
+              "y": 295
             },
             {
-              "x": 315,
-              "y": 720
+              "x": 1130,
+              "y": 276
             }
           ],
           "label": {
-            "x": 226,
-            "y": 681,
+            "x": 1013,
+            "y": 264,
             "width": 119,
             "height": 31,
             "fontName": "Arial Unicode MS",
@@ -2862,21 +3099,17 @@
           "visible": true,
           "vertices": [
             {
-              "x": 490,
-              "y": 615
+              "x": 1280,
+              "y": 420
             },
             {
-              "x": 490,
-              "y": 450
-            },
-            {
-              "x": 525,
-              "y": 450
+              "x": 1485,
+              "y": 420
             }
           ],
           "label": {
-            "x": 392,
-            "y": 584,
+            "x": 1170,
+            "y": 381,
             "width": 100,
             "height": 31,
             "fontName": "Arial Unicode MS",
@@ -2900,17 +3133,17 @@
           "visible": true,
           "vertices": [
             {
-              "x": 490,
-              "y": 816
+              "x": 975,
+              "y": 390
             },
             {
-              "x": 490,
-              "y": 1125
+              "x": 575,
+              "y": 390
             }
           ],
           "label": {
-            "x": 492,
-            "y": 765,
+            "x": 985,
+            "y": 351,
             "width": 166,
             "height": 31,
             "fontName": "Arial Unicode MS",
@@ -2934,17 +3167,17 @@
           "visible": true,
           "vertices": [
             {
-              "x": 655,
-              "y": 720
+              "x": 1130,
+              "y": 525
             },
             {
-              "x": 640,
-              "y": 720
+              "x": 1130,
+              "y": 496
             }
           ],
           "label": {
-            "x": 665,
-            "y": 681,
+            "x": 1132,
+            "y": 494,
             "width": 152,
             "height": 31,
             "fontName": "Arial Unicode MS",
@@ -2968,25 +3201,25 @@
           "visible": true,
           "vertices": [
             {
-              "x": 895,
-              "y": 720
+              "x": 1130,
+              "y": 666
             },
             {
-              "x": 1000,
-              "y": 720
+              "x": 1130,
+              "y": 780
             },
             {
-              "x": 1000,
-              "y": 1200
+              "x": 490,
+              "y": 780
             },
             {
-              "x": 575,
-              "y": 1200
+              "x": 490,
+              "y": 466
             }
           ],
           "label": {
-            "x": 885,
-            "y": 681,
+            "x": 1132,
+            "y": 615,
             "width": 233,
             "height": 31,
             "fontName": "Arial Unicode MS",
@@ -3010,17 +3243,17 @@
           "visible": true,
           "vertices": [
             {
-              "x": 780,
-              "y": 805
+              "x": 988,
+              "y": 590
             },
             {
-              "x": 780,
-              "y": 786
+              "x": 1015,
+              "y": 590
             }
           ],
           "label": {
-            "x": 788,
-            "y": 784,
+            "x": 984,
+            "y": 561,
             "width": 264,
             "height": 31,
             "fontName": "Arial Unicode MS",

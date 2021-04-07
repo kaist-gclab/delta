@@ -104,6 +104,6 @@ Docker Volume을 통한 모듈 통신 방법은 빠르고 편리하지만, 자�
     "result": "success",
     "input": "input.obj",
     "output": "output.jpg",
-    "log": "log.log",
+    "log": "log.log"
 }
 ```

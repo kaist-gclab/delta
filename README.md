@@ -7,6 +7,9 @@ SW스타랩 <3차원 기하 모델 프로세싱 프레임워크 개발>
     - 문서 및 웹 사이트 (예정)
     - https://kaist-gclab.github.io/delta
 
+## 가이드 문서
+- [처리기 모듈 작성 방법](writing-modules.md)
+
 ## 처리기
 - https://github.com/kaist-gclab/delta-processor-null
     - 무효 처리기 계산 노드
@@ -14,6 +17,8 @@ SW스타랩 <3차원 기하 모델 프로세싱 프레임워크 개발>
     - 기본 작업 처리기 계산 노드
 - https://github.com/kaist-gclab/delta-processor-converter
     - 파일 형식 변환 처리기 계산 노드
+- https://github.com/kaist-gclab/delta-processor-axis
+    - 미디얼 액시스 근사 계산 노드
 - https://github.com/kaist-gclab/delta-renderer
     - 렌더링 계산 노드
 

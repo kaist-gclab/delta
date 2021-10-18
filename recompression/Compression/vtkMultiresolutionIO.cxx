@@ -155,10 +155,10 @@ void vtkMultiresolutionIO::EncodeMeshConnectivity(vtkSurface *Mesh)
 	vtkIdType i;
 	vtkIdType n,v1,v2,v3;
 
-	this->ArithmeticCoder->EncodeWord(Mesh->GetNumberOfPoints());
-	this->ArithmeticCoder->EncodeWord(Mesh->GetNumberOfCells());
+	this->ArithmeticCoder->EncodeInt(Mesh->GetNumberOfPoints());	// Me: Word -> Int
+	this->ArithmeticCoder->EncodeInt(Mesh->GetNumberOfCells());	// Me: Word -> Int
 	qsmodel QsmConnectivity;
-	QsmConnectivity.initqsmodel(Mesh->GetNumberOfPoints(),15,1000,NULL,1);
+	QsmConnectivity.initqsmodel(Mesh->GetNumberOfPoints(),23,1000,NULL,1);
 
 	n=Mesh->GetNumberOfCells();
 	for (i=0;i<n;i++)
@@ -180,8 +180,8 @@ vtkSurface *vtkMultiresolutionIO::DecodeMeshConnectivity()
 	P[2]=0;
 
 	vtkSurface *Mesh=vtkSurface::New();
-	NumberOfPoints=this->ArithmeticCoder->DecodeWord();
-	NumberOfFaces=this->ArithmeticCoder->DecodeWord();
+	NumberOfPoints=this->ArithmeticCoder->DecodeInt();	// Me: Word -> Int
+	NumberOfFaces=this->ArithmeticCoder->DecodeInt();	// Me: Word -> Int
 	Mesh->Init(NumberOfPoints,NumberOfFaces,NumberOfPoints+NumberOfFaces+1000);
 
 
@@ -189,7 +189,7 @@ vtkSurface *vtkMultiresolutionIO::DecodeMeshConnectivity()
 		Mesh->AddVertex(P);
 
 	qsmodel QsmConnectivity;
-	QsmConnectivity.initqsmodel(NumberOfPoints,15,1000,NULL,0);
+	QsmConnectivity.initqsmodel(NumberOfPoints,23,1000,NULL,0);
 
 
 	for (i=0;i<NumberOfFaces;i++)
@@ -237,7 +237,7 @@ void vtkMultiresolutionIO::EncodeMeshGeometry(vtkSurface *Mesh)
 			for (j=0;j<3;j++)
 			{
 				Value=(int) P[j];
-				this->ArithmeticCoder->EncodeWord(Value+16384);
+				this->ArithmeticCoder->EncodeInt(Value+ 1073741824);	// Me: Word -> Int
 			}
 		}
 	}
@@ -267,7 +267,7 @@ void vtkMultiresolutionIO::DecodeMeshGeometry(vtkSurface *Mesh)
 		{
 			for (j=0;j<3;j++)
 			{		
-				P[j]=(this->ArithmeticCoder->DecodeWord()-16384);
+				P[j]=(this->ArithmeticCoder->DecodeInt()- 1073741824);	// Me: Word -> Int
 			}
 			Mesh->SetPointCoordinates(i,P);
 		}
@@ -1220,6 +1220,7 @@ void vtkMultiresolutionIO::DecodeProgressivePrecision()
 					vtkPLYWriter *Writer=vtkPLYWriter::New();
 					Writer->SetInputData(this->Filters[0]->GetOutput());
 					Writer->SetFileName(strfile.str().c_str());
+					//Writer->SetFileTypeToASCII();
 					Writer->Write();
 					Writer->Delete();
 				}
@@ -1278,8 +1279,6 @@ void vtkMultiresolutionIO::Reconstruct()
 }
 void vtkMultiresolutionIO::Read()
 {
-	cout<<"Reconstruction:"<<endl;
-
 	this->ArithmeticCoder=vtkArithmeticCoder::New();
 	this->ArithmeticCoder->OpenFile(this->FileName,0);
 	this->ArithmeticCoder->InitConnectivityQSModels(0);
@@ -1315,6 +1314,69 @@ void vtkMultiresolutionIO::Read()
 	this->SynthesisMeshes[this->NumberOfFilters]=BaseMesh;
 	if (this->ArithmeticType!=0)
         this->DecodeProgressiveResolution();
+	else
+		this->DecodeProgressivePrecision();
+}
+
+void vtkMultiresolutionIO::ReadPerMesh()
+{
+	std::string outinfo = this->InputFileName;
+	clock_t start, end;
+
+	this->ArithmeticCoder = vtkArithmeticCoder::New();
+	this->ArithmeticCoder->OpenFile(this->FileName, 0);
+	this->ArithmeticCoder->InitConnectivityQSModels(0);
+
+	start = clock();
+
+	this->ArithmeticCoder->StartDecoding();
+	this->ArithmeticType = this->ArithmeticCoder->DecodeBit();
+
+	vtkSurface* BaseMesh = this->DecodeMeshConnectivity();
+	this->DecodeMeshGeometry(BaseMesh);
+	this->DecodeLiftingProperties();
+	this->NumberOfFilters = this->ArithmeticCoder->DecodeByte();
+
+	int Type, i;
+	int bit1, bit2;
+	for (i = this->NumberOfFilters - 1; i >= 0; i--)
+	{
+		bit1 = this->ArithmeticCoder->DecodeBit();
+		bit2 = this->ArithmeticCoder->DecodeBit();
+		Type = bit1 * 2 + bit2;
+
+		this->Filters[i] = this->NewFilter(Type);
+		this->Filters[i]->SetSubdivisionType(Type);
+	}
+
+	this->ArithmeticCoder->StopDecoding();
+
+	end = clock();
+	double reading_time = (double)(end - start) / CLOCKS_PER_SEC;
+
+	start = clock();
+	this->GetRenderWindow()->Render();
+	end = clock();
+	double rendering_time = (double)(end - start) / CLOCKS_PER_SEC;
+
+	// file name setting
+	if (this->Lifting > 0)
+		outinfo += "_DS_lift_0.txt";
+	else
+		outinfo += "_DS_nolift.txt";
+
+	std::ofstream out;
+
+	// for each resolution in multi-resolution mesh:
+	//   (1) print reading time, rendering time, (reading + rendering) time
+	out.open(outinfo, ios::app);
+	out << "level \t" << "reading_time  \t" << "rendering_time \t" << "total_time" << endl;
+	out << this->NumberOfFilters << " \t" << reading_time << " \t" << rendering_time << " \t" << reading_time + rendering_time << endl;
+	out.close();
+
+	this->SynthesisMeshes[this->NumberOfFilters] = BaseMesh;
+	if (this->ArithmeticType != 0)
+		this->DecodeProgressiveResolutionDS();
 	else
 		this->DecodeProgressivePrecision();
 }
@@ -1418,7 +1480,7 @@ void vtkMultiresolutionIO::DecodeProgressiveResolution()
 		cout<<"Window interaction: presse 'e' key to exit from interaction"<<endl;
 		this->MeshWindow->Interact();
 	}
-	if (this->WriteOutput==1)
+	if (this->WriteOutput==-1)
 	{
 		// output file name initialization
 		std::string strout;
@@ -1444,6 +1506,7 @@ void vtkMultiresolutionIO::DecodeProgressiveResolution()
 			strfile << strout << "0.ply";
 			Writer->SetFileName(strfile.str().c_str());
 			Writer->SetInputData(this->Filters[this->NumberOfFilters-1]->GetSubdivisionInput());
+			//Writer->SetFileTypeToASCII();
 			Writer->Write();
 			Writer->Delete();
 		}
@@ -1456,21 +1519,22 @@ void vtkMultiresolutionIO::DecodeProgressiveResolution()
 			std::stringstream strfile;
 			if (this->FileType==0)
 			{
-				strfile << strout << this->NumberOfFilters - j << ".iv";
+				strfile << strout << j+1 << ".iv";
 				this->Filters[j]->GetOutput()->WriteInventor(strfile.str().c_str());
 			}
 			else
 			{
-				strfile << strout << this->NumberOfFilters - j << ".ply";
+				strfile << strout << j+1 << ".ply";
 				vtkPLYWriter *Writer=vtkPLYWriter::New();
 				Writer->SetFileName(strfile.str().c_str());
 				Writer->SetInputData(this->Filters[j]->GetOutput());
+				//Writer->SetFileTypeToASCII();
 				Writer->Write();
 				Writer->Delete();
 			}
 		}
 	}
-	if (this->WriteOutput == 2)
+	if (this->WriteOutput >= 1)
 	{
 		// output file name initialization
 		std::string strout;
@@ -1495,7 +1559,7 @@ void vtkMultiresolutionIO::DecodeProgressiveResolution()
 		}
 		else
 		{
-			for (j = 0; j < MIN(10,this->NumberOfFilters); j++)
+			for (j = 0; j < MIN(this->WriteOutput,this->NumberOfFilters); j++)
 			{
 				this->Filters[j]->GetOutput()->SetScalingFactors(Factor, Tx, Ty, Tz);
 				this->Filters[j]->GetOutput()->UnQuantizeCoordinates();
@@ -1503,15 +1567,16 @@ void vtkMultiresolutionIO::DecodeProgressiveResolution()
 				std::stringstream strfile;
 				if (this->FileType == 0)
 				{
-					strfile << strout << this->NumberOfFilters - j << ".iv";
+					strfile << strout << j+1 << ".iv";
 					this->Filters[j]->GetOutput()->WriteInventor(strfile.str().c_str());
 				}
 				else
 				{
-					strfile << strout << this->NumberOfFilters - j << ".ply";
+					strfile << strout << j+1 << ".ply";
 					vtkPLYWriter* Writer = vtkPLYWriter::New();
 					Writer->SetFileName(strfile.str().c_str());
 					Writer->SetInputData(this->Filters[j]->GetOutput());
+					//Writer->SetFileTypeToASCII();
 					Writer->Write();
 					Writer->Delete();
 				}
@@ -1519,6 +1584,262 @@ void vtkMultiresolutionIO::DecodeProgressiveResolution()
 		}
 	}
 }
+
+///////////////////// for DS only //////////////////////
+void vtkMultiresolutionIO::DecodeProgressiveResolutionDS()
+{
+	int j;
+	double start2, finish2;
+
+	if (this->Display != 0)
+	{
+		this->MeshWindow->SetInputData(this->SynthesisMeshes[this->NumberOfFilters]);
+		this->MeshWindow->Render();
+		this->MeshWindow->SetWindowName("Progressive resolution reconstruction");
+#if ( (VTK_MAJOR_VERSION >= 5))
+		start2 = this->Timer->GetUniversalTime();
+		finish2 = this->Timer->GetUniversalTime();
+		while (finish2 - start2 < this->Time)
+			finish2 = this->Timer->GetUniversalTime();
+
+#else
+		start2 = this->Timer->GetCurrentTime();
+		finish2 = this->Timer->GetCurrentTime();
+		while (finish2 - start2 < this->Time)
+			finish2 = this->Timer->GetCurrentTime();
+#endif			
+		this->MeshWindow->Interact();
+	}
+
+	std::string outinfo = this->InputFileName;
+	if (this->Lifting > 0)
+		outinfo += "_DS_lift_0.txt";
+	else
+		outinfo += "_DS_nolift.txt";
+
+	std::ofstream out;
+
+	clock_t start, end;
+
+	for (j = this->NumberOfFilters - 1; j >= 0; j--)
+	{
+		this->Filters[j]->SetInput(this->SynthesisMeshes[j + 1]);
+		this->Filters[j]->SetIOType(2);
+		this->Filters[j]->SetLifting(this->Lifting);
+		this->Filters[j]->SetLiftingRadius(this->LiftingRadius);
+		this->Filters[j]->SetArithmeticType(1);
+		this->Filters[j]->ArithmeticCoder = this->ArithmeticCoder;
+		this->Filters[j]->Quantization = this->Quantization;
+
+		start = clock();
+
+		this->ArithmeticCoder->StartDecoding();
+		if (j == this->NumberOfFilters - 1)
+			this->DecodeScalingFactors(this->Filters[j]->GetSubdivisionInput());
+
+
+		this->Filters[j]->Subdivide();
+		this->SynthesisMeshes[j] = this->Filters[j]->GetOutput();
+		this->ArithmeticCoder->StopDecoding();
+		this->ArithmeticCoder->StartDecoding();
+		this->Filters[j]->ReadCoefficients();
+		this->ArithmeticCoder->StopDecoding();
+		this->Filters[j]->Reconstruct();
+
+		end = clock();
+		double reading_time = (double)(end - start) / CLOCKS_PER_SEC;
+
+		start = clock();
+		this->MeshWindow->Render();
+		end = clock();
+		double rendering_time = (double)(end - start) / CLOCKS_PER_SEC;
+
+		// for each resolution in multi-resolution mesh:
+		//   (1) print reading time, rendering time, (reading + rendering) time
+		out.open(outinfo, ios::app);
+		out << j << " \t" << reading_time << " \t" << rendering_time << " \t" << reading_time + rendering_time << endl;
+		out.close();
+
+
+
+		if (this->DisplayText)
+			cout << "Level " << this->NumberOfFilters - j << ": " << this->SynthesisMeshes[j]->GetNumberOfCells()
+			<< " faces, " << this->SynthesisMeshes[j]->GetNumberOfPoints() << " vertices and "
+			<< this->SynthesisMeshes[j]->GetNumberOfEdges() << " edges " << endl;
+
+
+//		if (this->Display != 0)
+//		{
+//			this->MeshWindow->SetInputData(this->Filters[j]->GetOutput());
+//			this->MeshWindow->Render();
+//
+//#if ( (VTK_MAJOR_VERSION >= 5))
+//			start2 = this->Timer->GetUniversalTime();
+//			finish2 = this->Timer->GetUniversalTime();
+//			while (finish2 - start2 < this->Time)
+//				finish2 = this->Timer->GetUniversalTime();
+//
+//#else
+//			start2 = this->Timer->GetCurrentTime();
+//			finish2 = this->Timer->GetCurrentTime();
+//			while (finish2 - start2 < this->Time)
+//				finish2 = this->Timer->GetCurrentTime();
+//#endif
+//			if (this->Capture == 1)
+//			{
+//				std::stringstream strfile;
+//				strfile << "Mesh" << this->NumberOfFilters - j << ".bmp";
+//				this->MeshWindow->Capture(strfile.str().c_str());
+//			}
+//
+//			if (this->Display == 2)
+//			{
+//				cout << "Window interaction: presse 'e' key to exit from interaction" << endl;
+//				this->MeshWindow->Interact();
+//			}
+//		}
+	}
+
+	this->ArithmeticCoder->CloseFile();
+
+	this->SynthesisMeshes[0]->Modified();
+
+	// for each resolution in multi-resolution mesh:
+	//   (2) save mesh as obj file
+
+	// output file name initialization
+	std::string strout;
+	strout = this->InputFileName;
+	if (this->Lifting > 0)
+		strout += "_DS_lift_0_Mesh";
+	else
+		strout += "_DS_nolift_Mesh";
+
+	double Factor, Tx, Ty, Tz;
+	this->Filters[this->NumberOfFilters - 1]->GetSubdivisionInput()->GetScalingFactors(Factor, Tx, Ty, Tz);
+	for (j = 0; j < this->NumberOfFilters; j++)
+	{
+		this->Filters[j]->GetOutput()->SetScalingFactors(Factor, Tx, Ty, Tz);
+		this->Filters[j]->GetOutput()->UnQuantizeCoordinates();
+
+		std::stringstream strfile;
+		strfile << strout << this->NumberOfFilters - j << ".ply";
+		vtkPLYWriter* Writer = vtkPLYWriter::New();
+		Writer->SetFileName(strfile.str().c_str());
+		Writer->SetInputData(this->Filters[j]->GetOutput());
+		Writer->Write();
+		Writer->Delete();
+	}
+
+	//if (this->Display != 0)
+	//{
+	//	this->MeshWindow->SetInputData(this->SynthesisMeshes[0]);
+	//	this->MeshWindow->Render();
+	//	cout << "Window interaction: presse 'e' key to exit from interaction" << endl;
+	//	this->MeshWindow->Interact();
+	//}
+	//if (this->WriteOutput == 1)
+	//{
+	//	// output file name initialization
+	//	std::string strout;
+	//	if (this->InputFileName != NULL)
+	//	{
+	//		strout = this->InputFileName;
+	//		strout += "_";
+	//	}
+	//	else
+	//		strout = "Mesh";
+
+	//	this->Filters[this->NumberOfFilters - 1]->GetSubdivisionInput()->UnQuantizeCoordinates();
+	//	if (this->FileType == 0)
+	//	{
+	//		std::stringstream strfile;
+	//		strfile << strout << "0.iv";
+	//		this->Filters[this->NumberOfFilters - 1]->GetSubdivisionInput()->WriteInventor(strfile.str().c_str());
+	//	}
+	//	else
+	//	{
+	//		vtkPLYWriter* Writer = vtkPLYWriter::New();
+	//		std::stringstream strfile;
+	//		strfile << strout << "0.ply";
+	//		Writer->SetFileName(strfile.str().c_str());
+	//		Writer->SetInputData(this->Filters[this->NumberOfFilters - 1]->GetSubdivisionInput());
+	//		Writer->Write();
+	//		Writer->Delete();
+	//	}
+	//	double Factor, Tx, Ty, Tz;
+	//	this->Filters[this->NumberOfFilters - 1]->GetSubdivisionInput()->GetScalingFactors(Factor, Tx, Ty, Tz);
+	//	for (j = 0; j < this->NumberOfFilters; j++)
+	//	{
+	//		this->Filters[j]->GetOutput()->SetScalingFactors(Factor, Tx, Ty, Tz);
+	//		this->Filters[j]->GetOutput()->UnQuantizeCoordinates();
+	//		std::stringstream strfile;
+	//		if (this->FileType == 0)
+	//		{
+	//			strfile << strout << this->NumberOfFilters - j << ".iv";
+	//			this->Filters[j]->GetOutput()->WriteInventor(strfile.str().c_str());
+	//		}
+	//		else
+	//		{
+	//			strfile << strout << this->NumberOfFilters - j << ".ply";
+	//			vtkPLYWriter* Writer = vtkPLYWriter::New();
+	//			Writer->SetFileName(strfile.str().c_str());
+	//			Writer->SetInputData(this->Filters[j]->GetOutput());
+	//			Writer->Write();
+	//			Writer->Delete();
+	//		}
+	//	}
+	//}
+	//if (this->WriteOutput == 2)
+	//{
+	//	// output file name initialization
+	//	std::string strout;
+	//	if (this->InputFileName != NULL)
+	//	{
+	//		strout = this->InputFileName;
+	//		strout += "_";
+	//	}
+	//	else
+	//		strout = "Mesh";
+
+	//	double Factor, Tx, Ty, Tz;
+	//	this->Filters[this->NumberOfFilters - 1]->GetSubdivisionInput()->GetScalingFactors(Factor, Tx, Ty, Tz);
+	//	if (this->FileType == 0)
+	//	{
+	//		this->Filters[0]->GetOutput()->SetScalingFactors(Factor, Tx, Ty, Tz);
+	//		this->Filters[0]->GetOutput()->UnQuantizeCoordinates();
+
+	//		std::stringstream strfile;
+	//		strfile << strout << "0.iv";
+	//		this->Filters[this->NumberOfFilters - 1]->GetSubdivisionInput()->WriteInventor(strfile.str().c_str());
+	//	}
+	//	else
+	//	{
+	//		for (j = 0; j < MIN(10, this->NumberOfFilters); j++)
+	//		{
+	//			this->Filters[j]->GetOutput()->SetScalingFactors(Factor, Tx, Ty, Tz);
+	//			this->Filters[j]->GetOutput()->UnQuantizeCoordinates();
+
+	//			std::stringstream strfile;
+	//			if (this->FileType == 0)
+	//			{
+	//				strfile << strout << this->NumberOfFilters - j << ".iv";
+	//				this->Filters[j]->GetOutput()->WriteInventor(strfile.str().c_str());
+	//			}
+	//			else
+	//			{
+	//				strfile << strout << this->NumberOfFilters - j << ".ply";
+	//				vtkPLYWriter* Writer = vtkPLYWriter::New();
+	//				Writer->SetFileName(strfile.str().c_str());
+	//				Writer->SetInputData(this->Filters[j]->GetOutput());
+	//				Writer->Write();
+	//				Writer->Delete();
+	//			}
+	//		}
+	//	}
+	//}
+}
+
 void vtkMultiresolutionIO::Write()
 {
 	vtkIdType Id;
@@ -1596,7 +1917,7 @@ void vtkMultiresolutionIO::EncodeProgressiveResolution()
 	}
 	this->ArithmeticCoder->CloseFile();
 
-	if (this->WriteRepport > 0)
+	if (this->WriteRepport > 0 && this->WriteRepport < 4)
 	{
 		int connectivitybits=0;
 		double encodedbits=0,duration,ratio;
@@ -1688,6 +2009,63 @@ void vtkMultiresolutionIO::EncodeProgressiveResolution()
 
 		Repport.close();
 	}
+
+	// for DS project
+	if (this->WriteRepport == 4)
+	{
+		int connectivitybits = 0;
+		double encodedbits = 0, duration, ratio;
+
+#if ( (VTK_MAJOR_VERSION >= 5))
+		duration = this->Timer->GetUniversalTime() - this->StartTime;
+#else
+		duration = this->Timer->GetCurrentTime() - this->StartTime;
+#endif
+		ratio = (this->Filters[0]->GetOutput()->GetNumberOfCells()) / duration;
+
+		std::string outinfo = this->InputFileName;
+		if (this->Lifting > 0)
+			outinfo += "_DS_lift_0_repport.txt";
+		else
+			outinfo += "_DS_nolift_repport.txt";
+		std::ofstream Repport;
+		Repport.open(outinfo, ofstream::out | ofstream::trunc);
+
+		double numberoffaces = this->Filters[this->NumberOfFilters - 1]->GetSubdivisionInput()->GetNumberOfCells();
+		double numberofvertices = this->Filters[this->NumberOfFilters - 1]->GetSubdivisionInput()->GetNumberOfPoints();
+		double cost = 32.0 + ceil(log(numberofvertices) / log(2.0)) * 3.0 * numberoffaces;
+		connectivitybits = (int)cost;
+		encodedbits = this->BaseMeshBitRate;
+
+		// level, v, f, base_connectivity, base_geometry, base_total
+		Repport << "level \t" << "v \t" << "f \t" << "base_connectivity \t" << "base_geometry \t" << "base_total" << endl;
+		Repport << this->NumberOfFilters
+			<< " \t" << this->Filters[this->NumberOfFilters - 1]->GetSubdivisionInput()->GetNumberOfPoints()
+			<< " \t" << this->Filters[this->NumberOfFilters - 1]->GetSubdivisionInput()->GetNumberOfCells()
+			<< " \t" << connectivitybits
+			<< " \t" << (int)this->BaseMeshBitRate - connectivitybits
+			<< " \t" << (int)this->BaseMeshBitRate << endl;
+		for (j = this->NumberOfFilters - 1; j >= 0; j--)
+		{
+			encodedbits += ConnectivityBitrate[j] + GeometryBitrate[j];
+			connectivitybits += ConnectivityBitrate[j];
+
+			// level, v, f, addt_connectivity, addt_geometry, addt_total
+			Repport << j
+				<< " \t" << this->Filters[j]->GetSubdivisionInput()->GetNumberOfPoints()
+				<< " \t" << this->Filters[j]->GetSubdivisionInput()->GetNumberOfCells()
+				<< " \t" << (int)ConnectivityBitrate[j]
+				<< " \t" << (int)GeometryBitrate[j]
+				<< " \t" << (int)ConnectivityBitrate[j] + (int)GeometryBitrate[j] << endl;
+		};
+
+		// global_connectivity, global_geometry, global_total
+		Repport << (int)connectivitybits
+			<< " \t" << (int)(encodedbits - connectivitybits)
+			<< " \t" << encodedbits << endl;
+
+		Repport.close();
+	}
 }
 
 void vtkMultiresolutionIO::Analyse()
@@ -1712,7 +2090,7 @@ void vtkMultiresolutionIO::Analyse()
 
 	i=0;
 	int merged=1;
-	while (merged==1)
+	while (merged==1 && i < 2)
 	{
 		std::vector<vtkIdType> bad_faces;
 		bool badfacefull_flag = false;
@@ -1746,7 +2124,7 @@ void vtkMultiresolutionIO::Analyse()
 			while (((this->AnalysisMeshes[i+1]->GetNumberOfPoints()==this->AnalysisMeshes[i]->GetNumberOfPoints())
 				||(this->Filters[i]->remaining_faces!=0))&&(j<MIN(10, this->AnalysisMeshes[i]->GetNumberOfCells() - 1)))//(j<this->AnalysisMeshes[i]->GetNumberOfCells()-1))
 			{
-				cout << "Fail " << j << ", " << this->Filters[i]->remaining_faces << " remaining faces" << endl;
+				//cout << "Fail " << j << ", " << this->Filters[i]->remaining_faces << " remaining faces" << endl;
 				bad_faces = this->Filters[i]->bad_faces;
 				if (bad_faces.size() > 0)
 				{
@@ -2577,22 +2955,6 @@ void vtkMultiresolutionIO::RoiRandom(int k)
 
 	this->MeshWindow->SetInputData(this->SynthesisMeshes[0]);
 
-	// sieve for modified vertices (init with all 0s)
-	bool *ModifiedTable = new bool[this->Filters[0]->GetOutput()->GetNumberOfPoints()]();
-	int number_of_modified = 0;
-
-	// random number generator without duplicating
-	std::vector<int> RandomNumbers(this->Filters[0]->GetOutput()->GetNumberOfPoints());
-	for (int i = 0; i < RandomNumbers.size(); i++)
-		RandomNumbers[i] = i;
-	std::shuffle(RandomNumbers.begin(), RandomNumbers.end(), std::default_random_engine(std::random_device()()));
-
-	// randomly choose n/k vertices
-	for (i = 0; i < (this->Filters[0]->GetOutput()->GetNumberOfPoints())/k; i++)
-		ModifiedTable[RandomNumbers[i]] = true;
-
-	clock_t start, end;
-
 	// 2) with lifting
 	//      after approximate,
 	//		v is recalculated from Mesh2
@@ -2600,13 +2962,9 @@ void vtkMultiresolutionIO::RoiRandom(int k)
 	//      all SynthesisMeshes must be handled.
 	if (this->Lifting == 1)
 	{
-		std::string outinfo = this->InputFileName;
-		outinfo += "_info.txt";
-		std::ofstream out;
-
 		// propagation //
 		{
-			start = clock();
+			
 			// Newly quantizing
 			//		lifting case also need vertex quantization
 			//      all SynthesisMeshes must be requantized with same factor as MergeInput
@@ -2640,20 +2998,11 @@ void vtkMultiresolutionIO::RoiRandom(int k)
 			{
 				;
 			}
-			end = clock();
-
-			// for test3
-			out.open(outinfo, ios::app);
-			out << "Re-quantization elapsed time: " << double(end - start) / CLOCKS_PER_SEC << endl;
-			out.close();
-
-			start = clock();
 
 			// R^finest initialize
 			bool *R_raw = new bool[this->Filters[0]->GetOutput()->GetNumberOfPoints()]();
-			int length_of_R = number_of_modified;
 			for (PtId = 0; PtId < this->Filters[0]->GetOutput()->GetNumberOfPoints(); PtId++)
-				R_raw[PtId] = ModifiedTable[PtId];
+				R_raw[PtId] = true;
 
 			vtkIdList *Edges = vtkIdList::New();
 			vtkIdType PtId;
@@ -2820,159 +3169,152 @@ void vtkMultiresolutionIO::RoiRandom(int k)
 
 				R_raw = R_next;
 			}
-			end = clock();
-
-			out.open(outinfo, ios::app);
-			out << double(end - start) / CLOCKS_PER_SEC;
-			out.close();
 		}
 
 		///////////////////////////////////////////////////////////
 		////////// count modified vertices and wavelets ///////////
 		///////////////////////////////////////////////////////////
-		{
-			// number of vertices and wavelets to be modified
-			int number_of_modified_wavelets = 0;
-			int number_of_modified_vertices = 0;
+		//{
+		//	// number of vertices and wavelets to be modified
+		//	int number_of_modified_wavelets = 0;
+		//	int number_of_modified_vertices = 0;
 
-			// R^finest initialize
-			bool *R_raw = new bool[this->Filters[0]->GetOutput()->GetNumberOfPoints()]();
-			for (PtId = 0; PtId < this->Filters[0]->GetOutput()->GetNumberOfPoints(); PtId++)
-			{
-				R_raw[PtId] = ModifiedTable[PtId];
-				if (R_raw[PtId] == true)
-					number_of_modified_vertices += 1;
-			}
+		//	// R^finest initialize
+		//	bool *R_raw = new bool[this->Filters[0]->GetOutput()->GetNumberOfPoints()]();
+		//	for (PtId = 0; PtId < this->Filters[0]->GetOutput()->GetNumberOfPoints(); PtId++)
+		//	{
+		//		R_raw[PtId] = ModifiedTable[PtId];
+		//		if (R_raw[PtId] == true)
+		//			number_of_modified_vertices += 1;
+		//	}
 
-			vtkIdList *Edges = vtkIdList::New();
-			vtkIdType PtId;
-			vtkIdType edge;
-			vtkIdType c, p1, p2;
+		//	vtkIdList *Edges = vtkIdList::New();
+		//	vtkIdType PtId;
+		//	vtkIdType edge;
+		//	vtkIdType c, p1, p2;
 
-			vtkIdList *HorizontalList, *VerticalList, *TempList;
-			HorizontalList = vtkIdList::New();
-			VerticalList = vtkIdList::New();
+		//	vtkIdList *HorizontalList, *VerticalList, *TempList;
+		//	HorizontalList = vtkIdList::New();
+		//	VerticalList = vtkIdList::New();
 
-			vtkSparseMatrix::NonZeroElement *NonZero;
+		//	vtkSparseMatrix::NonZeroElement *NonZero;
 
-			for (j = 0; j < this->NumberOfFilters; j++)
-			{
-				vtkIdType NOldPoints = this->Filters[j]->GetSubdivisionInput()->GetNumberOfPoints();
-				vtkIdType NNewPoints = this->Filters[j]->GetOutput()->GetNumberOfPoints();
-				vtkPoints *OldPoints = this->Filters[j]->GetSubdivisionInput()->GetPoints();
-				vtkPoints *NewPoints = this->Filters[j]->GetOutput()->GetPoints();
+		//	for (j = 0; j < this->NumberOfFilters; j++)
+		//	{
+		//		vtkIdType NOldPoints = this->Filters[j]->GetSubdivisionInput()->GetNumberOfPoints();
+		//		vtkIdType NNewPoints = this->Filters[j]->GetOutput()->GetNumberOfPoints();
+		//		vtkPoints *OldPoints = this->Filters[j]->GetSubdivisionInput()->GetPoints();
+		//		vtkPoints *NewPoints = this->Filters[j]->GetOutput()->GetPoints();
 
-				bool *R_next = new bool[NOldPoints]();
-				bool *W_next = new bool[NNewPoints - NOldPoints]();
+		//		bool *R_next = new bool[NOldPoints]();
+		//		bool *W_next = new bool[NNewPoints - NOldPoints]();
 
-				// w impacted by v in R^(j+1) must be added to hat(W)^j
-				//     and propagated into k-disk of its parents
-				for (PtId = 0; PtId < NOldPoints; PtId++)
-				{
-					if (R_raw[PtId] == true)
-					{
-						// add v to R^j 
-						R_next[PtId] = true;
+		//		// w impacted by v in R^(j+1) must be added to hat(W)^j
+		//		//     and propagated into k-disk of its parents
+		//		for (PtId = 0; PtId < NOldPoints; PtId++)
+		//		{
+		//			if (R_raw[PtId] == true)
+		//			{
+		//				// add v to R^j 
+		//				R_next[PtId] = true;
 
-						this->Filters[j]->GetSubdivisionInput()->GetVertexNeighbourEdges(PtId, Edges);
-						for (e = 0; e < Edges->GetNumberOfIds(); e++)
-						{
-							// find c impacted by v
-							edge = Edges->GetId(e);
-							c = this->Filters[j]->edgesvector[edge].child;
-							if ((c >= NOldPoints) && (this->Filters[j]->GetOutput()->IsEdge(PtId, c) >= 0))
-							{
-								// add c to hat(W)^j
-								W_next[c - NOldPoints] = true;
+		//				this->Filters[j]->GetSubdivisionInput()->GetVertexNeighbourEdges(PtId, Edges);
+		//				for (e = 0; e < Edges->GetNumberOfIds(); e++)
+		//				{
+		//					// find c impacted by v
+		//					edge = Edges->GetId(e);
+		//					c = this->Filters[j]->edgesvector[edge].child;
+		//					if ((c >= NOldPoints) && (this->Filters[j]->GetOutput()->IsEdge(PtId, c) >= 0))
+		//					{
+		//						// add c to hat(W)^j
+		//						W_next[c - NOldPoints] = true;
 
-								// propagate parents of c into k-disk
-								HorizontalList->SetNumberOfIds(2);
-								HorizontalList->SetId(0, this->Filters[j]->vertices[c].parent1);
-								HorizontalList->SetId(1, this->Filters[j]->vertices[c].parent2);
+		//						// propagate parents of c into k-disk
+		//						HorizontalList->SetNumberOfIds(2);
+		//						HorizontalList->SetId(0, this->Filters[j]->vertices[c].parent1);
+		//						HorizontalList->SetId(1, this->Filters[j]->vertices[c].parent2);
 
-								if (this->LiftingRadius > 0)
-								{
-									for (i = 0; i < this->LiftingRadius; i++)
-									{
-										this->Filters[j]->GetSubdivisionInput()->GetNeighbours(HorizontalList, VerticalList);
-										TempList = VerticalList;
-										VerticalList = HorizontalList;
-										HorizontalList = TempList;
-									}
-								}
+		//						if (this->LiftingRadius > 0)
+		//						{
+		//							for (i = 0; i < this->LiftingRadius; i++)
+		//							{
+		//								this->Filters[j]->GetSubdivisionInput()->GetNeighbours(HorizontalList, VerticalList);
+		//								TempList = VerticalList;
+		//								VerticalList = HorizontalList;
+		//								HorizontalList = TempList;
+		//							}
+		//						}
 
-								// all v in k-disk are added to R^j
-								int Range = HorizontalList->GetNumberOfIds();
-								for (i = 0; i < Range; i++)
-								{
-									c = HorizontalList->GetId(i);
-									if (c < NOldPoints)
-									{
-										R_next[HorizontalList->GetId(i)] = true;
-									}
-								}
-							}
-						}
-					}
-				}
-				// mergable v in R^(j+1) must be added to hat(W)^j
-				for (PtId = NOldPoints; PtId < NNewPoints; PtId++)
-				{
-					if (R_raw[PtId] == true)
-					{
-						W_next[PtId - NOldPoints] = true;
+		//						// all v in k-disk are added to R^j
+		//						int Range = HorizontalList->GetNumberOfIds();
+		//						for (i = 0; i < Range; i++)
+		//						{
+		//							c = HorizontalList->GetId(i);
+		//							if (c < NOldPoints)
+		//							{
+		//								R_next[HorizontalList->GetId(i)] = true;
+		//							}
+		//						}
+		//					}
+		//				}
+		//			}
+		//		}
+		//		// mergable v in R^(j+1) must be added to hat(W)^j
+		//		for (PtId = NOldPoints; PtId < NNewPoints; PtId++)
+		//		{
+		//			if (R_raw[PtId] == true)
+		//			{
+		//				W_next[PtId - NOldPoints] = true;
 
-						// propagate parents of PtId into k-disk
-						HorizontalList->SetNumberOfIds(2);
-						HorizontalList->SetId(0, this->Filters[j]->vertices[PtId].parent1);
-						HorizontalList->SetId(1, this->Filters[j]->vertices[PtId].parent2);
+		//				// propagate parents of PtId into k-disk
+		//				HorizontalList->SetNumberOfIds(2);
+		//				HorizontalList->SetId(0, this->Filters[j]->vertices[PtId].parent1);
+		//				HorizontalList->SetId(1, this->Filters[j]->vertices[PtId].parent2);
 
-						if (this->LiftingRadius > 0)
-						{
-							for (i = 0; i < this->LiftingRadius; i++)
-							{
-								this->Filters[j]->GetSubdivisionInput()->GetNeighbours(HorizontalList, VerticalList);
-								TempList = VerticalList;
-								VerticalList = HorizontalList;
-								HorizontalList = TempList;
-							}
-						}
+		//				if (this->LiftingRadius > 0)
+		//				{
+		//					for (i = 0; i < this->LiftingRadius; i++)
+		//					{
+		//						this->Filters[j]->GetSubdivisionInput()->GetNeighbours(HorizontalList, VerticalList);
+		//						TempList = VerticalList;
+		//						VerticalList = HorizontalList;
+		//						HorizontalList = TempList;
+		//					}
+		//				}
 
-						// all v in k-disk are added to R^j
-						int Range = HorizontalList->GetNumberOfIds();
-						for (i = 0; i < Range; i++)
-						{
-							c = HorizontalList->GetId(i);
-							if (c < NOldPoints)
-							{
-								R_next[HorizontalList->GetId(i)] = true;
-							}
-						}
-					}
-				}
+		//				// all v in k-disk are added to R^j
+		//				int Range = HorizontalList->GetNumberOfIds();
+		//				for (i = 0; i < Range; i++)
+		//				{
+		//					c = HorizontalList->GetId(i);
+		//					if (c < NOldPoints)
+		//					{
+		//						R_next[HorizontalList->GetId(i)] = true;
+		//					}
+		//				}
+		//			}
+		//		}
 
-				for (PtId = 0; PtId < NOldPoints; PtId++)
-				{
-					if (R_next[PtId] == true)
-						number_of_modified_vertices += 1;
-				}
-				for (PtId = NOldPoints; PtId < NNewPoints; PtId++)
-				{
-					if (W_next[PtId - NOldPoints] == true)
-						number_of_modified_wavelets += 1;
-				}
+		//		for (PtId = 0; PtId < NOldPoints; PtId++)
+		//		{
+		//			if (R_next[PtId] == true)
+		//				number_of_modified_vertices += 1;
+		//		}
+		//		for (PtId = NOldPoints; PtId < NNewPoints; PtId++)
+		//		{
+		//			if (W_next[PtId - NOldPoints] == true)
+		//				number_of_modified_wavelets += 1;
+		//		}
 
-				R_raw = R_next;
-			}
+		//		R_raw = R_next;
+		//	}
 
-			out.open(outinfo, ios::app);
-			out << " " << (this->Filters[0]->GetOutput()->GetNumberOfPoints()) / k;
-			out << " " << number_of_modified_vertices + number_of_modified_wavelets << endl;
-			out.close();
-		}
+		//	cout << " " << (this->Filters[0]->GetOutput()->GetNumberOfPoints()) / k;
+		//	cout << " " << number_of_modified_vertices + number_of_modified_wavelets << endl;
+		//}
 	}
 
-	cout << "End ROI propagation : " << (this->Filters[0]->GetOutput()->GetNumberOfPoints()) / k << endl;
+	//cout << "End ROI propagation : " << (this->Filters[0]->GetOutput()->GetNumberOfPoints()) / k << endl;
 }
 
 // randomly modify n/k, 2n/k, ..., n vertices
@@ -2991,7 +3333,7 @@ void vtkMultiresolutionIO::RoiIncrease(int k)
 	std::vector<int> RandomNumbers(this->Filters[0]->GetOutput()->GetNumberOfPoints());
 	for (int i = 0; i < RandomNumbers.size(); i++)
 		RandomNumbers[i] = i;
-	std::shuffle(RandomNumbers.begin(), RandomNumbers.end(), std::default_random_engine(std::random_device()()));
+	std::random_shuffle(RandomNumbers.begin(), RandomNumbers.end());
 
 	if (k > this->Filters[0]->GetOutput()->GetNumberOfPoints())
 		k = this->Filters[0]->GetOutput()->GetNumberOfPoints();
@@ -3947,11 +4289,11 @@ vtkMultiresolutionIO::vtkMultiresolutionIO()
 	this->LiftingRadius=1;
 	this->DisplayEfficiency=0;
 	this->Display=0;
-	this->DisplayText=1;
+	this->DisplayText=0;
 	this->WriteRepport=1;
 	this->NumberOfBitPlanes=12;
 	this->NumberOfStartBitPlanes=1;
-	this->WriteOutput=1;  // 1: print all meshes, 2: print finest mesh only
+	this->WriteOutput=1;  // -1: print all meshes, n>0: print n finest mesh only
 	this->GeometryPrediction=0;
 	this->MaxNumberOfLevels=99;
 	this->Input=0;

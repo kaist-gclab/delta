@@ -29,17 +29,17 @@ void vtkArithmeticCoderBase::Encode(int code,qsmodel *Model)
 {
 	int syfreq,ltfreq;
 	Model->qsgetfreq(code,&syfreq,&ltfreq);
-	this->Rc.encode_shift(syfreq,ltfreq,15);
+	this->Rc.encode_shift(syfreq,ltfreq,23);
 	Model->qsupdate(code);
 }
 
 int vtkArithmeticCoderBase::Decode(qsmodel *Model)
 {
 	int syfreq,ltfreq,ch;
-	ltfreq = this->Rd.decode_culshift(15);
+	ltfreq = this->Rd.decode_culshift(23);
 	ch = Model->qsgetsym( ltfreq);
 	Model->qsgetfreq(ch,&syfreq,&ltfreq);
-	this->Rd.decode_update(syfreq, ltfreq, 1<<15);
+	this->Rd.decode_update(syfreq, ltfreq, ((uint4)1)<<23);
 	Model->qsupdate(ch);
 	return (ch);
 }

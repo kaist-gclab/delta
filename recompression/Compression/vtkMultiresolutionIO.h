@@ -192,6 +192,10 @@ public:
 	void Read();
 
 	// Description:
+	// Reads Data from disk, and print mesh info per each resolution
+	void ReadPerMesh();
+
+	// Description:
 	// Sets On/off the writing of reconstructed meshes
 	void SetWriteOutput(int s){this->WriteOutput=s;};
 
@@ -296,6 +300,7 @@ protected:
 
 	void EncodeProgressiveResolution();
 	void DecodeProgressiveResolution();
+	void DecodeProgressiveResolutionDS(); // for DS only
 	void EncodeProgressivePrecision();
 	void DecodeProgressivePrecision();
 

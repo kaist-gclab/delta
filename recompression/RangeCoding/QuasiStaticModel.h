@@ -99,7 +99,7 @@ private:
 	int targetrescale; /* should be interval between rescales */
 	int incr;          /* increment per update */
 	int searchshift;   /* shift for lt_freq before using as index */
-	uint2 *cf;         /* array of cumulative frequencies */
+	uint4 *cf;         /* array of cumulative frequencies */
 	int *newf;         /* array for collecting ststistics */
 	int *search;       /* structure for searching on decompression */
 };

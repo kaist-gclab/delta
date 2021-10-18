@@ -78,15 +78,15 @@ void vtkWaveletSubdivisionFilter::WriteCoefficients()
 
 	double Wavelet[3];
 	int ch;
-	short max=-1000,min=1000,size=0;
+	int max=-1000,min=1000,size=0;		// Me: short -> int
 	char sign;
 	for (i=0;i<this->IntegerWavelets->GetNumberOfTuples();i++)
 	{
 		this->IntegerWavelets->GetTuple(i,Wavelet);
 		for (j=0;j<3;j++)
 		{
-			if (Wavelet[j]<min) min=(short) Wavelet[j];
-			if (Wavelet[j]>max) max=(short) Wavelet[j];
+			if (Wavelet[j]<min) min=(int) Wavelet[j];	// Me: short -> int
+			if (Wavelet[j]>max) max=(int) Wavelet[j];	// Me: short -> int
 		}
 	}
 	size=max-min+1;
@@ -118,12 +118,12 @@ void vtkWaveletSubdivisionFilter::WriteCoefficients()
 	this->EstimatedGeometryBits=entropy*3*this->IntegerWavelets->GetNumberOfTuples();
 	table.empty();
 
-	QsmGeometry.initqsmodel(size,15,1000,NULL,1);
+	QsmGeometry.initqsmodel(size,23,1000,NULL,1);
 
 	if (this->CoordinatesCoupling==1)
 	{
-		QsmGeometry2.initqsmodel(size,15,1000,NULL,1);
-		QsmGeometry3.initqsmodel(size,15,1000,NULL,1);
+		QsmGeometry2.initqsmodel(size,23,1000,NULL,1);
+		QsmGeometry3.initqsmodel(size,23,1000,NULL,1);
 	}
 
 	if (min<0)
@@ -134,8 +134,8 @@ void vtkWaveletSubdivisionFilter::WriteCoefficients()
 	else sign=0;
 
 	this->ArithmeticCoder->EncodeByte(sign);
-	this->ArithmeticCoder->EncodeWord(min);
-	this->ArithmeticCoder->EncodeWord(size);
+	this->ArithmeticCoder->EncodeInt(min);
+	this->ArithmeticCoder->EncodeInt(size);
 
 	if (sign==1) min=-min;
 
@@ -184,22 +184,22 @@ void vtkWaveletSubdivisionFilter::ReadCoefficients()
 	{
 		double Wavelet[3];
 		int ch;
-		short min,max;
+		int min,max;
 		char sign;
 
 
 		sign=this->ArithmeticCoder->DecodeByte();
-		min=this->ArithmeticCoder->DecodeWord();
-		max=this->ArithmeticCoder->DecodeWord();
+		min=this->ArithmeticCoder->DecodeInt();	// Me: Word -> Int
+		max=this->ArithmeticCoder->DecodeInt();	// Me: Word -> Int
 
 		if (sign==1) min=-min;
 
-		QsmGeometry.initqsmodel(max,15,1000,NULL,0);
+		QsmGeometry.initqsmodel(max,23,1000,NULL,0);
 
 		if(this->CoordinatesCoupling==1)
 		{
-			QsmGeometry2.initqsmodel(max,15,1000,NULL,0);
-			QsmGeometry3.initqsmodel(max,15,1000,NULL,0);
+			QsmGeometry2.initqsmodel(max,23,1000,NULL,0);
+			QsmGeometry3.initqsmodel(max,23,1000,NULL,0);
 		}
 
 		if (!this->IntegerWavelets)

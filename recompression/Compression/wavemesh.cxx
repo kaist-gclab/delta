@@ -30,6 +30,7 @@ int main( int argc, char *argv[] )
 		cout<<"Usage :"<<endl;
 		cout<<"Compression : wavemesh c file [options]"<<endl;
 		cout<<"Decompression : wavemesh d file [options]"<<endl;
+		cout << "Test for SWStarLab 2021 : wavemesh test file [options]" << endl;
 		cout<<endl;
 		cout<<"Optionnal arguments :"<<endl;
 		cout<<"-d 0/1/2 changes display type (default : 0):"<<endl;

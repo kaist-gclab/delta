@@ -197,6 +197,13 @@ unsigned short rangedecoder::decode_short()
 	return tmp;
 }
 
+unsigned int rangedecoder::decode_int()
+{
+	unsigned int tmp = this->decode_culshift(32);
+	this->decode_update(1, tmp, (freq)1 << 32);
+	return tmp;
+}
+
 
 /* Finish decoding                                           */
 /* rc is the range coder to be used                          */

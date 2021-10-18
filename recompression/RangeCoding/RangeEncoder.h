@@ -107,6 +107,7 @@ public:
 	/* b,s is the data to be encoded                             */
 	void encode_byte(unsigned char b) {encode_shift((freq)1,(freq)(b),(freq)8);};
 	void encode_short(unsigned short s) {encode_shift((freq)1,(freq)(s),(freq)16);};
+	void encode_int(unsigned int s) { encode_shift((freq)1, (freq)(s), (freq)32); };
 
 	rangeencoder(){};
 	virtual ~rangeencoder(){};

@@ -108,6 +108,7 @@ void decode_update_shift( freq f1, freq f2, freq f3)
 /* rc is the range coder to be used                          */
 unsigned char decode_byte();
 unsigned short decode_short();
+unsigned int decode_int();
 
 
 /* Finish decoding                                           */

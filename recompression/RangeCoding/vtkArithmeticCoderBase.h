@@ -1,6 +1,6 @@
 /*=========================================================================
 
-Program:   Mailleur 3D multi-résolution (Creatis 1997 ~)
+Program:   Mailleur 3D multi-rï¿½solution (Creatis 1997 ~)
 Module:    vtkArithmeticCoderBase.h
 Language:  C++
 Date:      2003/06

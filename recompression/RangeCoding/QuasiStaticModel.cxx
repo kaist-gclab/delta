@@ -114,7 +114,7 @@ void qsmodel::initqsmodel(int n, int lg_totf, int rescale, int *init, int compre
 	if (this->searchshift < 0)
 		this->searchshift = 0;
 	
-	this->cf = new uint2[n+1];//malloc(test);
+	this->cf = new uint4[n+1];//malloc(test);	Me: uint2 -> uint4
 	this->newf = new int[n+1]; //)*sizeof(uint2));
 	this->cf[n] = 1<<lg_totf;
 	this->cf[0] = 0;

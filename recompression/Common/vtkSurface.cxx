@@ -1783,8 +1783,6 @@ void vtkSurface::QuantizeCoordinates(int q)
 	zmin=Bounds[4];
 	zmax=Bounds[5];
 
-	cout<<endl;
-
 	xdyn = xmax-xmin;
 	ydyn = ymax-ymin;
 	zdyn = zmax-zmin;

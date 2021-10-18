@@ -36,8 +36,8 @@ void vtkOFFWriter::WriteData()
     }
 
 	// if input is correct , proceed.
-	register int i;
-	register double P[3];
+	int i;
+	double P[3];
 
 	vtkPolyData *polydata = this->GetInput();
 	vtkSurface *surfaceTemp = vtkSurface::New();
@@ -59,7 +59,7 @@ void vtkOFFWriter::WriteData()
 
 	vtkIdType nbPtsCell;
 	vtkIdType *ptIdList;
-	register vtkIdType j;
+	vtkIdType j;
 
 	// * write the faces *
 	for (i = 0; i <nbcls;i++)

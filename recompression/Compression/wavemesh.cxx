@@ -386,10 +386,9 @@ int main( int argc, char *argv[] )
 		MIO->Synthetize();
 		MIO->Approximate();
 		MIO->Write();
+		Mesh->Delete();
 
 		cout << "completed" << endl;
-
-		Mesh->Delete();
 
 		// Decompression //
 
@@ -402,10 +401,9 @@ int main( int argc, char *argv[] )
 		MIO_d->SetFileName(strout.c_str());
 		MIO_d->Read();
 		end = clock();
+		MIO_d->Delete();
 
 		cout << "completed. " << (double)(end - start) / CLOCKS_PER_SEC << " sec. elapsed" << endl;
-
-		MIO_d->Delete();
 
 		// Recompression //
 
@@ -417,10 +415,9 @@ int main( int argc, char *argv[] )
 		MIO->RoiRandom(1);
 		MIO->Write();
 		end = clock();
+		MIO->Delete();
 
 		cout << "completed. " << (double)(end - start) / CLOCKS_PER_SEC << " sec. elapsed" << endl;
-
-		MIO->Delete();
 	}
 }
 

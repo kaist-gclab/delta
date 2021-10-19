@@ -375,7 +375,7 @@ int main( int argc, char *argv[] )
 
 		// Compression //
 
-		cout << "Compression in progress ... ";
+		cout << "Compression in progress ... " << endl;
 
 		if (Arithmetics == 1)
 			Mesh->QuantizeCoordinates(MIO->GetQuantization());
@@ -393,7 +393,7 @@ int main( int argc, char *argv[] )
 
 		// Decompression //
 
-		cout << "Decompression in progress ... ";
+		cout << "Decompression in progress ... "  << endl;
 
 		vtkMultiresolutionIO* MIO_d = vtkMultiresolutionIO::New();
 
@@ -409,7 +409,7 @@ int main( int argc, char *argv[] )
 
 		// Recompression //
 
-		cout << "Recompression in progress ... ";
+		cout << "Recompression in progress ... "  << endl;
 
 		start = clock();
 		std::string strnewout = MIO->GetInputFileName(); strnewout += "_m.out";

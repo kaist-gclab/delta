@@ -10,7 +10,7 @@ OPTION(BUILD_RANGECODING "Build Range Coder/Decoder." ON)
 OPTION(BUILD_WAVEMESH "Build Wavemesh and Compression Tools." ON)
 
 SET (VTK_DIR "D:/Program Files/VTK/lib/cmake/vtk-6.3")
-add_compile_options(--std=c++20)
+add_compile_options(--std=c++20 -O0 -DDEBUG)
 SET (EXECUTABLE_OUTPUT_PATH ${PROJECT_BINARY_DIR}/bin CACHE PATH "Single output directory for building all executables.")
 SET (LIBRARY_OUTPUT_PATH ${PROJECT_BINARY_DIR}/bin CACHE PATH "Single output directory for building all libraries.")
 MARK_AS_ADVANCED(LIBRARY_OUTPUT_PATH EXECUTABLE_OUTPUT_PATH)

@@ -3333,7 +3333,7 @@ void vtkMultiresolutionIO::RoiIncrease(int k)
 	std::vector<int> RandomNumbers(this->Filters[0]->GetOutput()->GetNumberOfPoints());
 	for (int i = 0; i < RandomNumbers.size(); i++)
 		RandomNumbers[i] = i;
-	std::random_shuffle(RandomNumbers.begin(), RandomNumbers.end());
+	std::shuffle(RandomNumbers.begin(), RandomNumbers.end(), std::default_random_engine(std::random_device()()));
 
 	if (k > this->Filters[0]->GetOutput()->GetNumberOfPoints())
 		k = this->Filters[0]->GetOutput()->GetNumberOfPoints();

@@ -34,55 +34,54 @@
 #include <random>
 
 #include <time.h>
-#define MIN(a,b) (((a)<(b))?(a):(b))
-
+#define MIN(a, b) (((a) < (b)) ? (a) : (b))
 
 void vtkMultiresolutionIO::PrintInsignificantCoeffs()
 {
-	int coord=0;
+	int coord = 0;
 	std::list<WaveletCoefficient>::iterator CoeffIter;
 
-	cout<<"InsignificantCoeffs:"<<endl;
-	for (CoeffIter=this->InsignificantCoeffs[coord].begin();
-		CoeffIter!=this->InsignificantCoeffs[coord].end();
-		CoeffIter++)
+	cout << "InsignificantCoeffs:" << endl;
+	for (CoeffIter = this->InsignificantCoeffs[coord].begin();
+		 CoeffIter != this->InsignificantCoeffs[coord].end();
+		 CoeffIter++)
 	{
-		cout<<"Filter "<<CoeffIter->FilterId<<", Wavelet "<<CoeffIter->WaveletId<<endl;
+		cout << "Filter " << CoeffIter->FilterId << ", Wavelet " << CoeffIter->WaveletId << endl;
 	}
 }
 void vtkMultiresolutionIO::PrintWavelets()
 {
-	int i,j,count=1;
-	for	(i=0;i<this->NumberOfFilters;i++)
+	int i, j, count = 1;
+	for (i = 0; i < this->NumberOfFilters; i++)
 	{
-		for (j=0;j<this->Filters[i]->Wavelets->GetNumberOfTuples();j++)
+		for (j = 0; j < this->Filters[i]->Wavelets->GetNumberOfTuples(); j++)
 		{
-			double	value1,value2,value3,Wav[3];
-			this->Filters[i]->Wavelets->GetTuple(j,Wav);
-			value1=Wav[0];
-			value2=Wav[1];
-			value3=Wav[2];
-			cout<<count++<<" : Filter "<<i<<", wavelet "<<j<<" : "<<value1<<" "<<value2<<" "<<value3<<endl;
+			double value1, value2, value3, Wav[3];
+			this->Filters[i]->Wavelets->GetTuple(j, Wav);
+			value1 = Wav[0];
+			value2 = Wav[1];
+			value3 = Wav[2];
+			cout << count++ << " : Filter " << i << ", wavelet " << j << " : " << value1 << " " << value2 << " " << value3 << endl;
 		}
 	}
 }
 void vtkMultiresolutionIO::SaveWavelets()
 {
-	int i,j;
-	fstream	WavF;
-	WavF.open ("wavelets.dat", ofstream::out | ofstream::trunc|ios::binary);
-	for	(i=0;i<this->NumberOfFilters;i++)
+	int i, j;
+	fstream WavF;
+	WavF.open("wavelets.dat", ofstream::out | ofstream::trunc | ios::binary);
+	for (i = 0; i < this->NumberOfFilters; i++)
 	{
-		for (j=0;j<this->Filters[i]->Wavelets->GetNumberOfTuples();j++)
+		for (j = 0; j < this->Filters[i]->Wavelets->GetNumberOfTuples(); j++)
 		{
-			double	value1,value2,value3,Wav[3];
-			this->Filters[i]->Wavelets->GetTuple(j,Wav);
-			value1=Wav[0];
-			value2=Wav[1];
-			value3=Wav[2];
-			WavF.write((char*) &value1,sizeof(double));
-			WavF.write((char*) &value2,sizeof(double));
-			WavF.write((char*) &value3,sizeof(double));
+			double value1, value2, value3, Wav[3];
+			this->Filters[i]->Wavelets->GetTuple(j, Wav);
+			value1 = Wav[0];
+			value2 = Wav[1];
+			value3 = Wav[2];
+			WavF.write((char *)&value1, sizeof(double));
+			WavF.write((char *)&value2, sizeof(double));
+			WavF.write((char *)&value3, sizeof(double));
 		}
 	}
 	WavF.close();
@@ -91,21 +90,21 @@ void vtkMultiresolutionIO::SaveWavelets()
 void vtkMultiresolutionIO::LoadWavelets()
 {
 	fstream WavF;
-	WavF.open ("wavelets.dat", ofstream::in|ios::binary);
-	int i,j;
+	WavF.open("wavelets.dat", ofstream::in | ios::binary);
+	int i, j;
 
-	for	(i=0;i<this->NumberOfFilters;i++)
+	for (i = 0; i < this->NumberOfFilters; i++)
 	{
-		for (j=0;j<this->Filters[i]->Wavelets->GetNumberOfTuples();j++)
+		for (j = 0; j < this->Filters[i]->Wavelets->GetNumberOfTuples(); j++)
 		{
-			double	value1,value2,value3,Wav[3];
-			WavF.read((char*) &value1,sizeof	(double));
-			WavF.read((char*) &value2,sizeof	(double));
-			WavF.read((char*) &value3,sizeof	(double));
-			Wav[0]=value1;
-			Wav[1]=value2;
-			Wav[2]=value3;
-			this->Filters[i]->Wavelets->SetTuple(j,Wav);
+			double value1, value2, value3, Wav[3];
+			WavF.read((char *)&value1, sizeof(double));
+			WavF.read((char *)&value2, sizeof(double));
+			WavF.read((char *)&value3, sizeof(double));
+			Wav[0] = value1;
+			Wav[1] = value2;
+			Wav[2] = value3;
+			this->Filters[i]->Wavelets->SetTuple(j, Wav);
 		}
 	}
 	WavF.close();
@@ -113,116 +112,111 @@ void vtkMultiresolutionIO::LoadWavelets()
 
 void vtkMultiresolutionIO::EncodeLiftingProperties()
 {
-	if (this->Lifting==0)
+	if (this->Lifting == 0)
 		this->ArithmeticCoder->EncodeByte(1);
 	else
 	{
-		if (this->Lifting==2)
+		if (this->Lifting == 2)
 			this->ArithmeticCoder->EncodeByte(0);
 		else
-			this->ArithmeticCoder->EncodeByte(this->LiftingRadius+2);
+			this->ArithmeticCoder->EncodeByte(this->LiftingRadius + 2);
 	}
-	this->ArithmeticCoder->EncodeBit(this->GeometryPrediction!=0);
+	this->ArithmeticCoder->EncodeBit(this->GeometryPrediction != 0);
 }
 void vtkMultiresolutionIO::DecodeLiftingProperties()
 {
-	int LiftingTest=this->ArithmeticCoder->DecodeByte();
-	LiftingTest-=2;
-	if (LiftingTest>=0)
+	int LiftingTest = this->ArithmeticCoder->DecodeByte();
+	LiftingTest -= 2;
+	if (LiftingTest >= 0)
 	{
-		this->Lifting=1;
-		this->LiftingRadius=LiftingTest;
+		this->Lifting = 1;
+		this->LiftingRadius = LiftingTest;
 	}
 	else
 	{
-		if (LiftingTest==-1)
+		if (LiftingTest == -1)
 		{
-			this->Lifting=0;
-			this->LiftingRadius=0;			
+			this->Lifting = 0;
+			this->LiftingRadius = 0;
 		}
 		else
 		{
-			this->Lifting=2;
-			this->LiftingRadius=0;
+			this->Lifting = 2;
+			this->LiftingRadius = 0;
 		}
 	}
-	this->GeometryPrediction=(this->ArithmeticCoder->DecodeBit()==true);
-
+	this->GeometryPrediction = (this->ArithmeticCoder->DecodeBit() == true);
 }
 
 void vtkMultiresolutionIO::EncodeMeshConnectivity(vtkSurface *Mesh)
 {
 	vtkIdType i;
-	vtkIdType n,v1,v2,v3;
+	vtkIdType n, v1, v2, v3;
 
-	this->ArithmeticCoder->EncodeInt(Mesh->GetNumberOfPoints());	// Me: Word -> Int
-	this->ArithmeticCoder->EncodeInt(Mesh->GetNumberOfCells());	// Me: Word -> Int
+	this->ArithmeticCoder->EncodeInt(Mesh->GetNumberOfPoints()); // Me: Word -> Int
+	this->ArithmeticCoder->EncodeInt(Mesh->GetNumberOfCells());	 // Me: Word -> Int
 	qsmodel QsmConnectivity;
-	QsmConnectivity.initqsmodel(Mesh->GetNumberOfPoints(),23,1000,NULL,1);
+	QsmConnectivity.initqsmodel(Mesh->GetNumberOfPoints(), 23, 1000, NULL, 1);
 
-	n=Mesh->GetNumberOfCells();
-	for (i=0;i<n;i++)
+	n = Mesh->GetNumberOfCells();
+	for (i = 0; i < n; i++)
 	{
-		Mesh->GetFaceVertices(i,v1,v2,v3);
-		this->ArithmeticCoder->Encode(v1,&QsmConnectivity);
-		this->ArithmeticCoder->Encode(v2,&QsmConnectivity);
-		this->ArithmeticCoder->Encode(v3,&QsmConnectivity);
+		Mesh->GetFaceVertices(i, v1, v2, v3);
+		this->ArithmeticCoder->Encode(v1, &QsmConnectivity);
+		this->ArithmeticCoder->Encode(v2, &QsmConnectivity);
+		this->ArithmeticCoder->Encode(v3, &QsmConnectivity);
 	}
 }
 vtkSurface *vtkMultiresolutionIO::DecodeMeshConnectivity()
 {
 	vtkIdType i;
-	int v1,v2,v3;
-	int NumberOfPoints,NumberOfFaces;
+	int v1, v2, v3;
+	int NumberOfPoints, NumberOfFaces;
 	double P[3];
-	P[0]=0;
-	P[1]=0;
-	P[2]=0;
+	P[0] = 0;
+	P[1] = 0;
+	P[2] = 0;
 
-	vtkSurface *Mesh=vtkSurface::New();
-	NumberOfPoints=this->ArithmeticCoder->DecodeInt();	// Me: Word -> Int
-	NumberOfFaces=this->ArithmeticCoder->DecodeInt();	// Me: Word -> Int
-	Mesh->Init(NumberOfPoints,NumberOfFaces,NumberOfPoints+NumberOfFaces+1000);
+	vtkSurface *Mesh = vtkSurface::New();
+	NumberOfPoints = this->ArithmeticCoder->DecodeInt(); // Me: Word -> Int
+	NumberOfFaces = this->ArithmeticCoder->DecodeInt();	 // Me: Word -> Int
+	Mesh->Init(NumberOfPoints, NumberOfFaces, NumberOfPoints + NumberOfFaces + 1000);
 
-
-	for (i=0;i<NumberOfPoints;i++)
+	for (i = 0; i < NumberOfPoints; i++)
 		Mesh->AddVertex(P);
 
 	qsmodel QsmConnectivity;
-	QsmConnectivity.initqsmodel(NumberOfPoints,23,1000,NULL,0);
+	QsmConnectivity.initqsmodel(NumberOfPoints, 23, 1000, NULL, 0);
 
-
-	for (i=0;i<NumberOfFaces;i++)
+	for (i = 0; i < NumberOfFaces; i++)
 	{
-		v1=this->ArithmeticCoder->Decode(&QsmConnectivity);
-		v2=this->ArithmeticCoder->Decode(&QsmConnectivity);
-		v3=this->ArithmeticCoder->Decode(&QsmConnectivity);
-		Mesh->AddFace(v1,v2,v3);
+		v1 = this->ArithmeticCoder->Decode(&QsmConnectivity);
+		v2 = this->ArithmeticCoder->Decode(&QsmConnectivity);
+		v3 = this->ArithmeticCoder->Decode(&QsmConnectivity);
+		Mesh->AddFace(v1, v2, v3);
 	}
 
-	vtkSurface *Mesh2=vtkSurface::New();
+	vtkSurface *Mesh2 = vtkSurface::New();
 	Mesh2->CreateFromPolyData(Mesh);
 	Mesh->Delete();
 	return (Mesh2);
-
-
 }
 
 void vtkMultiresolutionIO::EncodeMeshGeometry(vtkSurface *Mesh)
 {
 
-	vtkIdType i,j;
+	vtkIdType i, j;
 	double P[3];
 	int NumberOfPoints;
 
-	NumberOfPoints=Mesh->GetNumberOfPoints();
+	NumberOfPoints = Mesh->GetNumberOfPoints();
 
-	if (this->ArithmeticType==0)
+	if (this->ArithmeticType == 0)
 	{
-		for (i=0;i<NumberOfPoints;i++)
+		for (i = 0; i < NumberOfPoints; i++)
 		{
-			Mesh->GetPointCoordinates(i,P);
-			for (j=0;j<3;j++)
+			Mesh->GetPointCoordinates(i, P);
+			for (j = 0; j < 3; j++)
 			{
 				this->ArithmeticCoder->EncodeFloat(P[j]);
 			}
@@ -231,13 +225,13 @@ void vtkMultiresolutionIO::EncodeMeshGeometry(vtkSurface *Mesh)
 	else
 	{
 		int Value;
-		for (i=0;i<NumberOfPoints;i++)
+		for (i = 0; i < NumberOfPoints; i++)
 		{
-			Mesh->GetPointCoordinates(i,P);
-			for (j=0;j<3;j++)
+			Mesh->GetPointCoordinates(i, P);
+			for (j = 0; j < 3; j++)
 			{
-				Value=(int) P[j];
-				this->ArithmeticCoder->EncodeInt(Value+ 1073741824);	// Me: Word -> Int
+				Value = (int)P[j];
+				this->ArithmeticCoder->EncodeInt(Value + 1073741824); // Me: Word -> Int
 			}
 		}
 	}
@@ -245,31 +239,31 @@ void vtkMultiresolutionIO::EncodeMeshGeometry(vtkSurface *Mesh)
 void vtkMultiresolutionIO::DecodeMeshGeometry(vtkSurface *Mesh)
 {
 
-	vtkIdType i,j;
+	vtkIdType i, j;
 	double P[3];
 	int NumberOfPoints;
 
-	NumberOfPoints=Mesh->GetNumberOfPoints();
-	if (this->ArithmeticType==0)
+	NumberOfPoints = Mesh->GetNumberOfPoints();
+	if (this->ArithmeticType == 0)
 	{
-		for (i=0;i<NumberOfPoints;i++)
+		for (i = 0; i < NumberOfPoints; i++)
 		{
-			for (j=0;j<3;j++)
-			{		
-				P[j]=this->ArithmeticCoder->DecodeFloat();
+			for (j = 0; j < 3; j++)
+			{
+				P[j] = this->ArithmeticCoder->DecodeFloat();
 			}
-			Mesh->SetPointCoordinates(i,P);
+			Mesh->SetPointCoordinates(i, P);
 		}
 	}
 	else
 	{
-		for (i=0;i<NumberOfPoints;i++)
+		for (i = 0; i < NumberOfPoints; i++)
 		{
-			for (j=0;j<3;j++)
-			{		
-				P[j]=(this->ArithmeticCoder->DecodeInt()- 1073741824);	// Me: Word -> Int
+			for (j = 0; j < 3; j++)
+			{
+				P[j] = (this->ArithmeticCoder->DecodeInt() - 1073741824); // Me: Word -> Int
 			}
-			Mesh->SetPointCoordinates(i,P);
+			Mesh->SetPointCoordinates(i, P);
 		}
 	}
 }
@@ -277,47 +271,46 @@ void vtkMultiresolutionIO::DecodeMeshGeometry(vtkSurface *Mesh)
 void vtkMultiresolutionIO::EncodeScalingFactors(vtkSurface *Mesh)
 {
 	double Factor, Tx, Ty, Tz;
-	Mesh->GetScalingFactors(Factor,Tx,Ty,Tz);
-	this->ArithmeticCoder->EncodeFloat((float) Factor);
-	this->ArithmeticCoder->EncodeFloat((float) Tx);
-	this->ArithmeticCoder->EncodeFloat((float) Ty);
-	this->ArithmeticCoder->EncodeFloat((float) Tz);
+	Mesh->GetScalingFactors(Factor, Tx, Ty, Tz);
+	this->ArithmeticCoder->EncodeFloat((float)Factor);
+	this->ArithmeticCoder->EncodeFloat((float)Tx);
+	this->ArithmeticCoder->EncodeFloat((float)Ty);
+	this->ArithmeticCoder->EncodeFloat((float)Tz);
 }
 void vtkMultiresolutionIO::DecodeScalingFactors(vtkSurface *Mesh)
 {
 	double Factor, Tx, Ty, Tz;
-	Factor=this->ArithmeticCoder->DecodeFloat();
-	Tx=this->ArithmeticCoder->DecodeFloat();
-	Ty=this->ArithmeticCoder->DecodeFloat();
-	Tz=this->ArithmeticCoder->DecodeFloat();
-	Mesh->SetScalingFactors(Factor,Tx,Ty,Tz);
+	Factor = this->ArithmeticCoder->DecodeFloat();
+	Tx = this->ArithmeticCoder->DecodeFloat();
+	Ty = this->ArithmeticCoder->DecodeFloat();
+	Tz = this->ArithmeticCoder->DecodeFloat();
+	Mesh->SetScalingFactors(Factor, Tx, Ty, Tz);
 }
-
 
 void vtkMultiresolutionIO::SetLifting(int lifting)
 {
 	int i;
-	this->Lifting=lifting;
+	this->Lifting = lifting;
 
-	if (this->NumberOfFilters>0)
-		for (i=0;i<this->NumberOfFilters;i++)
+	if (this->NumberOfFilters > 0)
+		for (i = 0; i < this->NumberOfFilters; i++)
 			this->Filters[i]->SetLifting(lifting);
 }
-void vtkMultiresolutionIO::SetArithmeticType (int Type)
+void vtkMultiresolutionIO::SetArithmeticType(int Type)
 {
 	int i;
-	this->ArithmeticType=Type;
-	if (this->NumberOfFilters>0)
-		for (i=0;i<this->NumberOfFilters;i++)
+	this->ArithmeticType = Type;
+	if (this->NumberOfFilters > 0)
+		for (i = 0; i < this->NumberOfFilters; i++)
 			this->Filters[i]->SetArithmeticType(Type);
 };
 
 void vtkMultiresolutionIO::SetLiftingRadius(int radius)
 {
 	int i;
-	this->LiftingRadius=radius;
-	if (this->NumberOfFilters>0)
-		for (i=0;i<this->NumberOfFilters;i++)
+	this->LiftingRadius = radius;
+	if (this->NumberOfFilters > 0)
+		for (i = 0; i < this->NumberOfFilters; i++)
 			this->Filters[i]->SetLiftingRadius(radius);
 }
 
@@ -330,25 +323,25 @@ void vtkMultiresolutionIO::InsertNextFilter(vtkWaveletSubdivisionFilter *Filter)
 {
 	int i;
 
-	for (i=this->NumberOfFilters-1;i>=0;i--)
+	for (i = this->NumberOfFilters - 1; i >= 0; i--)
 	{
-		this->Filters[i+1]=this->Filters[i];
-		this->SynthesisMeshes[i+2]=this->Filters[i+1]->GetSubdivisionInput();
+		this->Filters[i + 1] = this->Filters[i];
+		this->SynthesisMeshes[i + 2] = this->Filters[i + 1]->GetSubdivisionInput();
 	}
 
-	this->SynthesisMeshes[1]=Filter->GetSubdivisionInput();
-	this->Filters[0]=Filter;
-	this->SynthesisMeshes[0]=Filter->GetOutput();
+	this->SynthesisMeshes[1] = Filter->GetSubdivisionInput();
+	this->Filters[0] = Filter;
+	this->SynthesisMeshes[0] = Filter->GetOutput();
 
 	this->NumberOfFilters++;
 	Filter->SetPointsIds(this->PointsIds);
 }
 
-void vtkMultiresolutionIO::EncodeSignificance(int S,int Coord)
+void vtkMultiresolutionIO::EncodeSignificance(int S, int Coord)
 {
-	this->ArithmeticCoder->EncodeBit(S!=0);
+	this->ArithmeticCoder->EncodeBit(S != 0);
 	return;
-	this->ArithmeticCoder->EncodeSignificance(S,Coord,0);
+	this->ArithmeticCoder->EncodeSignificance(S, Coord, 0);
 	this->SignificanceCodes++;
 };
 
@@ -365,110 +358,108 @@ void vtkMultiresolutionIO::EncodeSign(int Sign)
 int vtkMultiresolutionIO::DecodeSignificance(int Coord)
 {
 	return (this->ArithmeticCoder->DecodeBit());
-	int S; 
-	S=this->ArithmeticCoder->DecodeSignificance(Coord,0);
+	int S;
+	S = this->ArithmeticCoder->DecodeSignificance(Coord, 0);
 	this->SignificanceCodes++;
 	return (S);
 };
 
 int vtkMultiresolutionIO::DecodeCoeffRefinement()
 {
-	int Coeff; 
-	Coeff=this->ArithmeticCoder->DecodeSignOrRefinement();
+	int Coeff;
+	Coeff = this->ArithmeticCoder->DecodeSignOrRefinement();
 	return (Coeff);
 };
 
 int vtkMultiresolutionIO::DecodeSign()
 {
 	int Sign;
-	Sign=this->ArithmeticCoder->DecodeSignOrRefinement();
+	Sign = this->ArithmeticCoder->DecodeSignOrRefinement();
 	return (Sign);
 };
 
-
-void vtkMultiresolutionIO::GetFirstGoodEdge(vtkIdType Edge,vtkIdType FilterId, vtkIdType &Edge2, vtkIdType &FilterId2, vtkIdType &Vertex)
+void vtkMultiresolutionIO::GetFirstGoodEdge(vtkIdType Edge, vtkIdType FilterId, vtkIdType &Edge2, vtkIdType &FilterId2, vtkIdType &Vertex)
 {
 
-	Edge2=Edge;
-	FilterId2=FilterId;
+	Edge2 = Edge;
+	FilterId2 = FilterId;
 
-	Vertex=this->EdgeMidPoints[FilterId2]->GetId(Edge);
-	if (Vertex>=0)
+	Vertex = this->EdgeMidPoints[FilterId2]->GetId(Edge);
+	if (Vertex >= 0)
 	{
 		return;
 	}
-	while ((Vertex<0)&&(FilterId2>0))
+	while ((Vertex < 0) && (FilterId2 > 0))
 	{
-		Edge2=this->Filters[FilterId2]->TreeFirstChildEdge->GetId(Edge2);
+		Edge2 = this->Filters[FilterId2]->TreeFirstChildEdge->GetId(Edge2);
 		FilterId2--;
-		Vertex=this->EdgeMidPoints[FilterId2]->GetId(Edge2);		
+		Vertex = this->EdgeMidPoints[FilterId2]->GetId(Edge2);
 	}
 	return;
 }
 
-void vtkMultiresolutionIO::ComputeWaveletTree ()
+void vtkMultiresolutionIO::ComputeWaveletTree()
 {
-	int i,j,k,NumberOfEdges;
-	double *Wavelet,*Max,*Max2;
+	int i, j, k, NumberOfEdges;
+	double *Wavelet, *Max, *Max2;
 	double AbsoluteWavelet;
 	int NumberOfVertices;
 	vtkIdType Vertex;
-	for (i=0;i<this->NumberOfFilters;i++)
+	for (i = 0; i < this->NumberOfFilters; i++)
 	{
-		this->Filters[i]->TreeFirstChildEdge=this->Filters[i]->TreeFirstChildEdge;
-		this->TreeNextChildEdge[i]=this->Filters[i]->TreeNextChildEdge;
-		this->TreeParentEdge[i]=this->Filters[i]->TreeParentEdge;
-		this->Wavelets[i]=this->Filters[i]->Wavelets;
-		this->EdgeMidPoints[i]=this->Filters[i]->EdgeMidPoints;
+		this->Filters[i]->TreeFirstChildEdge = this->Filters[i]->TreeFirstChildEdge;
+		this->TreeNextChildEdge[i] = this->Filters[i]->TreeNextChildEdge;
+		this->TreeParentEdge[i] = this->Filters[i]->TreeParentEdge;
+		this->Wavelets[i] = this->Filters[i]->Wavelets;
+		this->EdgeMidPoints[i] = this->Filters[i]->EdgeMidPoints;
 
-		NumberOfEdges=this->Filters[i]->GetSubdivisionInput()->GetNumberOfEdges();
-		this->Maxima[i]=vtkDoubleArray::New();
-		this->Maxima[i]->SetNumberOfValues(NumberOfEdges*3);
-		for (j=0;j<NumberOfEdges;j++)
+		NumberOfEdges = this->Filters[i]->GetSubdivisionInput()->GetNumberOfEdges();
+		this->Maxima[i] = vtkDoubleArray::New();
+		this->Maxima[i]->SetNumberOfValues(NumberOfEdges * 3);
+		for (j = 0; j < NumberOfEdges; j++)
 		{
-			Max=this->Maxima[i]->GetPointer(j*3);
-			Max[0]=0;
-			Max[1]=0;
-			Max[2]=0;
+			Max = this->Maxima[i]->GetPointer(j * 3);
+			Max[0] = 0;
+			Max[1] = 0;
+			Max[2] = 0;
 		}
 	}
 
-	for (i=0;i<this->NumberOfFilters;i++)
+	for (i = 0; i < this->NumberOfFilters; i++)
 	{
-		NumberOfVertices=this->Filters[i]->GetSubdivisionInput()->GetNumberOfPoints();
-		NumberOfEdges=this->Filters[i]->GetSubdivisionInput()->GetNumberOfEdges();
+		NumberOfVertices = this->Filters[i]->GetSubdivisionInput()->GetNumberOfPoints();
+		NumberOfEdges = this->Filters[i]->GetSubdivisionInput()->GetNumberOfEdges();
 
-
-		if (i<this->NumberOfFilters-1)
+		if (i < this->NumberOfFilters - 1)
 		{
-			for (j=0;j<NumberOfEdges;j++)
+			for (j = 0; j < NumberOfEdges; j++)
 			{
-				Vertex=this->EdgeMidPoints[i]->GetId(j)-NumberOfVertices;
-				if (Vertex>=0)
+				Vertex = this->EdgeMidPoints[i]->GetId(j) - NumberOfVertices;
+				if (Vertex >= 0)
 				{
-					Max=this->Maxima[i+1]->GetPointer(this->TreeParentEdge[i+1]->GetId(j)*3);
-					Wavelet=this->Wavelets[i]->GetPointer(Vertex*3);
-					for (k=0;k<3;k++)
+					Max = this->Maxima[i + 1]->GetPointer(this->TreeParentEdge[i + 1]->GetId(j) * 3);
+					Wavelet = this->Wavelets[i]->GetPointer(Vertex * 3);
+					for (k = 0; k < 3; k++)
 					{
-						AbsoluteWavelet=Wavelet[k];
-						if (fabs(Max[k])<fabs(AbsoluteWavelet))
-							Max[k]=AbsoluteWavelet;
+						AbsoluteWavelet = Wavelet[k];
+						if (fabs(Max[k]) < fabs(AbsoluteWavelet))
+							Max[k] = AbsoluteWavelet;
 					}
 				}
 			}
 		}
-		if (i>0)
+		if (i > 0)
 		{
-			NumberOfEdges=this->Filters[i]->GetOutput()->GetNumberOfEdges();	
+			NumberOfEdges = this->Filters[i]->GetOutput()->GetNumberOfEdges();
 
-			for (j=0;j<NumberOfEdges;j++)
+			for (j = 0; j < NumberOfEdges; j++)
 			{
-				Max=this->Maxima[i]->GetPointer(this->TreeParentEdge[i]->GetId(j)*3);
-				Max2=this->Maxima[i-1]->GetPointer(j*3);
-				for (k=0;k<3;k++)
+				Max = this->Maxima[i]->GetPointer(this->TreeParentEdge[i]->GetId(j) * 3);
+				Max2 = this->Maxima[i - 1]->GetPointer(j * 3);
+				for (k = 0; k < 3; k++)
 				{
-					if (fabs(Max[k])<fabs(Max2[k]))
-						Max[k]=Max2[k];
+					if (fabs(Max[k]) < fabs(Max2[k]))
+						Max[k] = Max2[k];
 				}
 			}
 		}
@@ -479,34 +470,34 @@ void vtkMultiresolutionIO::EncodeProgressivePrecision()
 {
 	this->ComputeWaveletTree();
 
-	vtkIdType i,j,BitPlane;
+	vtkIdType i, j, BitPlane;
 	WaveletCoefficientSet Set;
 	WaveletCoefficient Coeff;
 
-	double Max[3],*Wav,AbsoluteCoeff;
-	vtkIdType Vertex,Edge;
-	vtkIdType NumberOfVertices,FilterId;
-	int Count=0; 
+	double Max[3], *Wav, AbsoluteCoeff;
+	vtkIdType Vertex, Edge;
+	vtkIdType NumberOfVertices, FilterId;
+	int Count = 0;
 
-	for (i=0;i<3;i++)
+	for (i = 0; i < 3; i++)
 	{
 		this->InsignificantCoeffs[i].clear();
 		this->InsignificantSets[i].clear();
 		this->SignificantCoeffs[i].clear();
 	}
 	this->ArithmeticCoder->StartCoding();
-	this->ArithmeticCoder->EncodeByte((this->NumberOfBitPlanes<<4)+this->NumberOfStartBitPlanes);
+	this->ArithmeticCoder->EncodeByte((this->NumberOfBitPlanes << 4) + this->NumberOfStartBitPlanes);
 	this->ArithmeticCoder->InitConnectivityQSModels(1);
 
-	for (i=this->NumberOfFilters-1;i>=0;i--)
+	for (i = this->NumberOfFilters - 1; i >= 0; i--)
 	{
-		if (this->Filters[i]->GetSubdivisionType()==0)
+		if (this->Filters[i]->GetSubdivisionType() == 0)
 		{
 			this->ArithmeticCoder->EncodeBit(0);
 		}
 		else
 		{
-			if (this->Filters[i]->GetSubdivisionType()==1)
+			if (this->Filters[i]->GetSubdivisionType() == 1)
 			{
 				this->ArithmeticCoder->EncodeBit(1);
 				this->ArithmeticCoder->EncodeBit(0);
@@ -519,268 +510,267 @@ void vtkMultiresolutionIO::EncodeProgressivePrecision()
 		}
 
 		this->Filters[i]->SetIOType(1);
-		this->Filters[i]->ArithmeticCoder=this->ArithmeticCoder;
+		this->Filters[i]->ArithmeticCoder = this->ArithmeticCoder;
 		this->Filters[i]->Subdivide();
 	}
-	
-	this->ConnectivityBytes=this->ArithmeticCoder->StopCoding();
+
+	this->ConnectivityBytes = this->ArithmeticCoder->StopCoding();
 	this->ArithmeticCoder->StartCoding();
 
-	Max[0]=0;
-	Max[1]=0;
-	Max[2]=0;
+	Max[0] = 0;
+	Max[1] = 0;
+	Max[2] = 0;
 
-	NumberOfVertices=this->Filters[this->NumberOfFilters-1]->GetSubdivisionInput()->GetNumberOfPoints();
+	NumberOfVertices = this->Filters[this->NumberOfFilters - 1]->GetSubdivisionInput()->GetNumberOfPoints();
 
-	for (i=0;i<this->SynthesisMeshes[this->NumberOfFilters]->GetNumberOfEdges();i++)
+	for (i = 0; i < this->SynthesisMeshes[this->NumberOfFilters]->GetNumberOfEdges(); i++)
 	{
-		Wav=this->Maxima[this->NumberOfFilters-1]->GetPointer(i*3);
-		for (j=0;j<3;j++)
+		Wav = this->Maxima[this->NumberOfFilters - 1]->GetPointer(i * 3);
+		for (j = 0; j < 3; j++)
 		{
-			AbsoluteCoeff=Wav[j];
-			if (fabs(Max[j])<fabs(AbsoluteCoeff))
-				Max[j]=AbsoluteCoeff;
+			AbsoluteCoeff = Wav[j];
+			if (fabs(Max[j]) < fabs(AbsoluteCoeff))
+				Max[j] = AbsoluteCoeff;
 		}
-		this->GetFirstGoodEdge(i,this->NumberOfFilters-1,Coeff.Edge,Coeff.FilterId,Vertex);
+		this->GetFirstGoodEdge(i, this->NumberOfFilters - 1, Coeff.Edge, Coeff.FilterId, Vertex);
 
-		if (Vertex>=0)
+		if (Vertex >= 0)
 		{
-			Vertex-=this->Filters[Coeff.FilterId]->GetSubdivisionInput()->GetNumberOfPoints();
-			Coeff.WaveletId=Vertex;
+			Vertex -= this->Filters[Coeff.FilterId]->GetSubdivisionInput()->GetNumberOfPoints();
+			Coeff.WaveletId = Vertex;
 			// Add entry to LIP
-			Wav=this->Wavelets[Coeff.FilterId]->GetPointer(Vertex*3);
-			for (j=0;j<3;j++)
+			Wav = this->Wavelets[Coeff.FilterId]->GetPointer(Vertex * 3);
+			for (j = 0; j < 3; j++)
 			{
-				AbsoluteCoeff=Wav[j];
-				if (fabs(Max[j])<fabs(AbsoluteCoeff))
-					Max[j]=AbsoluteCoeff;
-				Coeff.Wavelet=AbsoluteCoeff;
-				Coeff.Count=Count++;
-				Coeff.Sn=2;
+				AbsoluteCoeff = Wav[j];
+				if (fabs(Max[j]) < fabs(AbsoluteCoeff))
+					Max[j] = AbsoluteCoeff;
+				Coeff.Wavelet = AbsoluteCoeff;
+				Coeff.Count = Count++;
+				Coeff.Sn = 2;
 				InsignificantCoeffs[j].push_back(Coeff);
 			}
 
 			// Add entry to LIS
-			Set.Edge=Coeff.Edge;
-			Set.FilterId=Coeff.FilterId;
-			Set.Type=1;
-			Set.Sn=2;
-			Set.Count=Count++;
+			Set.Edge = Coeff.Edge;
+			Set.FilterId = Coeff.FilterId;
+			Set.Type = 1;
+			Set.Sn = 2;
+			Set.Count = Count++;
 
-			Wav=this->Maxima[Set.FilterId]->GetPointer(Set.Edge*3);
-			if (Set.FilterId>0)
-				for (j=0;j<3;j++)
+			Wav = this->Maxima[Set.FilterId]->GetPointer(Set.Edge * 3);
+			if (Set.FilterId > 0)
+				for (j = 0; j < 3; j++)
 				{
-					Set.Max=Wav[j];
+					Set.Max = Wav[j];
 					InsignificantSets[j].push_back(Set);
 				}
 		}
 	}
 
-	AbsoluteCoeff=Max[0];
-	if (fabs(AbsoluteCoeff)<fabs(Max[1]))
-		AbsoluteCoeff=Max[1];
-	if (fabs(AbsoluteCoeff)<fabs(Max[2]))
-		AbsoluteCoeff=Max[2];
+	AbsoluteCoeff = Max[0];
+	if (fabs(AbsoluteCoeff) < fabs(Max[1]))
+		AbsoluteCoeff = Max[1];
+	if (fabs(AbsoluteCoeff) < fabs(Max[2]))
+		AbsoluteCoeff = Max[2];
 
-	int N,Descendants,Sn;
-	vtkIdType Edge2,FilterId2;
-	double T,MaxCoeff,TestCoeff;
+	int N, Descendants, Sn;
+	vtkIdType Edge2, FilterId2;
+	double T, MaxCoeff, TestCoeff;
 	std::list<WaveletCoefficientSet>::iterator SetIter;
 	std::list<WaveletCoefficient>::iterator CoeffIter;
 	std::list<WaveletCoefficientSet>::iterator SetIter2;
 	std::list<WaveletCoefficient>::iterator CoeffIter2;
 
-	N=(int) floor(log(fabs(AbsoluteCoeff))/log(2.00));
-	for (i=0;i<3;i++)
+	N = (int)floor(log(fabs(AbsoluteCoeff)) / log(2.00));
+	for (i = 0; i < 3; i++)
 	{
-		for (CoeffIter=InsignificantCoeffs[i].begin();
-			CoeffIter!=InsignificantCoeffs[i].end();CoeffIter++)
-			CoeffIter->N=N;
+		for (CoeffIter = InsignificantCoeffs[i].begin();
+			 CoeffIter != InsignificantCoeffs[i].end(); CoeffIter++)
+			CoeffIter->N = N;
 	}
 
-	for (i=0;i<this->NumberOfFilters;i++)
+	for (i = 0; i < this->NumberOfFilters; i++)
 	{
-		this->SauvWavelets[i]=vtkDoubleArray::New();
+		this->SauvWavelets[i] = vtkDoubleArray::New();
 		this->SauvWavelets[i]->DeepCopy(Wavelets[i]);
 	}
 
-	this->ArithmeticCoder->EncodeByte(N+128);
+	this->ArithmeticCoder->EncodeByte(N + 128);
 	this->ArithmeticCoder->EncodeByte(this->NumberOfBitPlanes);
 	this->ArithmeticCoder->EncodeByte(this->NumberOfStartBitPlanes);
-	T=pow(2.0,N);
+	T = pow(2.0, N);
 
-	for (BitPlane=0;BitPlane<this->NumberOfBitPlanes;BitPlane++)
+	for (BitPlane = 0; BitPlane < this->NumberOfBitPlanes; BitPlane++)
 	{
-		if (BitPlane>=this->NumberOfStartBitPlanes)
+		if (BitPlane >= this->NumberOfStartBitPlanes)
 			this->ArithmeticCoder->StartCoding();
 		this->ArithmeticCoder->InitZerotreeQSModels(1);
-		for (i=0;i<3;i++)
+		for (i = 0; i < 3; i++)
 		{
-			int number=0;
+			int number = 0;
 
-			//2.1 For Each Entry (i,j) in the LIP
-			for (CoeffIter=InsignificantCoeffs[i].begin();
-				CoeffIter!=InsignificantCoeffs[i].end();)
+			// 2.1 For Each Entry (i,j) in the LIP
+			for (CoeffIter = InsignificantCoeffs[i].begin();
+				 CoeffIter != InsignificantCoeffs[i].end();)
 			{
 				number++;
 
-				Sn=(fabs(CoeffIter->Wavelet)>=T);
-				this->EncodeSignificance(Sn,i);
+				Sn = (fabs(CoeffIter->Wavelet) >= T);
+				this->EncodeSignificance(Sn, i);
 
-				//2.1.1 Output Sn(i,j)
-				if (Sn==0)
+				// 2.1.1 Output Sn(i,j)
+				if (Sn == 0)
 					CoeffIter++;
 				else
 				{
 					// If Sn(i,j)=1 then move (i,j) to the LSP and output the sign of cij
-					Sn=(CoeffIter->Wavelet<0);
+					Sn = (CoeffIter->Wavelet < 0);
 					this->EncodeSign(Sn);
 
-					Coeff.Edge=CoeffIter->Edge;
-					Coeff.FilterId=CoeffIter->FilterId;
-					Coeff.Wavelet=CoeffIter->Wavelet;
-					Coeff.WaveletId=CoeffIter->WaveletId;
-					Coeff.N=N;
+					Coeff.Edge = CoeffIter->Edge;
+					Coeff.FilterId = CoeffIter->FilterId;
+					Coeff.Wavelet = CoeffIter->Wavelet;
+					Coeff.WaveletId = CoeffIter->WaveletId;
+					Coeff.N = N;
 					SignificantCoeffs[i].push_back(Coeff);
 
-					CoeffIter=InsignificantCoeffs[i].erase(CoeffIter);
+					CoeffIter = InsignificantCoeffs[i].erase(CoeffIter);
 				}
 			}
 
-			//2.2 for each entry (i,j) in the LIS do:
-			for (SetIter=InsignificantSets[i].begin();
-				SetIter!=InsignificantSets[i].end();)
+			// 2.2 for each entry (i,j) in the LIS do:
+			for (SetIter = InsignificantSets[i].begin();
+				 SetIter != InsignificantSets[i].end();)
 			{
-				if (SetIter->Type==1)
+				if (SetIter->Type == 1)
 				{
 					// 2.2.1 if the entry is of type A
 					// Output Sn(D(i,j))
 
-					Sn=(fabs(SetIter->Max)>=T);
-					this->EncodeSignificance(Sn,i);
+					Sn = (fabs(SetIter->Max) >= T);
+					this->EncodeSignificance(Sn, i);
 
-					if (Sn==0)
+					if (Sn == 0)
 						SetIter++;
 					else
 					{
 						// is Sn(i,j)=1 then:
-						Descendants=0;
-						MaxCoeff=0;
-						FilterId=SetIter->FilterId-1;
+						Descendants = 0;
+						MaxCoeff = 0;
+						FilterId = SetIter->FilterId - 1;
 
 						// for each (k,l) in O(i,j)
-						Edge=this->Filters[SetIter->FilterId]->TreeFirstChildEdge->GetId(SetIter->Edge);
-						while (Edge>=0)
+						Edge = this->Filters[SetIter->FilterId]->TreeFirstChildEdge->GetId(SetIter->Edge);
+						while (Edge >= 0)
 						{
-							this->GetFirstGoodEdge(Edge,FilterId,Edge2,FilterId2,Vertex);
-							TestCoeff=this->Maxima[FilterId2]->GetPointer(Edge2*3)[i];
-							if (fabs(MaxCoeff)<fabs(TestCoeff))
-								MaxCoeff=TestCoeff;
+							this->GetFirstGoodEdge(Edge, FilterId, Edge2, FilterId2, Vertex);
+							TestCoeff = this->Maxima[FilterId2]->GetPointer(Edge2 * 3)[i];
+							if (fabs(MaxCoeff) < fabs(TestCoeff))
+								MaxCoeff = TestCoeff;
 
-							if (Vertex>=0)
+							if (Vertex >= 0)
 							{
-								if (FilterId2>0)
+								if (FilterId2 > 0)
 									Descendants++;
-								Coeff.WaveletId=Vertex-this->Filters[FilterId2]->GetSubdivisionInput()->GetNumberOfPoints();
-								Coeff.Edge=Edge2;
-								Coeff.FilterId=FilterId2;
-								Coeff.Wavelet=this->Wavelets[FilterId2]->GetPointer(Coeff.WaveletId*3)[i];
-								Coeff.N=N;
-								Coeff.Count=Count;
-								Coeff.Sn=2;
+								Coeff.WaveletId = Vertex - this->Filters[FilterId2]->GetSubdivisionInput()->GetNumberOfPoints();
+								Coeff.Edge = Edge2;
+								Coeff.FilterId = FilterId2;
+								Coeff.Wavelet = this->Wavelets[FilterId2]->GetPointer(Coeff.WaveletId * 3)[i];
+								Coeff.N = N;
+								Coeff.Count = Count;
+								Coeff.Sn = 2;
 
-								//Output Sn(k,l)
-								Sn=(fabs(Coeff.Wavelet)>=T);
+								// Output Sn(k,l)
+								Sn = (fabs(Coeff.Wavelet) >= T);
 
-								this->EncodeSignificance(Sn,i);
-								if (Sn==0)
+								this->EncodeSignificance(Sn, i);
+								if (Sn == 0)
 									// if Sn(k,l)=0 then add (k,l) to the end of the LIP
 									InsignificantCoeffs[i].push_back(Coeff);
 								else
 								{
 									// if Sn(k,l)=1 then add (k,l) to the end of the LSP and output the sign of cij
-									Sn=Coeff.Wavelet<0;
+									Sn = Coeff.Wavelet < 0;
 									this->EncodeSign(Sn);
 									SignificantCoeffs[i].push_back(Coeff);
 								}
-
 							}
-							if (FilterId>=0)
-								Edge=this->TreeNextChildEdge[SetIter->FilterId]->GetId(Edge);
+							if (FilterId >= 0)
+								Edge = this->TreeNextChildEdge[SetIter->FilterId]->GetId(Edge);
 							else
-								Edge=-1;
+								Edge = -1;
 						}
 						Count++;
 						// if L(i,j) non empty
-						if ((Descendants>0)&&(FilterId>0))
+						if ((Descendants > 0) && (FilterId > 0))
 						{
 
-							SetIter->Max=MaxCoeff;
-							SetIter->Type=0;
+							SetIter->Max = MaxCoeff;
+							SetIter->Type = 0;
 						}
 						else
 						{
 							// else remove (i,j) from the LIS
-							SetIter=InsignificantSets[i].erase(SetIter);
+							SetIter = InsignificantSets[i].erase(SetIter);
 						}
 					}
 				}
 
 				// 2.2.2 if the entry is of type B then
-				if (SetIter!=InsignificantSets[i].end())
+				if (SetIter != InsignificantSets[i].end())
 				{
-					if (SetIter->Type==0)
+					if (SetIter->Type == 0)
 					{
-						Sn=(fabs(SetIter->Max)>=T);
+						Sn = (fabs(SetIter->Max) >= T);
 						// Output Sn(L(i,j))
-						this->EncodeSignificance(Sn,i);
+						this->EncodeSignificance(Sn, i);
 
-						if (Sn==0)
+						if (Sn == 0)
 							SetIter++;
 						else
 						{
 							// if Sn(L(i,j))=1 then
-							MaxCoeff=0;
-							Edge=this->Filters[SetIter->FilterId]->TreeFirstChildEdge->GetId(SetIter->Edge);
-							FilterId=SetIter->FilterId-1;
+							MaxCoeff = 0;
+							Edge = this->Filters[SetIter->FilterId]->TreeFirstChildEdge->GetId(SetIter->Edge);
+							FilterId = SetIter->FilterId - 1;
 							// add each (k,l) In O(i,j) to the end of the LIS as an entry of type A
-							while (Edge>=0)
+							while (Edge >= 0)
 							{
-								this->GetFirstGoodEdge(Edge,FilterId,Edge2,FilterId2,Vertex);
-								if ((Vertex>=0)&&(FilterId2>0))
+								this->GetFirstGoodEdge(Edge, FilterId, Edge2, FilterId2, Vertex);
+								if ((Vertex >= 0) && (FilterId2 > 0))
 								{
-									Set.Edge=Edge2;
-									Set.FilterId=FilterId2;
-									Set.Max=this->Maxima[FilterId2]->GetPointer(Edge2*3)[i];
-									Set.Type=1;
-									Set.Sn=2;
-									Set.Count=Count;
+									Set.Edge = Edge2;
+									Set.FilterId = FilterId2;
+									Set.Max = this->Maxima[FilterId2]->GetPointer(Edge2 * 3)[i];
+									Set.Type = 1;
+									Set.Sn = 2;
+									Set.Count = Count;
 									InsignificantSets[i].push_back(Set);
 								}
-								Edge=this->TreeNextChildEdge[SetIter->FilterId]->GetId(Edge);
+								Edge = this->TreeNextChildEdge[SetIter->FilterId]->GetId(Edge);
 							}
 							// remove (i,j) from the LIS;
-							SetIter=InsignificantSets[i].erase(SetIter);
+							SetIter = InsignificantSets[i].erase(SetIter);
 							Count++;
 						}
 					}
 				}
-			}		
+			}
 
 			// Refinement pass
-			int newnumber=0,k,Ptest;
-			number=0;
-			for(CoeffIter=SignificantCoeffs[i].begin();
-				CoeffIter!=SignificantCoeffs[i].end();CoeffIter++)
+			int newnumber = 0, k, Ptest;
+			number = 0;
+			for (CoeffIter = SignificantCoeffs[i].begin();
+				 CoeffIter != SignificantCoeffs[i].end(); CoeffIter++)
 			{
 				number++;
-				if (CoeffIter->N!=N)
+				if (CoeffIter->N != N)
 				{
 					newnumber++;
-					TestCoeff=floor(fabs(CoeffIter->Wavelet)/T);
-					Ptest=(int) TestCoeff;
-					if (Ptest%2==1)
+					TestCoeff = floor(fabs(CoeffIter->Wavelet) / T);
+					Ptest = (int)TestCoeff;
+					if (Ptest % 2 == 1)
 					{
 						this->EncodeCoeffRefinement(1);
 					}
@@ -788,29 +778,26 @@ void vtkMultiresolutionIO::EncodeProgressivePrecision()
 					{
 						this->EncodeCoeffRefinement(0);
 					}
-
 				}
 			}
 
-			number=0;
-			for (k=0;k<this->NumberOfFilters;k++)
+			number = 0;
+			for (k = 0; k < this->NumberOfFilters; k++)
 			{
-				for (j=0;j<this->Filters[k]->GetOutput()->GetNumberOfPoints()
-					-this->Filters[k]->GetSubdivisionInput()->GetNumberOfPoints();j++)
+				for (j = 0; j < this->Filters[k]->GetOutput()->GetNumberOfPoints() - this->Filters[k]->GetSubdivisionInput()->GetNumberOfPoints(); j++)
 				{
-					Wav=this->Wavelets[k]->GetPointer(j*3);
-					if (fabs(Wav[i])>=T)
+					Wav = this->Wavelets[k]->GetPointer(j * 3);
+					if (fabs(Wav[i]) >= T)
 						number++;
 				}
 			}
-
 		}
 		N--;
-		T=T/2;
-		if (BitPlane>=this->NumberOfStartBitPlanes-1)
-			this->DataSize[BitPlane]=this->ArithmeticCoder->StopCoding();
+		T = T / 2;
+		if (BitPlane >= this->NumberOfStartBitPlanes - 1)
+			this->DataSize[BitPlane] = this->ArithmeticCoder->StopCoding();
 		else
-			this->DataSize[BitPlane]=0;
+			this->DataSize[BitPlane] = 0;
 	}
 
 	this->ArithmeticCoder->CloseFile();
@@ -825,35 +812,30 @@ void vtkMultiresolutionIO::EncodeProgressivePrecision()
 		std::ofstream Repport;
 		Repport.open(outinfo, ofstream::out | ofstream::trunc);
 
-		double duration,ratio;
-#if ( (VTK_MAJOR_VERSION >= 5))
-		duration = this->Timer->GetUniversalTime()- this->StartTime;
+		double duration, ratio;
+#if ((VTK_MAJOR_VERSION >= 5))
+		duration = this->Timer->GetUniversalTime() - this->StartTime;
 #else
-		duration = this->Timer->GetCurrentTime()- this->StartTime;
+		duration = this->Timer->GetCurrentTime() - this->StartTime;
 #endif
-		ratio= ((double)this->Filters[0]->GetOutput()->GetNumberOfCells())/duration;
+		ratio = ((double)this->Filters[0]->GetOutput()->GetNumberOfCells()) / duration;
 
 		int Sum;
-		int NumberOfVertices=this->SynthesisMeshes[0]->GetNumberOfPoints();
-		Repport<<"Zerotree Encoding of a mesh with "<<this->SynthesisMeshes[0]->GetNumberOfCells()<<
-			" faces and "<<NumberOfVertices<<" vertices, "<<this->NumberOfFilters<<" resolution levels"<<endl;
+		int NumberOfVertices = this->SynthesisMeshes[0]->GetNumberOfPoints();
+		Repport << "Zerotree Encoding of a mesh with " << this->SynthesisMeshes[0]->GetNumberOfCells() << " faces and " << NumberOfVertices << " vertices, " << this->NumberOfFilters << " resolution levels" << endl;
 
-		Repport<<"Coding of mesh connectivity+ base mesh geometry : "<<this->ConnectivityBytes<<
-			" bytes ( "<<this->ConnectivityBytes*8<<" bits, "<<
-			8.0*(double)this->ConnectivityBytes/(double)NumberOfVertices<<" bits/vertex)"<<endl;
-		Repport<<"Encoding time : "<<duration<<" seconds ( "<<ratio<<" faces/s)"<<endl;
+		Repport << "Coding of mesh connectivity+ base mesh geometry : " << this->ConnectivityBytes << " bytes ( " << this->ConnectivityBytes * 8 << " bits, " << 8.0 * (double)this->ConnectivityBytes / (double)NumberOfVertices << " bits/vertex)" << endl;
+		Repport << "Encoding time : " << duration << " seconds ( " << ratio << " faces/s)" << endl;
 
-		Sum=this->ConnectivityBytes+this->DataSize[this->NumberOfStartBitPlanes-1];
+		Sum = this->ConnectivityBytes + this->DataSize[this->NumberOfStartBitPlanes - 1];
 
-		Repport<<"Bitplanes 0 to "<<this->NumberOfStartBitPlanes-1<<" : "
-			<<this->DataSize[this->NumberOfStartBitPlanes-1]<<" Bytes, Total Data : "<<
-			Sum<<" Bytes ( "<<Sum*8<<" bits, "<<8.0*(double)Sum/(double)NumberOfVertices<<" bits/Vertex)"<<endl;
+		Repport << "Bitplanes 0 to " << this->NumberOfStartBitPlanes - 1 << " : "
+				<< this->DataSize[this->NumberOfStartBitPlanes - 1] << " Bytes, Total Data : " << Sum << " Bytes ( " << Sum * 8 << " bits, " << 8.0 * (double)Sum / (double)NumberOfVertices << " bits/Vertex)" << endl;
 
-		for (BitPlane=this->NumberOfStartBitPlanes;BitPlane<this->NumberOfBitPlanes;BitPlane++)
+		for (BitPlane = this->NumberOfStartBitPlanes; BitPlane < this->NumberOfBitPlanes; BitPlane++)
 		{
-			Sum+=this->DataSize[BitPlane];
-			Repport<<"Bitplane "<<BitPlane<<" : "<<this->DataSize[BitPlane]<<" Bytes, Total Data : "<<
-				Sum<<" Bytes ( "<<Sum*8<<" bits, "<<8.0*(double)Sum/(double)NumberOfVertices<<" bits/Vertex)"<<endl;
+			Sum += this->DataSize[BitPlane];
+			Repport << "Bitplane " << BitPlane << " : " << this->DataSize[BitPlane] << " Bytes, Total Data : " << Sum << " Bytes ( " << Sum * 8 << " bits, " << 8.0 * (double)Sum / (double)NumberOfVertices << " bits/Vertex)" << endl;
 		}
 		Repport.close();
 	}
@@ -861,14 +843,14 @@ void vtkMultiresolutionIO::EncodeProgressivePrecision()
 
 void vtkMultiresolutionIO::DecodeProgressivePrecision()
 {
-	int i,j,BitPlane;
+	int i, j, BitPlane;
 	WaveletCoefficientSet Set;
 	WaveletCoefficient Coeff;
 
-	vtkIdType Vertex,Edge;
-	int NumberOfVertices,FilterId,Count=0;
+	vtkIdType Vertex, Edge;
+	int NumberOfVertices, FilterId, Count = 0;
 
-	for (i=0;i<3;i++)
+	for (i = 0; i < 3; i++)
 	{
 		this->InsignificantCoeffs[i].clear();
 		this->InsignificantSets[i].clear();
@@ -878,214 +860,205 @@ void vtkMultiresolutionIO::DecodeProgressivePrecision()
 	this->ArithmeticCoder->StartDecoding();
 
 	int SubdivisionType;
-	int BitPlanesCode=this->ArithmeticCoder->DecodeByte();
-	this->NumberOfBitPlanes=BitPlanesCode>>4;
-	this->NumberOfStartBitPlanes=BitPlanesCode-(this->NumberOfBitPlanes<<4);
+	int BitPlanesCode = this->ArithmeticCoder->DecodeByte();
+	this->NumberOfBitPlanes = BitPlanesCode >> 4;
+	this->NumberOfStartBitPlanes = BitPlanesCode - (this->NumberOfBitPlanes << 4);
 
 	this->ArithmeticCoder->InitConnectivityQSModels(0);
 
-	for (j=this->NumberOfFilters-1;j>=0;j--)
+	for (j = this->NumberOfFilters - 1; j >= 0; j--)
 	{
-		if (this->ArithmeticCoder->DecodeBit()==0)
-			SubdivisionType=0;
+		if (this->ArithmeticCoder->DecodeBit() == 0)
+			SubdivisionType = 0;
 		else
 		{
-			if (this->ArithmeticCoder->DecodeBit()==0)
-				SubdivisionType=1;
+			if (this->ArithmeticCoder->DecodeBit() == 0)
+				SubdivisionType = 1;
 			else
-				SubdivisionType=2;
+				SubdivisionType = 2;
 		}
-		
-		this->Filters[j]=this->NewFilter(SubdivisionType);
 
-		this->Filters[j]->SetInput(this->SynthesisMeshes[j+1]);
+		this->Filters[j] = this->NewFilter(SubdivisionType);
+
+		this->Filters[j]->SetInput(this->SynthesisMeshes[j + 1]);
 
 		this->Filters[j]->SetSubdivisionType(SubdivisionType);
-		this->Filters[j]->SetIOType(2);	
+		this->Filters[j]->SetIOType(2);
 		this->Filters[j]->SetLifting(this->Lifting);
 		this->Filters[j]->SetLiftingRadius(this->LiftingRadius);
-		this->Filters[j]->GeometryPrediction=this->GeometryPrediction;
+		this->Filters[j]->GeometryPrediction = this->GeometryPrediction;
 		this->Filters[j]->SetArithmeticType(0);
-		this->EdgeMidPoints[j]=this->Filters[j]->EdgeMidPoints;
-		this->TreeNextChildEdge[j]=this->Filters[j]->TreeNextChildEdge;
+		this->EdgeMidPoints[j] = this->Filters[j]->EdgeMidPoints;
+		this->TreeNextChildEdge[j] = this->Filters[j]->TreeNextChildEdge;
 
-		this->Filters[j]->ArithmeticCoder=this->ArithmeticCoder;
+		this->Filters[j]->ArithmeticCoder = this->ArithmeticCoder;
 		this->Filters[j]->Subdivide();
-		this->Filters[j]->Wavelets=vtkDoubleArray::New();
+		this->Filters[j]->Wavelets = vtkDoubleArray::New();
 		this->Filters[j]->Wavelets->SetNumberOfComponents(3);
-		this->Filters[j]->Wavelets->SetNumberOfTuples(this->Filters[j]->GetOutput()->GetNumberOfPoints()-
-			this->Filters[j]->GetSubdivisionInput()->GetNumberOfPoints());
+		this->Filters[j]->Wavelets->SetNumberOfTuples(this->Filters[j]->GetOutput()->GetNumberOfPoints() -
+													  this->Filters[j]->GetSubdivisionInput()->GetNumberOfPoints());
 
-		this->Wavelets[j]=this->Filters[j]->Wavelets;
-		this->SynthesisMeshes[j]=this->Filters[j]->GetOutput();
+		this->Wavelets[j] = this->Filters[j]->Wavelets;
+		this->SynthesisMeshes[j] = this->Filters[j]->GetOutput();
 
 		if (this->DisplayText)
-			cout<<"Level "<<this->NumberOfFilters-j<<": "<<this->SynthesisMeshes[j]->GetNumberOfCells()
-			<<" faces, "<<this->SynthesisMeshes[j]->GetNumberOfPoints()<<" vertices "<<endl;
-
+			cout << "Level " << this->NumberOfFilters - j << ": " << this->SynthesisMeshes[j]->GetNumberOfCells()
+				 << " faces, " << this->SynthesisMeshes[j]->GetNumberOfPoints() << " vertices " << endl;
 	}
 
 	int k;
 	double Wav[3];
-	for (k=0;k<this->NumberOfFilters;k++)
+	for (k = 0; k < this->NumberOfFilters; k++)
 	{
-		for (j=0;j<this->Filters[k]->GetOutput()->GetNumberOfPoints()
-			-this->Filters[k]->GetSubdivisionInput()->GetNumberOfPoints();j++)
+		for (j = 0; j < this->Filters[k]->GetOutput()->GetNumberOfPoints() - this->Filters[k]->GetSubdivisionInput()->GetNumberOfPoints(); j++)
 		{
-			this->Wavelets[k]->GetTuple(j,Wav);
-			Wav[0]=0;
-			Wav[1]=0;
-			Wav[2]=0;
-			this->Wavelets[k]->SetTuple(j,Wav);
+			this->Wavelets[k]->GetTuple(j, Wav);
+			Wav[0] = 0;
+			Wav[1] = 0;
+			Wav[2] = 0;
+			this->Wavelets[k]->SetTuple(j, Wav);
 		}
 	}
 	this->Reconstruct();
 	if (this->DisplayText)
-		cout<<"Final mesh: "<<this->SynthesisMeshes[0]->GetNumberOfCells()<<" faces"<<endl;
-	if (this->Display!=0)
+		cout << "Final mesh: " << this->SynthesisMeshes[0]->GetNumberOfCells() << " faces" << endl;
+	if (this->Display != 0)
 	{
 		this->MeshWindow->SetInputData(this->SynthesisMeshes[0]);
 		this->MeshWindow->Render();
 		this->MeshWindow->SetWindowName("Progressive precision reconstruction");
-		cout<<"Window interaction: presse 'e' key to exit from interaction"<<endl;
+		cout << "Window interaction: presse 'e' key to exit from interaction" << endl;
 		this->MeshWindow->Interact();
-
 	}
 	this->ArithmeticCoder->StopDecoding();
 
 	this->ArithmeticCoder->StartDecoding();
 
-	NumberOfVertices=this->Filters[this->NumberOfFilters-1]->GetSubdivisionInput()->GetNumberOfPoints();
-	for (i=0;i<this->SynthesisMeshes[this->NumberOfFilters]->GetNumberOfEdges();i++)
+	NumberOfVertices = this->Filters[this->NumberOfFilters - 1]->GetSubdivisionInput()->GetNumberOfPoints();
+	for (i = 0; i < this->SynthesisMeshes[this->NumberOfFilters]->GetNumberOfEdges(); i++)
 	{
-		this->GetFirstGoodEdge(i,this->NumberOfFilters-1,Coeff.Edge,Coeff.FilterId,Vertex);
-		if (Vertex>=0)
+		this->GetFirstGoodEdge(i, this->NumberOfFilters - 1, Coeff.Edge, Coeff.FilterId, Vertex);
+		if (Vertex >= 0)
 		{
-			Vertex-=this->Filters[Coeff.FilterId]->GetSubdivisionInput()->GetNumberOfPoints();
-			Coeff.WaveletId=Vertex;
-			Coeff.Count=Count++;
-			Coeff.Sn=2;
+			Vertex -= this->Filters[Coeff.FilterId]->GetSubdivisionInput()->GetNumberOfPoints();
+			Coeff.WaveletId = Vertex;
+			Coeff.Count = Count++;
+			Coeff.Sn = 2;
 			// Add entry to LIP
-			for (j=0;j<3;j++)
+			for (j = 0; j < 3; j++)
 				InsignificantCoeffs[j].push_back(Coeff);
 
 			// Add entry to LIS
-			Set.Edge=Coeff.Edge;
-			Set.FilterId=Coeff.FilterId;
-			Set.Type=1;
-			Set.Count=Count++;
-			Set.Sn=2;
+			Set.Edge = Coeff.Edge;
+			Set.FilterId = Coeff.FilterId;
+			Set.Type = 1;
+			Set.Count = Count++;
+			Set.Sn = 2;
 
-			if (Set.FilterId>0)
-				for (j=0;j<3;j++)
+			if (Set.FilterId > 0)
+				for (j = 0; j < 3; j++)
 					InsignificantSets[j].push_back(Set);
 		}
 		else
 		{
-//			cout<<"Bizarre!!!"<<endl;
+			//			cout<<"Bizarre!!!"<<endl;
 		}
-
 	}
 
-
-	int N,Descendants,Sn;
-	vtkIdType Edge2,FilterId2;
-	double T,MaxCoeff;
+	int N, Descendants, Sn;
+	vtkIdType Edge2, FilterId2;
+	double T, MaxCoeff;
 	std::list<WaveletCoefficientSet>::iterator SetIter;
 	std::list<WaveletCoefficient>::iterator CoeffIter;
 
-	N=this->ArithmeticCoder->DecodeByte()-128;
-	this->NumberOfBitPlanes=this->ArithmeticCoder->DecodeByte();
-	this->NumberOfStartBitPlanes=this->ArithmeticCoder->DecodeByte();
+	N = this->ArithmeticCoder->DecodeByte() - 128;
+	this->NumberOfBitPlanes = this->ArithmeticCoder->DecodeByte();
+	this->NumberOfStartBitPlanes = this->ArithmeticCoder->DecodeByte();
 
-	T=pow(2.0,N);
-	for (i=0;i<3;i++)
+	T = pow(2.0, N);
+	for (i = 0; i < 3; i++)
 	{
-		for (CoeffIter=InsignificantCoeffs[i].begin();
-			CoeffIter!=InsignificantCoeffs[i].end();CoeffIter++)
-			CoeffIter->N=N;
+		for (CoeffIter = InsignificantCoeffs[i].begin();
+			 CoeffIter != InsignificantCoeffs[i].end(); CoeffIter++)
+			CoeffIter->N = N;
 	}
 
-
-	for (BitPlane=0;BitPlane<this->NumberOfBitPlanes;BitPlane++)
+	for (BitPlane = 0; BitPlane < this->NumberOfBitPlanes; BitPlane++)
 	{
-		if (BitPlane>=this->NumberOfStartBitPlanes)
+		if (BitPlane >= this->NumberOfStartBitPlanes)
 			this->ArithmeticCoder->StartDecoding();
 		this->ArithmeticCoder->InitZerotreeQSModels(0);
 
-		for (i=0;i<3;i++)
+		for (i = 0; i < 3; i++)
 		{
-			int number=0;
-			//2.1 For Each Entry (i,j) in the LIP
-			for (CoeffIter=InsignificantCoeffs[i].begin();
-				CoeffIter!=InsignificantCoeffs[i].end();)
+			int number = 0;
+			// 2.1 For Each Entry (i,j) in the LIP
+			for (CoeffIter = InsignificantCoeffs[i].begin();
+				 CoeffIter != InsignificantCoeffs[i].end();)
 			{
 				number++;
-				//2.1.1 Input Sn(i,j)
-				Sn=this->DecodeSignificance(i);
+				// 2.1.1 Input Sn(i,j)
+				Sn = this->DecodeSignificance(i);
 
-				if (Sn==0)
+				if (Sn == 0)
 					CoeffIter++;
 				else
 				{
 
 					// If Sn(i,j)=1 then move (i,j) to the LSP and input the sign of cij
-					Sn=this->DecodeSign();
-					if (Sn==1)
-						this->Wavelets[CoeffIter->FilterId]->GetPointer(CoeffIter->WaveletId*3)[i]=-1.5*pow(2.0,N);
+					Sn = this->DecodeSign();
+					if (Sn == 1)
+						this->Wavelets[CoeffIter->FilterId]->GetPointer(CoeffIter->WaveletId * 3)[i] = -1.5 * pow(2.0, N);
 					else
-						this->Wavelets[CoeffIter->FilterId]->GetPointer(CoeffIter->WaveletId*3)[i]=1.5*pow(2.0,N);
+						this->Wavelets[CoeffIter->FilterId]->GetPointer(CoeffIter->WaveletId * 3)[i] = 1.5 * pow(2.0, N);
 
-					Coeff.WaveletId=CoeffIter->WaveletId;
-					Coeff.Edge=CoeffIter->Edge;
-					Coeff.FilterId=CoeffIter->FilterId;
-					Coeff.N=N;
+					Coeff.WaveletId = CoeffIter->WaveletId;
+					Coeff.Edge = CoeffIter->Edge;
+					Coeff.FilterId = CoeffIter->FilterId;
+					Coeff.N = N;
 					SignificantCoeffs[i].push_back(Coeff);
-					CoeffIter=InsignificantCoeffs[i].erase(CoeffIter);
+					CoeffIter = InsignificantCoeffs[i].erase(CoeffIter);
 				}
 			}
 
-			//2.2 for each entry (i,j) in the LIS do:
-			for (SetIter=InsignificantSets[i].begin();
-				SetIter!=InsignificantSets[i].end();)
+			// 2.2 for each entry (i,j) in the LIS do:
+			for (SetIter = InsignificantSets[i].begin();
+				 SetIter != InsignificantSets[i].end();)
 			{
-				if (SetIter->Type==1)
+				if (SetIter->Type == 1)
 				{
 					// 2.2.1 if the entry is of type A
 					// Output Sn(D(i,j))
-					Sn=this->DecodeSignificance(i);
+					Sn = this->DecodeSignificance(i);
 
-
-					if (Sn==0)
+					if (Sn == 0)
 						SetIter++;
 					else
 					{
 						// is Sn(i,j)=1 then:
-						Descendants=0;
-						MaxCoeff=0;
-						FilterId=SetIter->FilterId-1;
-
+						Descendants = 0;
+						MaxCoeff = 0;
+						FilterId = SetIter->FilterId - 1;
 
 						// for each (k,l) in O(i,j)
-						Edge=this->Filters[SetIter->FilterId]->TreeFirstChildEdge->GetId(SetIter->Edge);
-						while (Edge>=0)
+						Edge = this->Filters[SetIter->FilterId]->TreeFirstChildEdge->GetId(SetIter->Edge);
+						while (Edge >= 0)
 						{
-							this->GetFirstGoodEdge(Edge,FilterId,Edge2,FilterId2,Vertex);
-							if (Vertex>=0)
+							this->GetFirstGoodEdge(Edge, FilterId, Edge2, FilterId2, Vertex);
+							if (Vertex >= 0)
 							{
-								if (FilterId2>0)
+								if (FilterId2 > 0)
 									Descendants++;
 
-								Coeff.WaveletId=Vertex-this->Filters[FilterId2]->GetSubdivisionInput()->GetNumberOfPoints();
-								Coeff.Edge=Edge2;
-								Coeff.FilterId=FilterId2;
-								Coeff.N=N;
+								Coeff.WaveletId = Vertex - this->Filters[FilterId2]->GetSubdivisionInput()->GetNumberOfPoints();
+								Coeff.Edge = Edge2;
+								Coeff.FilterId = FilterId2;
+								Coeff.N = N;
 
+								// Input Sn(k,l)
+								Sn = this->DecodeSignificance(i);
 
-								//Input Sn(k,l)
-								Sn=this->DecodeSignificance(i);
-
-								if (Sn==0)
+								if (Sn == 0)
 								{
 									// if Sn(k,l)=0 then add (k,l) to the end of the LIP
 									InsignificantCoeffs[i].push_back(Coeff);
@@ -1093,96 +1066,96 @@ void vtkMultiresolutionIO::DecodeProgressivePrecision()
 								else
 								{
 									// if Sn(k,l)=1 then add (k,l) to the end of the LSP and output the sign of cij
-									Sn=this->DecodeSign();
-									if (Sn==1)
-										this->Wavelets[Coeff.FilterId]->GetPointer(Coeff.WaveletId*3)[i]=-1.5*pow(2.0,N);
+									Sn = this->DecodeSign();
+									if (Sn == 1)
+										this->Wavelets[Coeff.FilterId]->GetPointer(Coeff.WaveletId * 3)[i] = -1.5 * pow(2.0, N);
 									else
-										this->Wavelets[Coeff.FilterId]->GetPointer(Coeff.WaveletId*3)[i]=1.5*pow(2.0,N);
+										this->Wavelets[Coeff.FilterId]->GetPointer(Coeff.WaveletId * 3)[i] = 1.5 * pow(2.0, N);
 
 									SignificantCoeffs[i].push_back(Coeff);
 								}
 							}
-							if (FilterId>=0)
-								Edge=this->TreeNextChildEdge[SetIter->FilterId]->GetId(Edge);
+							if (FilterId >= 0)
+								Edge = this->TreeNextChildEdge[SetIter->FilterId]->GetId(Edge);
 							else
-								Edge=-1;
+								Edge = -1;
 						}
 						// if L(i,j) non empty
-						if ((Descendants>0)&&(FilterId>0))
+						if ((Descendants > 0) && (FilterId > 0))
 						{
-							SetIter->Type=0;
+							SetIter->Type = 0;
 						}
 						else
 						{
 							// else remove (i,j) from the LIS
-							SetIter=InsignificantSets[i].erase(SetIter);
+							SetIter = InsignificantSets[i].erase(SetIter);
 						}
 					}
 				}
 
 				// 2.2.2 if the entry is of type B then
-				if (SetIter!=InsignificantSets[i].end())
+				if (SetIter != InsignificantSets[i].end())
 				{
-					if (SetIter->Type==0)
+					if (SetIter->Type == 0)
 					{
-						Sn=this->DecodeSignificance(i);
+						Sn = this->DecodeSignificance(i);
 
 						// Input Sn(L(i,j))
-						if (Sn==0)
+						if (Sn == 0)
 							SetIter++;
 						else
 						{
 							// if Sn(L(i,j))=1 then
-							MaxCoeff=0;
-							Edge=this->Filters[SetIter->FilterId]->TreeFirstChildEdge->GetId(SetIter->Edge);
-							FilterId=SetIter->FilterId-1;
+							MaxCoeff = 0;
+							Edge = this->Filters[SetIter->FilterId]->TreeFirstChildEdge->GetId(SetIter->Edge);
+							FilterId = SetIter->FilterId - 1;
 							// add each (k,l) In O(i,j) to the end of the LIS as an entry of type A
-							while (Edge>=0)
+							while (Edge >= 0)
 							{
-								this->GetFirstGoodEdge(Edge,FilterId,Edge2,FilterId2,Vertex);
-								if ((Vertex>=0)&&(FilterId2>0))
+								this->GetFirstGoodEdge(Edge, FilterId, Edge2, FilterId2, Vertex);
+								if ((Vertex >= 0) && (FilterId2 > 0))
 								{
-									Set.Edge=Edge2;
-									Set.FilterId=FilterId2;
-									Set.Type=1;
+									Set.Edge = Edge2;
+									Set.FilterId = FilterId2;
+									Set.Type = 1;
 									InsignificantSets[i].push_back(Set);
 								}
-								Edge=this->TreeNextChildEdge[SetIter->FilterId]->GetId(Edge);
+								Edge = this->TreeNextChildEdge[SetIter->FilterId]->GetId(Edge);
 							}
 							// remove (i,j) from the LIS;
-							SetIter=InsignificantSets[i].erase(SetIter);
+							SetIter = InsignificantSets[i].erase(SetIter);
 						}
 					}
 				}
-			}		
+			}
 
 			// Refinement pass
-			int newnumber=0,ref;
+			int newnumber = 0, ref;
 			double *WaveletPointer;
-			number=0;
-			for(CoeffIter=SignificantCoeffs[i].begin();
-				CoeffIter!=SignificantCoeffs[i].end();CoeffIter++)
+			number = 0;
+			for (CoeffIter = SignificantCoeffs[i].begin();
+				 CoeffIter != SignificantCoeffs[i].end(); CoeffIter++)
 			{
 				number++;
-				if (CoeffIter->N!=N)
+				if (CoeffIter->N != N)
 				{
 					newnumber++;
-					WaveletPointer=this->Wavelets[CoeffIter->FilterId]->GetPointer(CoeffIter->WaveletId*3);
-					ref=this->DecodeCoeffRefinement();
+					WaveletPointer = this->Wavelets[CoeffIter->FilterId]->GetPointer(CoeffIter->WaveletId * 3);
+					ref = this->DecodeCoeffRefinement();
 
-					if (WaveletPointer[i]<0)
+					if (WaveletPointer[i] < 0)
 					{
-						if (ref==1)
-							WaveletPointer[i]-=pow(2.0, N-1);
+						if (ref == 1)
+							WaveletPointer[i] -= pow(2.0, N - 1);
 						else
-							WaveletPointer[i]+=pow(2.0, N-1);
+							WaveletPointer[i] += pow(2.0, N - 1);
 					}
 					else
 					{
-						if (ref==1)
-							WaveletPointer[i]+=pow(2.0, N-1);
+						if (ref == 1)
+							WaveletPointer[i] += pow(2.0, N - 1);
 						else
-							WaveletPointer[i]-=pow(2.0,N-1);
+							WaveletPointer[i] -= pow(2.0, N - 1);
 					}
 				}
 			}
@@ -1190,130 +1163,126 @@ void vtkMultiresolutionIO::DecodeProgressivePrecision()
 
 		N--;
 
-		cout<<"Bitplane :"<<BitPlane<<", Threshold="<<T<<endl;
-		T=T/2;
+		cout << "Bitplane :" << BitPlane << ", Threshold=" << T << endl;
+		T = T / 2;
 
 		this->SynthesisMeshes[0]->Modified();
-		if (BitPlane>=this->NumberOfStartBitPlanes-1)
+		if (BitPlane >= this->NumberOfStartBitPlanes - 1)
 		{
 			this->ArithmeticCoder->StopDecoding();
 			this->Reconstruct();
-			if (this->Display!=0)
+			if (this->Display != 0)
 			{
 				this->MeshWindow->SetInputData(this->SynthesisMeshes[0]);
 				this->MeshWindow->Render();
 			}
-			if ((this->Display==2)||((BitPlane==this->NumberOfStartBitPlanes-1)&&(this->Display!=0)))
+			if ((this->Display == 2) || ((BitPlane == this->NumberOfStartBitPlanes - 1) && (this->Display != 0)))
 				this->MeshWindow->Interact();
-			if (this->WriteOutput==1)
+			if (this->WriteOutput == 1)
 			{
-				if (this->FileType==0)
+				if (this->FileType == 0)
 				{
 					std::stringstream strfile;
-					strfile<<"Mesh"<<BitPlane<<".iv";
+					strfile << "Mesh" << BitPlane << ".iv";
 					this->Filters[0]->GetOutput()->WriteInventor(strfile.str().c_str());
 				}
 				else
 				{
 					std::stringstream strfile;
-					strfile<<"Mesh"<<BitPlane<<".ply";
-					vtkPLYWriter *Writer=vtkPLYWriter::New();
+					strfile << "Mesh" << BitPlane << ".ply";
+					vtkPLYWriter *Writer = vtkPLYWriter::New();
 					Writer->SetInputData(this->Filters[0]->GetOutput());
 					Writer->SetFileName(strfile.str().c_str());
-					//Writer->SetFileTypeToASCII();
+					// Writer->SetFileTypeToASCII();
 					Writer->Write();
 					Writer->Delete();
 				}
 			}
-			if (this->Capture==1)
+			if (this->Capture == 1)
 			{
 				std::stringstream strfile;
-				strfile<<"Mesh"<<BitPlane<<".bmp";
+				strfile << "Mesh" << BitPlane << ".bmp";
 				this->MeshWindow->Capture(strfile.str().c_str());
 			}
 		}
 	}
 
-	if (this->Display!=0)
+	if (this->Display != 0)
 	{
 		this->MeshWindow->Render();
 		this->MeshWindow->Interact();
 	}
 	this->ArithmeticCoder->CloseFile();
-	this->Output=this->SynthesisMeshes[0];
+	this->Output = this->SynthesisMeshes[0];
 }
 
 void vtkMultiresolutionIO::Execute()
 {
-
 }
 
 void vtkMultiresolutionIO::Approximate()
 {
 	int i;
-	for (i=0;i<this->NumberOfFilters;i++)
+	for (i = 0; i < this->NumberOfFilters; i++)
 	{
 		this->Filters[i]->SetGeometryPrediction(this->GeometryPrediction);
 		this->Filters[i]->SetLifting(this->Lifting);
 		this->Filters[i]->SetLiftingRadius(this->LiftingRadius);
 		this->Filters[i]->Approximate();
-
 	}
 }
 
 void vtkMultiresolutionIO::Reconstruct()
 {
 	int i;
-	for (i=this->NumberOfFilters-1;i>=0;i--)
+	for (i = this->NumberOfFilters - 1; i >= 0; i--)
 	{
 		this->Filters[i]->SetGeometryPrediction(this->GeometryPrediction);
 		this->Filters[i]->SetLifting(this->Lifting);
 		this->Filters[i]->SetLiftingRadius(this->LiftingRadius);
 		this->Filters[i]->Reconstruct();
-		this->SynthesisMeshes[i]=this->Filters[i]->GetOutput();
+		this->SynthesisMeshes[i] = this->Filters[i]->GetOutput();
 	}
 	this->SynthesisMeshes[0]->Modified();
 	this->SynthesisMeshes[0]->GetPoints()->Modified();
-	this->Output=this->SynthesisMeshes[0];
+	this->Output = this->SynthesisMeshes[0];
 	this->Output->Register(this);
 }
 void vtkMultiresolutionIO::Read()
 {
-	this->ArithmeticCoder=vtkArithmeticCoder::New();
-	this->ArithmeticCoder->OpenFile(this->FileName,0);
+	this->ArithmeticCoder = vtkArithmeticCoder::New();
+	this->ArithmeticCoder->OpenFile(this->FileName, 0);
 	this->ArithmeticCoder->InitConnectivityQSModels(0);
 	this->ArithmeticCoder->StartDecoding();
-	this->ArithmeticType=this->ArithmeticCoder->DecodeBit();
+	this->ArithmeticType = this->ArithmeticCoder->DecodeBit();
 
-	vtkSurface *BaseMesh=this->DecodeMeshConnectivity();
+	vtkSurface *BaseMesh = this->DecodeMeshConnectivity();
 	this->DecodeMeshGeometry(BaseMesh);
 	this->DecodeLiftingProperties();
-	this->NumberOfFilters=this->ArithmeticCoder->DecodeByte();
+	this->NumberOfFilters = this->ArithmeticCoder->DecodeByte();
 
-	int Type,i;
-	int bit1,bit2;
-	for (i=this->NumberOfFilters-1;i>=0;i--)
+	int Type, i;
+	int bit1, bit2;
+	for (i = this->NumberOfFilters - 1; i >= 0; i--)
 	{
-		bit1=this->ArithmeticCoder->DecodeBit();
-		bit2=this->ArithmeticCoder->DecodeBit();
-		Type=bit1*2+bit2;
+		bit1 = this->ArithmeticCoder->DecodeBit();
+		bit2 = this->ArithmeticCoder->DecodeBit();
+		Type = bit1 * 2 + bit2;
 
-		this->Filters[i]=this->NewFilter(Type);
+		this->Filters[i] = this->NewFilter(Type);
 		this->Filters[i]->SetSubdivisionType(Type);
 	}
 
-
 	this->ArithmeticCoder->StopDecoding();
 
-
 	if (this->DisplayText)
-		cout<<"Level 0 : "<<BaseMesh->GetNumberOfCells()
-		<<" faces, "<<BaseMesh->GetNumberOfPoints()<<" vertices and "
-		<<BaseMesh->GetNumberOfEdges()<<" edges "<<endl;
+		cout << "Level 0 : " << BaseMesh->GetNumberOfCells()
+			 << " faces, " << BaseMesh->GetNumberOfPoints() << " vertices and "
+			 << BaseMesh->GetNumberOfEdges() << " edges " << endl;
 
-	this->SynthesisMeshes[this->NumberOfFilters]=BaseMesh;
-	if (this->ArithmeticType!=0)
-        this->DecodeProgressiveResolution();
+	this->SynthesisMeshes[this->NumberOfFilters] = BaseMesh;
+	if (this->ArithmeticType != 0)
+		this->DecodeProgressiveResolution();
 	else
 		this->DecodeProgressivePrecision();
 }
@@ -1332,7 +1301,7 @@ void vtkMultiresolutionIO::ReadPerMesh()
 	this->ArithmeticCoder->StartDecoding();
 	this->ArithmeticType = this->ArithmeticCoder->DecodeBit();
 
-	vtkSurface* BaseMesh = this->DecodeMeshConnectivity();
+	vtkSurface *BaseMesh = this->DecodeMeshConnectivity();
 	this->DecodeMeshGeometry(BaseMesh);
 	this->DecodeLiftingProperties();
 	this->NumberOfFilters = this->ArithmeticCoder->DecodeByte();
@@ -1370,7 +1339,10 @@ void vtkMultiresolutionIO::ReadPerMesh()
 	// for each resolution in multi-resolution mesh:
 	//   (1) print reading time, rendering time, (reading + rendering) time
 	out.open(outinfo, ios::app);
-	out << "level \t" << "reading_time  \t" << "rendering_time \t" << "total_time" << endl;
+	out << "level \t"
+		<< "reading_time  \t"
+		<< "rendering_time \t"
+		<< "total_time" << endl;
 	out << this->NumberOfFilters << " \t" << reading_time << " \t" << rendering_time << " \t" << reading_time + rendering_time << endl;
 	out.close();
 
@@ -1384,40 +1356,40 @@ void vtkMultiresolutionIO::ReadPerMesh()
 void vtkMultiresolutionIO::DecodeProgressiveResolution()
 {
 	int j;
-	double start2,finish2;
+	double start2, finish2;
 
-	if (this->Display!=0)
+	if (this->Display != 0)
 	{
 		this->MeshWindow->SetInputData(this->SynthesisMeshes[this->NumberOfFilters]);
 		this->MeshWindow->Render();
 		this->MeshWindow->SetWindowName("Progressive resolution reconstruction");
-#if ( (VTK_MAJOR_VERSION >= 5))
-		start2=this->Timer->GetUniversalTime();
-		finish2=this->Timer->GetUniversalTime();
-		while (finish2 - start2<this->Time)
-			finish2=this->Timer->GetUniversalTime();
+#if ((VTK_MAJOR_VERSION >= 5))
+		start2 = this->Timer->GetUniversalTime();
+		finish2 = this->Timer->GetUniversalTime();
+		while (finish2 - start2 < this->Time)
+			finish2 = this->Timer->GetUniversalTime();
 
 #else
-		start2=this->Timer->GetCurrentTime();
-		finish2=this->Timer->GetCurrentTime();
-		while (finish2 - start2<this->Time)
-			finish2=this->Timer->GetCurrentTime();
-#endif			
+		start2 = this->Timer->GetCurrentTime();
+		finish2 = this->Timer->GetCurrentTime();
+		while (finish2 - start2 < this->Time)
+			finish2 = this->Timer->GetCurrentTime();
+#endif
 		this->MeshWindow->Interact();
 	}
 
-	for (j=this->NumberOfFilters-1;j>=0;j--)
+	for (j = this->NumberOfFilters - 1; j >= 0; j--)
 	{
-		this->Filters[j]->SetInput(this->SynthesisMeshes[j+1]);
-		this->Filters[j]->SetIOType(2);	
+		this->Filters[j]->SetInput(this->SynthesisMeshes[j + 1]);
+		this->Filters[j]->SetIOType(2);
 		this->Filters[j]->SetLifting(this->Lifting);
 		this->Filters[j]->SetLiftingRadius(this->LiftingRadius);
 		this->Filters[j]->SetArithmeticType(1);
-		this->Filters[j]->ArithmeticCoder=this->ArithmeticCoder;
-		this->Filters[j]->Quantization=this->Quantization;
+		this->Filters[j]->ArithmeticCoder = this->ArithmeticCoder;
+		this->Filters[j]->Quantization = this->Quantization;
 
 		this->ArithmeticCoder->StartDecoding();
-		if (j==this->NumberOfFilters-1)
+		if (j == this->NumberOfFilters - 1)
 			this->DecodeScalingFactors(this->Filters[j]->GetSubdivisionInput());
 
 		/// <summary>
@@ -1426,76 +1398,74 @@ void vtkMultiresolutionIO::DecodeProgressiveResolution()
 		clock_t start;
 		clock_t end;
 
-		//start = clock();
+		// start = clock();
 		this->Filters[j]->Subdivide();
-		//cout << "Subdivide. " << (double)(clock() - start) / CLOCKS_PER_SEC << " sec. elapsed" << endl;
+		// cout << "Subdivide. " << (double)(clock() - start) / CLOCKS_PER_SEC << " sec. elapsed" << endl;
 
-		this->SynthesisMeshes[j]=this->Filters[j]->GetOutput();
+		this->SynthesisMeshes[j] = this->Filters[j]->GetOutput();
 		this->ArithmeticCoder->StopDecoding();
 		this->ArithmeticCoder->StartDecoding();
 
-		//start = clock();
+		// start = clock();
 		this->Filters[j]->ReadCoefficients();
-		//cout << "ReadCoefficients. " << (double)(clock() - start) / CLOCKS_PER_SEC << " sec. elapsed" << endl;
+		// cout << "ReadCoefficients. " << (double)(clock() - start) / CLOCKS_PER_SEC << " sec. elapsed" << endl;
 
 		this->ArithmeticCoder->StopDecoding();
 
-		//start = clock();
+		// start = clock();
 		this->Filters[j]->Reconstruct();
-		//cout << "Reconstruct. " << (double)(clock() - start) / CLOCKS_PER_SEC << " sec. elapsed" << endl;
+		// cout << "Reconstruct. " << (double)(clock() - start) / CLOCKS_PER_SEC << " sec. elapsed" << endl;
 
 		if (this->DisplayText)
-			cout<<"Level "<<this->NumberOfFilters-j<<": "<<this->SynthesisMeshes[j]->GetNumberOfCells()
-			<<" faces, "<<this->SynthesisMeshes[j]->GetNumberOfPoints()<<" vertices and "
-			<<this->SynthesisMeshes[j]->GetNumberOfEdges()<<" edges "<<endl;
+			cout << "Level " << this->NumberOfFilters - j << ": " << this->SynthesisMeshes[j]->GetNumberOfCells()
+				 << " faces, " << this->SynthesisMeshes[j]->GetNumberOfPoints() << " vertices and "
+				 << this->SynthesisMeshes[j]->GetNumberOfEdges() << " edges " << endl;
 
-
-		if (this->Display!=0)
+		if (this->Display != 0)
 		{
 			this->MeshWindow->SetInputData(this->Filters[j]->GetOutput());
 			this->MeshWindow->Render();
 
-#if ( (VTK_MAJOR_VERSION >= 5))
-			start2=this->Timer->GetUniversalTime();
-			finish2=this->Timer->GetUniversalTime();
-			while (finish2 - start2<this->Time)
-				finish2=this->Timer->GetUniversalTime();
+#if ((VTK_MAJOR_VERSION >= 5))
+			start2 = this->Timer->GetUniversalTime();
+			finish2 = this->Timer->GetUniversalTime();
+			while (finish2 - start2 < this->Time)
+				finish2 = this->Timer->GetUniversalTime();
 
 #else
-			start2=this->Timer->GetCurrentTime();
-			finish2=this->Timer->GetCurrentTime();
-			while (finish2 - start2<this->Time)
-				finish2=this->Timer->GetCurrentTime();
+			start2 = this->Timer->GetCurrentTime();
+			finish2 = this->Timer->GetCurrentTime();
+			while (finish2 - start2 < this->Time)
+				finish2 = this->Timer->GetCurrentTime();
 #endif
-			if (this->Capture==1)
+			if (this->Capture == 1)
 			{
 				std::stringstream strfile;
-				strfile<<"Mesh"<<this->NumberOfFilters-j<<".bmp";
+				strfile << "Mesh" << this->NumberOfFilters - j << ".bmp";
 				this->MeshWindow->Capture(strfile.str().c_str());
 			}
 
-			if (this->Display==2)
+			if (this->Display == 2)
 			{
-				cout<<"Window interaction: presse 'e' key to exit from interaction"<<endl;
+				cout << "Window interaction: presse 'e' key to exit from interaction" << endl;
 				this->MeshWindow->Interact();
 			}
 		}
-
 	}
 
 	if (this->DisplayText)
-		cout<<"Final mesh: "<<this->SynthesisMeshes[0]->GetNumberOfCells()<<" faces"<<endl;
+		cout << "Final mesh: " << this->SynthesisMeshes[0]->GetNumberOfCells() << " faces" << endl;
 	this->ArithmeticCoder->CloseFile();
 
 	this->SynthesisMeshes[0]->Modified();
-	if (this->Display!=0)
+	if (this->Display != 0)
 	{
 		this->MeshWindow->SetInputData(this->SynthesisMeshes[0]);
 		this->MeshWindow->Render();
-		cout<<"Window interaction: presse 'e' key to exit from interaction"<<endl;
+		cout << "Window interaction: presse 'e' key to exit from interaction" << endl;
 		this->MeshWindow->Interact();
 	}
-	if (this->WriteOutput==-1)
+	if (this->WriteOutput == -1)
 	{
 		// output file name initialization
 		std::string strout;
@@ -1507,7 +1477,7 @@ void vtkMultiresolutionIO::DecodeProgressiveResolution()
 		else
 			strout = "Mesh";
 
-		this->Filters[this->NumberOfFilters-1]->GetSubdivisionInput()->UnQuantizeCoordinates();
+		this->Filters[this->NumberOfFilters - 1]->GetSubdivisionInput()->UnQuantizeCoordinates();
 		if (this->FileType == 0)
 		{
 			std::stringstream strfile;
@@ -1516,34 +1486,34 @@ void vtkMultiresolutionIO::DecodeProgressiveResolution()
 		}
 		else
 		{
-			vtkPLYWriter *Writer=vtkPLYWriter::New();
+			vtkPLYWriter *Writer = vtkPLYWriter::New();
 			std::stringstream strfile;
 			strfile << strout << "0.ply";
 			Writer->SetFileName(strfile.str().c_str());
-			Writer->SetInputData(this->Filters[this->NumberOfFilters-1]->GetSubdivisionInput());
-			//Writer->SetFileTypeToASCII();
+			Writer->SetInputData(this->Filters[this->NumberOfFilters - 1]->GetSubdivisionInput());
+			// Writer->SetFileTypeToASCII();
 			Writer->Write();
 			Writer->Delete();
 		}
-		double Factor,Tx,Ty,Tz;
-		this->Filters[this->NumberOfFilters-1]->GetSubdivisionInput()->GetScalingFactors(Factor,Tx,Ty,Tz);
-		for (j=0;j<this->NumberOfFilters;j++)
+		double Factor, Tx, Ty, Tz;
+		this->Filters[this->NumberOfFilters - 1]->GetSubdivisionInput()->GetScalingFactors(Factor, Tx, Ty, Tz);
+		for (j = 0; j < this->NumberOfFilters; j++)
 		{
-			this->Filters[j]->GetOutput()->SetScalingFactors(Factor,Tx,Ty,Tz);
+			this->Filters[j]->GetOutput()->SetScalingFactors(Factor, Tx, Ty, Tz);
 			this->Filters[j]->GetOutput()->UnQuantizeCoordinates();
 			std::stringstream strfile;
-			if (this->FileType==0)
+			if (this->FileType == 0)
 			{
-				strfile << strout << j+1 << ".iv";
+				strfile << strout << j + 1 << ".iv";
 				this->Filters[j]->GetOutput()->WriteInventor(strfile.str().c_str());
 			}
 			else
 			{
-				strfile << strout << j+1 << ".ply";
-				vtkPLYWriter *Writer=vtkPLYWriter::New();
+				strfile << strout << j + 1 << ".ply";
+				vtkPLYWriter *Writer = vtkPLYWriter::New();
 				Writer->SetFileName(strfile.str().c_str());
 				Writer->SetInputData(this->Filters[j]->GetOutput());
-				//Writer->SetFileTypeToASCII();
+				// Writer->SetFileTypeToASCII();
 				Writer->Write();
 				Writer->Delete();
 			}
@@ -1574,7 +1544,7 @@ void vtkMultiresolutionIO::DecodeProgressiveResolution()
 		}
 		else
 		{
-			for (j = 0; j < MIN(this->WriteOutput,this->NumberOfFilters); j++)
+			for (j = 0; j < MIN(this->WriteOutput, this->NumberOfFilters); j++)
 			{
 				this->Filters[j]->GetOutput()->SetScalingFactors(Factor, Tx, Ty, Tz);
 				this->Filters[j]->GetOutput()->UnQuantizeCoordinates();
@@ -1582,16 +1552,16 @@ void vtkMultiresolutionIO::DecodeProgressiveResolution()
 				std::stringstream strfile;
 				if (this->FileType == 0)
 				{
-					strfile << strout << j+1 << ".iv";
+					strfile << strout << j + 1 << ".iv";
 					this->Filters[j]->GetOutput()->WriteInventor(strfile.str().c_str());
 				}
 				else
 				{
-					strfile << strout << j+1 << ".ply";
-					vtkPLYWriter* Writer = vtkPLYWriter::New();
+					strfile << strout << j + 1 << ".ply";
+					vtkPLYWriter *Writer = vtkPLYWriter::New();
 					Writer->SetFileName(strfile.str().c_str());
 					Writer->SetInputData(this->Filters[j]->GetOutput());
-					//Writer->SetFileTypeToASCII();
+					// Writer->SetFileTypeToASCII();
 					Writer->Write();
 					Writer->Delete();
 				}
@@ -1611,7 +1581,7 @@ void vtkMultiresolutionIO::DecodeProgressiveResolutionDS()
 		this->MeshWindow->SetInputData(this->SynthesisMeshes[this->NumberOfFilters]);
 		this->MeshWindow->Render();
 		this->MeshWindow->SetWindowName("Progressive resolution reconstruction");
-#if ( (VTK_MAJOR_VERSION >= 5))
+#if ((VTK_MAJOR_VERSION >= 5))
 		start2 = this->Timer->GetUniversalTime();
 		finish2 = this->Timer->GetUniversalTime();
 		while (finish2 - start2 < this->Time)
@@ -1622,7 +1592,7 @@ void vtkMultiresolutionIO::DecodeProgressiveResolutionDS()
 		finish2 = this->Timer->GetCurrentTime();
 		while (finish2 - start2 < this->Time)
 			finish2 = this->Timer->GetCurrentTime();
-#endif			
+#endif
 		this->MeshWindow->Interact();
 	}
 
@@ -1652,7 +1622,6 @@ void vtkMultiresolutionIO::DecodeProgressiveResolutionDS()
 		if (j == this->NumberOfFilters - 1)
 			this->DecodeScalingFactors(this->Filters[j]->GetSubdivisionInput());
 
-
 		this->Filters[j]->Subdivide();
 		this->SynthesisMeshes[j] = this->Filters[j]->GetOutput();
 		this->ArithmeticCoder->StopDecoding();
@@ -1675,44 +1644,41 @@ void vtkMultiresolutionIO::DecodeProgressiveResolutionDS()
 		out << j << " \t" << reading_time << " \t" << rendering_time << " \t" << reading_time + rendering_time << endl;
 		out.close();
 
-
-
 		if (this->DisplayText)
 			cout << "Level " << this->NumberOfFilters - j << ": " << this->SynthesisMeshes[j]->GetNumberOfCells()
-			<< " faces, " << this->SynthesisMeshes[j]->GetNumberOfPoints() << " vertices and "
-			<< this->SynthesisMeshes[j]->GetNumberOfEdges() << " edges " << endl;
+				 << " faces, " << this->SynthesisMeshes[j]->GetNumberOfPoints() << " vertices and "
+				 << this->SynthesisMeshes[j]->GetNumberOfEdges() << " edges " << endl;
 
-
-//		if (this->Display != 0)
-//		{
-//			this->MeshWindow->SetInputData(this->Filters[j]->GetOutput());
-//			this->MeshWindow->Render();
-//
-//#if ( (VTK_MAJOR_VERSION >= 5))
-//			start2 = this->Timer->GetUniversalTime();
-//			finish2 = this->Timer->GetUniversalTime();
-//			while (finish2 - start2 < this->Time)
-//				finish2 = this->Timer->GetUniversalTime();
-//
-//#else
-//			start2 = this->Timer->GetCurrentTime();
-//			finish2 = this->Timer->GetCurrentTime();
-//			while (finish2 - start2 < this->Time)
-//				finish2 = this->Timer->GetCurrentTime();
-//#endif
-//			if (this->Capture == 1)
-//			{
-//				std::stringstream strfile;
-//				strfile << "Mesh" << this->NumberOfFilters - j << ".bmp";
-//				this->MeshWindow->Capture(strfile.str().c_str());
-//			}
-//
-//			if (this->Display == 2)
-//			{
-//				cout << "Window interaction: presse 'e' key to exit from interaction" << endl;
-//				this->MeshWindow->Interact();
-//			}
-//		}
+		//		if (this->Display != 0)
+		//		{
+		//			this->MeshWindow->SetInputData(this->Filters[j]->GetOutput());
+		//			this->MeshWindow->Render();
+		//
+		//#if ( (VTK_MAJOR_VERSION >= 5))
+		//			start2 = this->Timer->GetUniversalTime();
+		//			finish2 = this->Timer->GetUniversalTime();
+		//			while (finish2 - start2 < this->Time)
+		//				finish2 = this->Timer->GetUniversalTime();
+		//
+		//#else
+		//			start2 = this->Timer->GetCurrentTime();
+		//			finish2 = this->Timer->GetCurrentTime();
+		//			while (finish2 - start2 < this->Time)
+		//				finish2 = this->Timer->GetCurrentTime();
+		//#endif
+		//			if (this->Capture == 1)
+		//			{
+		//				std::stringstream strfile;
+		//				strfile << "Mesh" << this->NumberOfFilters - j << ".bmp";
+		//				this->MeshWindow->Capture(strfile.str().c_str());
+		//			}
+		//
+		//			if (this->Display == 2)
+		//			{
+		//				cout << "Window interaction: presse 'e' key to exit from interaction" << endl;
+		//				this->MeshWindow->Interact();
+		//			}
+		//		}
 	}
 
 	this->ArithmeticCoder->CloseFile();
@@ -1739,21 +1705,21 @@ void vtkMultiresolutionIO::DecodeProgressiveResolutionDS()
 
 		std::stringstream strfile;
 		strfile << strout << this->NumberOfFilters - j << ".ply";
-		vtkPLYWriter* Writer = vtkPLYWriter::New();
+		vtkPLYWriter *Writer = vtkPLYWriter::New();
 		Writer->SetFileName(strfile.str().c_str());
 		Writer->SetInputData(this->Filters[j]->GetOutput());
 		Writer->Write();
 		Writer->Delete();
 	}
 
-	//if (this->Display != 0)
+	// if (this->Display != 0)
 	//{
 	//	this->MeshWindow->SetInputData(this->SynthesisMeshes[0]);
 	//	this->MeshWindow->Render();
 	//	cout << "Window interaction: presse 'e' key to exit from interaction" << endl;
 	//	this->MeshWindow->Interact();
-	//}
-	//if (this->WriteOutput == 1)
+	// }
+	// if (this->WriteOutput == 1)
 	//{
 	//	// output file name initialization
 	//	std::string strout;
@@ -1805,7 +1771,7 @@ void vtkMultiresolutionIO::DecodeProgressiveResolutionDS()
 	//		}
 	//	}
 	//}
-	//if (this->WriteOutput == 2)
+	// if (this->WriteOutput == 2)
 	//{
 	//	// output file name initialization
 	//	std::string strout;
@@ -1861,36 +1827,35 @@ void vtkMultiresolutionIO::Write()
 	vtkSurface *BaseMesh;
 
 	this->PointsIds->SetNumberOfIds(this->Filters[0]->GetOutput()->GetNumberOfPoints());
-	for (Id=0;Id<this->Filters[0]->GetOutput()->GetNumberOfPoints();Id++)
+	for (Id = 0; Id < this->Filters[0]->GetOutput()->GetNumberOfPoints(); Id++)
 	{
-		this->PointsIds->SetId(Id,Id);
+		this->PointsIds->SetId(Id, Id);
 	}
-	BaseMesh=this->Filters[this->NumberOfFilters-1]->GetSubdivisionInput();
+	BaseMesh = this->Filters[this->NumberOfFilters - 1]->GetSubdivisionInput();
 
-	this->ArithmeticCoder=vtkArithmeticCoder::New();
-	this->ArithmeticCoder->OpenFile(this->FileName,1);
+	this->ArithmeticCoder = vtkArithmeticCoder::New();
+	this->ArithmeticCoder->OpenFile(this->FileName, 1);
 	this->ArithmeticCoder->InitConnectivityQSModels(1);
 	this->ArithmeticCoder->StartCoding();
-	this->ArithmeticCoder->EncodeBit(this->ArithmeticType!=0);
+	this->ArithmeticCoder->EncodeBit(this->ArithmeticType != 0);
 	this->EncodeMeshConnectivity(BaseMesh);
 	this->EncodeMeshGeometry(BaseMesh);
 	this->EncodeLiftingProperties();
 	this->ArithmeticCoder->EncodeByte(this->NumberOfFilters);
 
-	int Type,i;
-	int bit1,bit2;
-	for (i=this->NumberOfFilters-1;i>=0;i--)
+	int Type, i;
+	int bit1, bit2;
+	for (i = this->NumberOfFilters - 1; i >= 0; i--)
 	{
-		Type=this->Filters[i]->GetSubdivisionType();
-		bit1=Type&2;
-		bit2=Type&1;
-		this->ArithmeticCoder->EncodeBit(bit1!=0);
-		this->ArithmeticCoder->EncodeBit(bit2!=0);
+		Type = this->Filters[i]->GetSubdivisionType();
+		bit1 = Type & 2;
+		bit2 = Type & 1;
+		this->ArithmeticCoder->EncodeBit(bit1 != 0);
+		this->ArithmeticCoder->EncodeBit(bit2 != 0);
 	}
 
-
-	this->BaseMeshBitRate=this->ArithmeticCoder->StopCoding()*8;
-	if (this->ArithmeticType==1)
+	this->BaseMeshBitRate = this->ArithmeticCoder->StopCoding() * 8;
+	if (this->ArithmeticType == 1)
 		this->EncodeProgressiveResolution();
 	else
 		this->EncodeProgressivePrecision();
@@ -1901,48 +1866,46 @@ void vtkMultiresolutionIO::EncodeProgressiveResolution()
 	int GeometryBitrate[1000];
 	int ConnectivityBitrate[1000];
 
-
-	for (j=this->NumberOfFilters-1;j>=0;j--)
+	for (j = this->NumberOfFilters - 1; j >= 0; j--)
 	{
 		this->ArithmeticCoder->StartCoding();
 		this->Filters[j]->SetIOType(1);
-		this->Filters[j]->ArithmeticCoder=this->ArithmeticCoder;
+		this->Filters[j]->ArithmeticCoder = this->ArithmeticCoder;
 		this->Filters[j]->SetPointsIds(this->PointsIds);
-		this->Filters[j]->SetInput(this->SynthesisMeshes[j+1]);
+		this->Filters[j]->SetInput(this->SynthesisMeshes[j + 1]);
 
-		
-		if (j==this->NumberOfFilters-1)
+		if (j == this->NumberOfFilters - 1)
 		{
 			// *** We modify MergeInput's scaling factor... so this cannot be used
-			//if (this->Filters[0]->GetMergeInput()!=0)
-   //             this->EncodeScalingFactors(this->Filters[0]->GetMergeInput());
-			//else
+			// if (this->Filters[0]->GetMergeInput()!=0)
+			//             this->EncodeScalingFactors(this->Filters[0]->GetMergeInput());
+			// else
 			//	this->EncodeScalingFactors(this->Filters[0]->GetOutput());
 			this->EncodeScalingFactors(this->Filters[0]->GetOutput());
 		}
 
-		this->SynthesisMeshes[j]=this->Filters[j]->GetOutput();
+		this->SynthesisMeshes[j] = this->Filters[j]->GetOutput();
 
 		this->Filters[j]->Subdivide();
-		ConnectivityBitrate[j]=this->ArithmeticCoder->StopCoding()*8;
+		ConnectivityBitrate[j] = this->ArithmeticCoder->StopCoding() * 8;
 		this->ArithmeticCoder->StartCoding();
 		this->Filters[j]->WriteCoefficients();
-		this->Filters[j]->Reconstruct();	
-		GeometryBitrate[j]=this->ArithmeticCoder->StopCoding()*8;
+		this->Filters[j]->Reconstruct();
+		GeometryBitrate[j] = this->ArithmeticCoder->StopCoding() * 8;
 	}
 	this->ArithmeticCoder->CloseFile();
 
 	if (this->WriteRepport > 0 && this->WriteRepport < 4)
 	{
-		int connectivitybits=0;
-		double encodedbits=0,duration,ratio;
+		int connectivitybits = 0;
+		double encodedbits = 0, duration, ratio;
 
-#if ( (VTK_MAJOR_VERSION >= 5))
-		duration = this->Timer->GetUniversalTime()- this->StartTime;
+#if ((VTK_MAJOR_VERSION >= 5))
+		duration = this->Timer->GetUniversalTime() - this->StartTime;
 #else
-		duration = this->Timer->GetCurrentTime()- this->StartTime;
+		duration = this->Timer->GetCurrentTime() - this->StartTime;
 #endif
-		ratio= (this->Filters[0]->GetOutput()->GetNumberOfCells())/duration;
+		ratio = (this->Filters[0]->GetOutput()->GetNumberOfCells()) / duration;
 
 		// for test2, test3
 		std::string outinfo = this->InputFileName;
@@ -1961,66 +1924,59 @@ void vtkMultiresolutionIO::EncodeProgressiveResolution()
 			outinfo = "repport.txt";
 		}
 		std::ofstream Repport;
-		Repport.open (outinfo, ofstream::out | ofstream::trunc);
-		Repport<<"Filename: "<<this->FileName<<endl;
+		Repport.open(outinfo, ofstream::out | ofstream::trunc);
+		Repport << "Filename: " << this->FileName << endl;
 
-		Repport<<"Quantization : "<<this->Quantization<<" bits"<<endl;
-		if (this->Lifting==0)
-			Repport<<"No lifting"<<endl;
+		Repport << "Quantization : " << this->Quantization << " bits" << endl;
+		if (this->Lifting == 0)
+			Repport << "No lifting" << endl;
 		else
 		{
-			if (this->Lifting==2)
-				Repport<<"Fast 0-ring Lifting"<<endl;
+			if (this->Lifting == 2)
+				Repport << "Fast 0-ring Lifting" << endl;
 			else
-				Repport<<"Lifting radius: "<<this->LiftingRadius<<endl;
+				Repport << "Lifting radius: " << this->LiftingRadius << endl;
 		}
 
-		if (this->GeometricConstraint==0)
-			Repport<<"No Wavelet Geometrical Criterion"<<endl;
+		if (this->GeometricConstraint == 0)
+			Repport << "No Wavelet Geometrical Criterion" << endl;
 		else
 		{
-			Repport<<"Geometry threshold: "<<this->EdgeAngleThreshold<<endl;
-			Repport<<"Wavelet threshold: "<<this->WGC<<endl;
+			Repport << "Geometry threshold: " << this->EdgeAngleThreshold << endl;
+			Repport << "Wavelet threshold: " << this->WGC << endl;
 		}
-		Repport<<"Total execution time : "<<duration<<" seconds : "<<ratio<<" faces/s"<<endl;
+		Repport << "Total execution time : " << duration << " seconds : " << ratio << " faces/s" << endl;
 
+		double numberoffaces = this->Filters[this->NumberOfFilters - 1]->GetSubdivisionInput()->GetNumberOfCells();
+		double numberofvertices = this->Filters[this->NumberOfFilters - 1]->GetSubdivisionInput()->GetNumberOfPoints();
+		double cost = 32.0 + ceil(log(numberofvertices) / log(2.0)) * 3.0 * numberoffaces;
+		connectivitybits = (int)cost;
+		encodedbits = this->BaseMeshBitRate;
 
-		double numberoffaces=this->Filters[this->NumberOfFilters-1]->GetSubdivisionInput()->GetNumberOfCells();
-		double numberofvertices=this->Filters[this->NumberOfFilters-1]->GetSubdivisionInput()->GetNumberOfPoints();
-		double cost=32.0+ceil(log(numberofvertices)/log(2.0))*3.0*numberoffaces;
-		connectivitybits=(int) cost;
-		encodedbits=this->BaseMeshBitRate;
-
-		Repport<<"Level 0 : "<<this->Filters[this->NumberOfFilters-1]->GetSubdivisionInput()->GetNumberOfCells()
-			<<"f, "<<this->Filters[this->NumberOfFilters-1]->GetSubdivisionInput()->GetNumberOfPoints()
-			<<"v, total data: "<<(int) this->BaseMeshBitRate<<" bits (connectivity: "<<connectivitybits<<
-			"bits)"<<endl;
-		for (j=this->NumberOfFilters-1;j>=0;j--)
+		Repport << "Level 0 : " << this->Filters[this->NumberOfFilters - 1]->GetSubdivisionInput()->GetNumberOfCells()
+				<< "f, " << this->Filters[this->NumberOfFilters - 1]->GetSubdivisionInput()->GetNumberOfPoints()
+				<< "v, total data: " << (int)this->BaseMeshBitRate << " bits (connectivity: " << connectivitybits << "bits)" << endl;
+		for (j = this->NumberOfFilters - 1; j >= 0; j--)
 		{
-			encodedbits+=ConnectivityBitrate[j]+GeometryBitrate[j];
-			
-			double RelativeBitrate=encodedbits/(double) this->Filters[0]->GetOutput()->GetNumberOfPoints();
+			encodedbits += ConnectivityBitrate[j] + GeometryBitrate[j];
 
-			connectivitybits+=ConnectivityBitrate[j];
-			Repport<<"Level "<<this->NumberOfFilters-j
-				<<": "<<this->Filters[j]->GetOutput()->GetNumberOfCells()
-				<<"f, "<<this->Filters[j]->GetOutput()->GetNumberOfPoints()
-				<<"v, valence entropy= "<<this->Filters[j]->GetOutput()->GetValenceEntropy()
-				<<", total data: "<<RelativeBitrate
-				<<" bits/v (connectivity: "<<connectivitybits
-				<<"bits, "<<
-				(float)((float)ConnectivityBitrate[j])
-				/((float)this->Filters[j]->GetOutput()->GetNumberOfPoints()-(float)this->Filters[j]->GetSubdivisionInput()->GetNumberOfPoints())
-				<<" bits/vertex for this level)"<<endl;
+			double RelativeBitrate = encodedbits / (double)this->Filters[0]->GetOutput()->GetNumberOfPoints();
+
+			connectivitybits += ConnectivityBitrate[j];
+			Repport << "Level " << this->NumberOfFilters - j
+					<< ": " << this->Filters[j]->GetOutput()->GetNumberOfCells()
+					<< "f, " << this->Filters[j]->GetOutput()->GetNumberOfPoints()
+					<< "v, valence entropy= " << this->Filters[j]->GetOutput()->GetValenceEntropy()
+					<< ", total data: " << RelativeBitrate
+					<< " bits/v (connectivity: " << connectivitybits
+					<< "bits, " << (float)((float)ConnectivityBitrate[j]) / ((float)this->Filters[j]->GetOutput()->GetNumberOfPoints() - (float)this->Filters[j]->GetSubdivisionInput()->GetNumberOfPoints())
+					<< " bits/vertex for this level)" << endl;
 		};
 
-		Repport<<"Global coding: "<<(double) encodedbits/this->Filters[0]->GetOutput()->GetNumberOfPoints()
-			<<" bits/vertex, connectivity : "<<
-			(double) connectivitybits/this->Filters[0]->GetOutput()->GetNumberOfPoints()<<
-			" bits/vertex, geometry : "<<
-			(double) (encodedbits-connectivitybits)/this->Filters[0]->GetOutput()->GetNumberOfPoints()
-			<<"bits/vertex"<<endl;
-		Repport<<"File size: "<<((int) encodedbits)/8<<"bytes"<<endl;
+		Repport << "Global coding: " << (double)encodedbits / this->Filters[0]->GetOutput()->GetNumberOfPoints()
+				<< " bits/vertex, connectivity : " << (double)connectivitybits / this->Filters[0]->GetOutput()->GetNumberOfPoints() << " bits/vertex, geometry : " << (double)(encodedbits - connectivitybits) / this->Filters[0]->GetOutput()->GetNumberOfPoints()
+				<< "bits/vertex" << endl;
+		Repport << "File size: " << ((int)encodedbits) / 8 << "bytes" << endl;
 
 		Repport.close();
 	}
@@ -2031,7 +1987,7 @@ void vtkMultiresolutionIO::EncodeProgressiveResolution()
 		int connectivitybits = 0;
 		double encodedbits = 0, duration, ratio;
 
-#if ( (VTK_MAJOR_VERSION >= 5))
+#if ((VTK_MAJOR_VERSION >= 5))
 		duration = this->Timer->GetUniversalTime() - this->StartTime;
 #else
 		duration = this->Timer->GetCurrentTime() - this->StartTime;
@@ -2053,13 +2009,18 @@ void vtkMultiresolutionIO::EncodeProgressiveResolution()
 		encodedbits = this->BaseMeshBitRate;
 
 		// level, v, f, base_connectivity, base_geometry, base_total
-		Repport << "level \t" << "v \t" << "f \t" << "base_connectivity \t" << "base_geometry \t" << "base_total" << endl;
+		Repport << "level \t"
+				<< "v \t"
+				<< "f \t"
+				<< "base_connectivity \t"
+				<< "base_geometry \t"
+				<< "base_total" << endl;
 		Repport << this->NumberOfFilters
-			<< " \t" << this->Filters[this->NumberOfFilters - 1]->GetSubdivisionInput()->GetNumberOfPoints()
-			<< " \t" << this->Filters[this->NumberOfFilters - 1]->GetSubdivisionInput()->GetNumberOfCells()
-			<< " \t" << connectivitybits
-			<< " \t" << (int)this->BaseMeshBitRate - connectivitybits
-			<< " \t" << (int)this->BaseMeshBitRate << endl;
+				<< " \t" << this->Filters[this->NumberOfFilters - 1]->GetSubdivisionInput()->GetNumberOfPoints()
+				<< " \t" << this->Filters[this->NumberOfFilters - 1]->GetSubdivisionInput()->GetNumberOfCells()
+				<< " \t" << connectivitybits
+				<< " \t" << (int)this->BaseMeshBitRate - connectivitybits
+				<< " \t" << (int)this->BaseMeshBitRate << endl;
 		for (j = this->NumberOfFilters - 1; j >= 0; j--)
 		{
 			encodedbits += ConnectivityBitrate[j] + GeometryBitrate[j];
@@ -2067,17 +2028,17 @@ void vtkMultiresolutionIO::EncodeProgressiveResolution()
 
 			// level, v, f, addt_connectivity, addt_geometry, addt_total
 			Repport << j
-				<< " \t" << this->Filters[j]->GetSubdivisionInput()->GetNumberOfPoints()
-				<< " \t" << this->Filters[j]->GetSubdivisionInput()->GetNumberOfCells()
-				<< " \t" << (int)ConnectivityBitrate[j]
-				<< " \t" << (int)GeometryBitrate[j]
-				<< " \t" << (int)ConnectivityBitrate[j] + (int)GeometryBitrate[j] << endl;
+					<< " \t" << this->Filters[j]->GetSubdivisionInput()->GetNumberOfPoints()
+					<< " \t" << this->Filters[j]->GetSubdivisionInput()->GetNumberOfCells()
+					<< " \t" << (int)ConnectivityBitrate[j]
+					<< " \t" << (int)GeometryBitrate[j]
+					<< " \t" << (int)ConnectivityBitrate[j] + (int)GeometryBitrate[j] << endl;
 		};
 
 		// global_connectivity, global_geometry, global_total
 		Repport << (int)connectivitybits
-			<< " \t" << (int)(encodedbits - connectivitybits)
-			<< " \t" << encodedbits << endl;
+				<< " \t" << (int)(encodedbits - connectivitybits)
+				<< " \t" << encodedbits << endl;
 
 		Repport.close();
 	}
@@ -2086,45 +2047,45 @@ void vtkMultiresolutionIO::EncodeProgressiveResolution()
 void vtkMultiresolutionIO::Analyse()
 {
 	double start2, finish2;
-	int i,j,revert;
+	int i, j, revert;
 
-	this->AnalysisMeshes[0]=this->Input;
+	this->AnalysisMeshes[0] = this->Input;
 	this->MeshWindow->SetInputData(this->AnalysisMeshes[0]);
-	if (this->Display==1)
+	if (this->Display == 1)
 	{
 		this->MeshWindow->Render();
-		cout<<"Window interaction: presse 'e' key to exit from interaction"<<endl;
+		cout << "Window interaction: presse 'e' key to exit from interaction" << endl;
 		this->MeshWindow->Interact();
 	}
 
-#if ( (VTK_MAJOR_VERSION >= 5))
+#if ((VTK_MAJOR_VERSION >= 5))
 	this->StartTime = this->Timer->GetUniversalTime();
 #else
 	this->StartTime = this->Timer->GetCurrentTime();
 #endif
 
-	i=0;
-	int merged=1;
-	while (merged==1 && i < 3)
+	i = 0;
+	int merged = 1;
+	while (merged == 1 && i < 3)
 	{
 		std::vector<vtkIdType> bad_faces;
 		bool badfacefull_flag = false;
 
-		if (i+1>=this->MaxNumberOfLevels)
+		if (i + 1 >= this->MaxNumberOfLevels)
 		{
-			merged=0;
+			merged = 0;
 		}
 		else
 		{
-			this->Filters[i]=vtkWaveletSubdivisionFilter::New();
+			this->Filters[i] = vtkWaveletSubdivisionFilter::New();
 			this->Filters[i]->SetGeometryPrediction(this->GeometryPrediction);
 			this->Filters[i]->SetLifting(this->Lifting);
 			this->Filters[i]->SetLiftingRadius(this->LiftingRadius);
 			this->Filters[i]->SetArithmeticType(this->ArithmeticType);
-			this->Filters[i]->Quantization=this->Quantization;
+			this->Filters[i]->Quantization = this->Quantization;
 			this->Filters[i]->SetMergeInput(this->AnalysisMeshes[i]);
 			this->Filters[i]->SetGeometryCriterion(this->GeometricConstraint);
-			this->Filters[i]->GeometryPrediction=this->GeometryPrediction;
+			this->Filters[i]->GeometryPrediction = this->GeometryPrediction;
 			this->Filters[i]->SetCurvatureTreshold(this->EdgeAngleThreshold);
 			this->Filters[i]->SetWaveletTreshold(this->WGC);
 			this->Filters[i]->SetDisplayEfficiency(this->DisplayEfficiency);
@@ -2132,14 +2093,13 @@ void vtkMultiresolutionIO::Analyse()
 			this->Filters[i]->bad_faces = bad_faces;
 
 			this->Filters[i]->SolveInverseProblem(0);
-			this->AnalysisMeshes[i+1]=this->Filters[i]->GetMergeOutput();
+			this->AnalysisMeshes[i + 1] = this->Filters[i]->GetMergeOutput();
 
 			j = 0; // number of times of which bad faces become full
 
-			while (((this->AnalysisMeshes[i+1]->GetNumberOfPoints()==this->AnalysisMeshes[i]->GetNumberOfPoints())
-				||(this->Filters[i]->remaining_faces!=0))&&(j<MIN(10, this->AnalysisMeshes[i]->GetNumberOfCells() - 1)))//(j<this->AnalysisMeshes[i]->GetNumberOfCells()-1))
+			while (((this->AnalysisMeshes[i + 1]->GetNumberOfPoints() == this->AnalysisMeshes[i]->GetNumberOfPoints()) || (this->Filters[i]->remaining_faces != 0)) && (j < MIN(10, this->AnalysisMeshes[i]->GetNumberOfCells() - 1))) //(j<this->AnalysisMeshes[i]->GetNumberOfCells()-1))
 			{
-				//cout << "Fail " << j << ", " << this->Filters[i]->remaining_faces << " remaining faces" << endl;
+				// cout << "Fail " << j << ", " << this->Filters[i]->remaining_faces << " remaining faces" << endl;
 				bad_faces = this->Filters[i]->bad_faces;
 				if (bad_faces.size() > 0)
 				{
@@ -2152,12 +2112,12 @@ void vtkMultiresolutionIO::Analyse()
 				}
 
 				this->Filters[i]->Delete();
-				this->Filters[i]=vtkWaveletSubdivisionFilter::New();
+				this->Filters[i] = vtkWaveletSubdivisionFilter::New();
 				this->Filters[i]->SetMergeInput(this->AnalysisMeshes[i]);
 				this->Filters[i]->SetGeometryPrediction(this->GeometryPrediction);
 				this->Filters[i]->SetLifting(this->Lifting);
 				this->Filters[i]->SetLiftingRadius(this->LiftingRadius);
-				this->Filters[i]->Quantization=this->Quantization;
+				this->Filters[i]->Quantization = this->Quantization;
 				this->Filters[i]->SetArithmeticType(this->ArithmeticType);
 				this->Filters[i]->SetGeometryCriterion(this->GeometricConstraint);
 				this->Filters[i]->SetCurvatureTreshold(this->EdgeAngleThreshold);
@@ -2167,63 +2127,60 @@ void vtkMultiresolutionIO::Analyse()
 				this->Filters[i]->bad_faces = bad_faces;
 
 				j++;
-//				this->AnalysisMeshes[i+1]->Delete();
+				//				this->AnalysisMeshes[i+1]->Delete();
 				this->Filters[i]->SolveInverseProblem(j);
-				this->AnalysisMeshes[i+1]=this->Filters[i]->GetMergeOutput();
+				this->AnalysisMeshes[i + 1] = this->Filters[i]->GetMergeOutput();
 			}
 
 			if (this->DisplayText && this->Filters[i]->remaining_faces == 0)
 			{
-				cout<<"i="<<i<<" ,original : "<<this->Filters[i]->GetMergeInput()->GetNumberOfCells()<<" faces, "<<this->Filters[i]->GetMergeInput()->GetPoints()->GetNumberOfPoints()<<" vertices";
-				cout<<", simplified : "<<this->Filters[i]->GetMergeOutput()->GetNumberOfCells()<<" faces, "<<this->Filters[i]->GetMergeOutput()->GetPoints()->GetNumberOfPoints()<<" vertices, "<<this->Filters[i]->GetMergeOutput()->GetNumberOfEdges()<<" edges"<<endl;
+				cout << "i=" << i << " ,original : " << this->Filters[i]->GetMergeInput()->GetNumberOfCells() << " faces, " << this->Filters[i]->GetMergeInput()->GetPoints()->GetNumberOfPoints() << " vertices";
+				cout << ", simplified : " << this->Filters[i]->GetMergeOutput()->GetNumberOfCells() << " faces, " << this->Filters[i]->GetMergeOutput()->GetPoints()->GetNumberOfPoints() << " vertices, " << this->Filters[i]->GetMergeOutput()->GetNumberOfEdges() << " edges" << endl;
 			}
 
-			if (this->Filters[i]->remaining_faces!=0)
-				revert=0;
+			if (this->Filters[i]->remaining_faces != 0)
+				revert = 0;
 
-			if (this->Display==1)
+			if (this->Display == 1)
 			{
-				if (this->GeometricConstraint==1)
-				{	
-					vtkLookupTable *lut=vtkLookupTable::New();
+				if (this->GeometricConstraint == 1)
+				{
+					vtkLookupTable *lut = vtkLookupTable::New();
 					this->MeshWindow->SetLookupTable(lut);
-					this->AnalysisMeshes[i+1]->ComputeSharpVertices(this->EdgeAngleThreshold);
-					lut->SetHueRange(0.667,0.0);
+					this->AnalysisMeshes[i + 1]->ComputeSharpVertices(this->EdgeAngleThreshold);
+					lut->SetHueRange(0.667, 0.0);
 				}
-				this->MeshWindow->SetInputData(this->AnalysisMeshes[i+1]);
+				this->MeshWindow->SetInputData(this->AnalysisMeshes[i + 1]);
 				this->MeshWindow->Render();
-#if ( (VTK_MAJOR_VERSION >= 5))
-				start2=this->Timer->GetUniversalTime();
-				finish2=this->Timer->GetUniversalTime();
-				while (finish2 - start2<this->Time)
-					finish2=this->Timer->GetUniversalTime();
+#if ((VTK_MAJOR_VERSION >= 5))
+				start2 = this->Timer->GetUniversalTime();
+				finish2 = this->Timer->GetUniversalTime();
+				while (finish2 - start2 < this->Time)
+					finish2 = this->Timer->GetUniversalTime();
 
 #else
-				start2=this->Timer->GetCurrentTime();
-				finish2=this->Timer->GetCurrentTime();
-				while (finish2 - start2<this->Time)
-					finish2=this->Timer->GetCurrentTime();
+				start2 = this->Timer->GetCurrentTime();
+				finish2 = this->Timer->GetCurrentTime();
+				while (finish2 - start2 < this->Time)
+					finish2 = this->Timer->GetCurrentTime();
 #endif
-				if (this->Display==1)
+				if (this->Display == 1)
 				{
-					cout<<"Window interaction: presse 'e' key to exit from interaction"<<endl;
+					cout << "Window interaction: presse 'e' key to exit from interaction" << endl;
 					this->MeshWindow->Interact();
 				}
 			}
 
-			if ((this->AnalysisMeshes[i]->GetNumberOfCells()>0)
-				&&(this->Filters[i]->GetMergeOutput()->GetNumberOfPoints()<this->Filters[i]->GetMergeInput()->GetNumberOfPoints()))
-				merged=1;
+			if ((this->AnalysisMeshes[i]->GetNumberOfCells() > 0) && (this->Filters[i]->GetMergeOutput()->GetNumberOfPoints() < this->Filters[i]->GetMergeInput()->GetNumberOfPoints()))
+				merged = 1;
 			else
-				merged=0;
-			if (this->Filters[i]->remaining_faces!=0)
-				merged=0;
+				merged = 0;
+			if (this->Filters[i]->remaining_faces != 0)
+				merged = 0;
 		}
 		i++;
-
 	}
-	this->NumberOfFilters=i-1;
-
+	this->NumberOfFilters = i - 1;
 
 	if (this->Display == 1)
 	{
@@ -2237,47 +2194,47 @@ void vtkMultiresolutionIO::Synthetize()
 	int j;
 
 	this->PointsIds->SetNumberOfIds(this->AnalysisMeshes[0]->GetNumberOfPoints());
-	for (Id=0;Id<this->AnalysisMeshes[0]->GetNumberOfPoints();Id++)
+	for (Id = 0; Id < this->AnalysisMeshes[0]->GetNumberOfPoints(); Id++)
 	{
-		this->PointsIds->SetId(Id,Id);
+		this->PointsIds->SetId(Id, Id);
 	}
 
-	this->SynthesisMeshes[this->NumberOfFilters]=vtkSurface::New();
+	this->SynthesisMeshes[this->NumberOfFilters] = vtkSurface::New();
 	this->SynthesisMeshes[this->NumberOfFilters]->CreateFromPolyData(this->AnalysisMeshes[this->NumberOfFilters]);
 
 	double Factor, Tx, Ty, Tz;
 	this->Filters[0]->GetMergeInput()->GetScalingFactors(Factor, Tx, Ty, Tz);
 	this->SynthesisMeshes[this->NumberOfFilters]->SetScalingFactors(Factor, Tx, Ty, Tz);
 
-	for (j=this->NumberOfFilters-1;j>=0;j--)
+	for (j = this->NumberOfFilters - 1; j >= 0; j--)
 	{
 		this->Filters[j]->SetPointsIds(this->PointsIds);
-		this->Filters[j]->SetInput(this->SynthesisMeshes[j+1]);			
+		this->Filters[j]->SetInput(this->SynthesisMeshes[j + 1]);
 		this->Filters[j]->Subdivide();
 
-		this->SynthesisMeshes[j]=this->Filters[j]->GetOutput();
+		this->SynthesisMeshes[j] = this->Filters[j]->GetOutput();
 		this->SynthesisMeshes[j]->SetScalingFactors(Factor, Tx, Ty, Tz);
 
-		if (this->Display==1)
+		if (this->Display == 1)
 		{
 			this->MeshWindow->SetInputData(this->Filters[j]->GetOutput());
 			this->MeshWindow->Render();
 			this->MeshWindow->Interact();
-#if ( (VTK_MAJOR_VERSION >= 5))
-			start2=this->Timer->GetUniversalTime();
-			finish2=this->Timer->GetUniversalTime();
-			while (finish2 - start2<this->Time)
-				finish2=this->Timer->GetUniversalTime();
+#if ((VTK_MAJOR_VERSION >= 5))
+			start2 = this->Timer->GetUniversalTime();
+			finish2 = this->Timer->GetUniversalTime();
+			while (finish2 - start2 < this->Time)
+				finish2 = this->Timer->GetUniversalTime();
 
 #else
-			start2=this->Timer->GetCurrentTime();
-			finish2=this->Timer->GetCurrentTime();
-			while (finish2 - start2<this->Time)
-				finish2=this->Timer->GetCurrentTime();
+			start2 = this->Timer->GetCurrentTime();
+			finish2 = this->Timer->GetCurrentTime();
+			while (finish2 - start2 < this->Time)
+				finish2 = this->Timer->GetCurrentTime();
 #endif
 		}
 	}
-	if (this->Display==1)
+	if (this->Display == 1)
 	{
 		this->MeshWindow->SetInputData(this->SynthesisMeshes[0]);
 		this->MeshWindow->Render();
@@ -2285,29 +2242,29 @@ void vtkMultiresolutionIO::Synthetize()
 	}
 
 	//// test : delete AnalysisMeshes[0~last-1] for reducing memory
-	//for (j = this->NumberOfFilters - 1; j >= 0; j--)
+	// for (j = this->NumberOfFilters - 1; j >= 0; j--)
 	//{
 	//	this->AnalysisMeshes[j]->Delete();
 	//	this->Filters[j]->InitMergeInput();
-	//}
+	// }
 }
 
 void vtkMultiresolutionIO::DisplayHires()
 {
-	this->MeshWindow->SetInputData(this->SynthesisMeshes[this->NumberOfFilters-1]);
+	this->MeshWindow->SetInputData(this->SynthesisMeshes[this->NumberOfFilters - 1]);
 	this->MeshWindow->Render();
 	this->MeshWindow->SetInputData(this->SynthesisMeshes[0]);
 	this->MeshWindow->Render();
 	this->MeshWindow->Interact();
-}	
+}
 
-vtkMultiresolutionIO* vtkMultiresolutionIO::New()
+vtkMultiresolutionIO *vtkMultiresolutionIO::New()
 {
 	// First try to create the object from the vtkObjectFactory
-	vtkObject* ret = vtkObjectFactory::CreateInstance("vtkMultiresolutionIO");
-	if(ret)
+	vtkObject *ret = vtkObjectFactory::CreateInstance("vtkMultiresolutionIO");
+	if (ret)
 	{
-		return (vtkMultiresolutionIO*)ret;
+		return (vtkMultiresolutionIO *)ret;
 	}
 	// If the factory was unable to create the object, then create it here.
 	return (new vtkMultiresolutionIO);
@@ -2315,7 +2272,7 @@ vtkMultiresolutionIO* vtkMultiresolutionIO::New()
 
 void vtkMultiresolutionIO::RoiSetting()
 {
-	int i,j;
+	int i, j;
 	vtkIdType PtId;
 
 	this->MeshWindow->SetInputData(this->SynthesisMeshes[0]);
@@ -2364,8 +2321,7 @@ void vtkMultiresolutionIO::RoiSetting()
 		vtkSurface *Surface2 = (vtkSurface *)(MIO2->GetRenderWindow()->GetInput());
 
 		///// # of v and # of f  equality test /////
-		if ((Surface1->GetNumberOfPoints() != Surface2->GetNumberOfPoints())
-			|| (Surface1->GetNumberOfCells() != Surface2->GetNumberOfCells()))
+		if ((Surface1->GetNumberOfPoints() != Surface2->GetNumberOfPoints()) || (Surface1->GetNumberOfCells() != Surface2->GetNumberOfCells()))
 		{
 			// for debug //
 			cout << "Compare: " << endl;
@@ -2392,13 +2348,13 @@ void vtkMultiresolutionIO::RoiSetting()
 					number_of_modified++;
 
 					// Replace with new coords and add ROI
-					// 
+					//
 					// WARNING!! : Mesh coords are not propagated to other meshes (=AnalysisMeshes[],SynthesisMeshes[])
 					//   The coords required to be written to file are 'Basemesh' and 'Wavelets'.
 					//   Basemesh is stored in SynthesisMeshes[last] so we need to change it also.
 
 					if (i < BaseSize)
-						BasePoints->SetPoint(i, p2);  // for storing basemesh to file
+						BasePoints->SetPoint(i, p2); // for storing basemesh to file
 
 					Points1->SetPoint(i, p2);
 					ModifiedTable[i] = true;
@@ -2461,9 +2417,9 @@ void vtkMultiresolutionIO::RoiSetting()
 						Points->GetPoint(p2, P2);
 						IntWavelet = this->Filters[j]->IntegerWavelets->GetPointer((PtId - NOldPoints) * 3);
 
-						IntWavelet[0] = (int)floor(V[0] - 0.5*(P1[0] + P2[0]));
-						IntWavelet[1] = (int)floor(V[1] - 0.5*(P1[1] + P2[1]));
-						IntWavelet[2] = (int)floor(V[2] - 0.5*(P1[2] + P2[2]));
+						IntWavelet[0] = (int)floor(V[0] - 0.5 * (P1[0] + P2[0]));
+						IntWavelet[1] = (int)floor(V[1] - 0.5 * (P1[1] + P2[1]));
+						IntWavelet[2] = (int)floor(V[2] - 0.5 * (P1[2] + P2[2]));
 					}
 				}
 				this->Filters[j]->IntegerWavelets->Modified();
@@ -2491,9 +2447,9 @@ void vtkMultiresolutionIO::RoiSetting()
 						Points->GetPoint(p2, P2);
 						Wavelet = this->Filters[j]->Wavelets->GetPointer((PtId - NOldPoints) * 3);
 
-						Wavelet[0] = V[0] - 0.5*(P1[0] + P2[0]);
-						Wavelet[1] = V[1] - 0.5*(P1[1] + P2[1]);
-						Wavelet[2] = V[2] - 0.5*(P1[2] + P2[2]);
+						Wavelet[0] = V[0] - 0.5 * (P1[0] + P2[0]);
+						Wavelet[1] = V[1] - 0.5 * (P1[1] + P2[1]);
+						Wavelet[2] = V[2] - 0.5 * (P1[2] + P2[2]);
 					}
 				}
 				this->Filters[j]->Wavelets->Modified();
@@ -2575,7 +2531,7 @@ void vtkMultiresolutionIO::RoiSetting()
 		out << "Number of Modified vertices : " << number_of_modified << endl;
 		out.close();
 	}
-	
+
 	// 2) with lifting
 	//      after approximate,
 	//		v is recalculated from Mesh2
@@ -2656,7 +2612,7 @@ void vtkMultiresolutionIO::RoiSetting()
 			vtkPoints *NewPoints = this->Filters[j]->GetOutput()->GetPoints();
 
 			bool *R_next = new bool[NOldPoints]();
-			bool *W_next = new bool[NNewPoints-NOldPoints]();
+			bool *W_next = new bool[NNewPoints - NOldPoints]();
 
 			// w impacted by v in R^(j+1) must be added to hat(W)^j
 			//     and propagated into k-disk of its parents
@@ -2664,7 +2620,7 @@ void vtkMultiresolutionIO::RoiSetting()
 			{
 				if (R_raw[PtId] == true)
 				{
-					// add v to R^j 
+					// add v to R^j
 					R_next[PtId] = true;
 
 					this->Filters[j]->GetSubdivisionInput()->GetVertexNeighbourEdges(PtId, Edges);
@@ -2673,7 +2629,7 @@ void vtkMultiresolutionIO::RoiSetting()
 						// find c impacted by v
 						edge = Edges->GetId(i);
 						c = this->Filters[j]->edgesvector[edge].child;
-						if ( (c >= NOldPoints) && (this->Filters[j]->GetOutput()->IsEdge(PtId, c) >= 0))
+						if ((c >= NOldPoints) && (this->Filters[j]->GetOutput()->IsEdge(PtId, c) >= 0))
 						{
 							// add c to hat(W)^j
 							W_next[c - NOldPoints] = true;
@@ -2758,9 +2714,9 @@ void vtkMultiresolutionIO::RoiSetting()
 
 						IntWavelet = IntWavelets->GetPointer((PtId - NOldPoints) * 3);
 
-						IntWavelet[0] = (int)floor(V1[0] - 0.5*(P1[0] + P2[0]));
-						IntWavelet[1] = (int)floor(V1[1] - 0.5*(P1[1] + P2[1]));
-						IntWavelet[2] = (int)floor(V1[2] - 0.5*(P1[2] + P2[2]));
+						IntWavelet[0] = (int)floor(V1[0] - 0.5 * (P1[0] + P2[0]));
+						IntWavelet[1] = (int)floor(V1[1] - 0.5 * (P1[1] + P2[1]));
+						IntWavelet[2] = (int)floor(V1[2] - 0.5 * (P1[2] + P2[2]));
 					}
 				}
 				IntWavelets->Modified();
@@ -2780,9 +2736,9 @@ void vtkMultiresolutionIO::RoiSetting()
 						{
 							IntWavelet = IntWavelets->GetPointer((NonZero->j) * 3);
 
-							V[0] += NonZero->Value*IntWavelet[0];
-							V[1] += NonZero->Value*IntWavelet[1];
-							V[2] += NonZero->Value*IntWavelet[2];
+							V[0] += NonZero->Value * IntWavelet[0];
+							V[1] += NonZero->Value * IntWavelet[1];
+							V[2] += NonZero->Value * IntWavelet[2];
 
 							NonZero = NonZero->NextHor;
 						}
@@ -2806,7 +2762,6 @@ void vtkMultiresolutionIO::RoiSetting()
 		out.open(outinfo, ios::app);
 		out << "ROI vertices modification elapsed time: " << double(end - start) / CLOCKS_PER_SEC << endl;
 		out.close();
-
 
 		///////////////////////////////////////////////////////////
 		////////// count modified vertices and wavelets ///////////
@@ -2852,7 +2807,7 @@ void vtkMultiresolutionIO::RoiSetting()
 				{
 					if (R_raw[PtId] == true)
 					{
-						// add v to R^j 
+						// add v to R^j
 						R_next[PtId] = true;
 
 						this->Filters[j]->GetSubdivisionInput()->GetVertexNeighbourEdges(PtId, Edges);
@@ -2979,7 +2934,7 @@ void vtkMultiresolutionIO::RoiRandom(int k)
 	{
 		// propagation //
 		{
-			
+
 			// Newly quantizing
 			//		lifting case also need vertex quantization
 			//      all SynthesisMeshes must be requantized with same factor as MergeInput
@@ -3048,7 +3003,7 @@ void vtkMultiresolutionIO::RoiRandom(int k)
 				{
 					if (R_raw[PtId] == true)
 					{
-						// add v to R^j 
+						// add v to R^j
 						R_next[PtId] = true;
 
 						this->Filters[j]->GetSubdivisionInput()->GetVertexNeighbourEdges(PtId, Edges);
@@ -3142,9 +3097,9 @@ void vtkMultiresolutionIO::RoiRandom(int k)
 
 							IntWavelet = IntWavelets->GetPointer((PtId - NOldPoints) * 3);
 
-							IntWavelet[0] = (int)floor(V1[0] - 0.5*(P1[0] + P2[0]));
-							IntWavelet[1] = (int)floor(V1[1] - 0.5*(P1[1] + P2[1]));
-							IntWavelet[2] = (int)floor(V1[2] - 0.5*(P1[2] + P2[2]));
+							IntWavelet[0] = (int)floor(V1[0] - 0.5 * (P1[0] + P2[0]));
+							IntWavelet[1] = (int)floor(V1[1] - 0.5 * (P1[1] + P2[1]));
+							IntWavelet[2] = (int)floor(V1[2] - 0.5 * (P1[2] + P2[2]));
 						}
 					}
 					IntWavelets->Modified();
@@ -3164,9 +3119,9 @@ void vtkMultiresolutionIO::RoiRandom(int k)
 							{
 								IntWavelet = IntWavelets->GetPointer((NonZero->j) * 3);
 
-								V[0] += NonZero->Value*IntWavelet[0];
-								V[1] += NonZero->Value*IntWavelet[1];
-								V[2] += NonZero->Value*IntWavelet[2];
+								V[0] += NonZero->Value * IntWavelet[0];
+								V[1] += NonZero->Value * IntWavelet[1];
+								V[2] += NonZero->Value * IntWavelet[2];
 
 								NonZero = NonZero->NextHor;
 							}
@@ -3230,7 +3185,7 @@ void vtkMultiresolutionIO::RoiRandom(int k)
 		//		{
 		//			if (R_raw[PtId] == true)
 		//			{
-		//				// add v to R^j 
+		//				// add v to R^j
 		//				R_next[PtId] = true;
 
 		//				this->Filters[j]->GetSubdivisionInput()->GetVertexNeighbourEdges(PtId, Edges);
@@ -3329,7 +3284,7 @@ void vtkMultiresolutionIO::RoiRandom(int k)
 		//}
 	}
 
-	//cout << "End ROI propagation : " << (this->Filters[0]->GetOutput()->GetNumberOfPoints()) / k << endl;
+	// cout << "End ROI propagation : " << (this->Filters[0]->GetOutput()->GetNumberOfPoints()) / k << endl;
 }
 
 // randomly modify n/k, 2n/k, ..., n vertices
@@ -3410,7 +3365,7 @@ void vtkMultiresolutionIO::RoiIncrease(int k)
 					{
 						if (R_raw[PtId] == true)
 						{
-							// add v to R^j 
+							// add v to R^j
 							R_next[PtId] = true;
 
 							this->Filters[j]->GetSubdivisionInput()->GetVertexNeighbourEdges(PtId, Edges);
@@ -3504,9 +3459,9 @@ void vtkMultiresolutionIO::RoiIncrease(int k)
 
 								IntWavelet = IntWavelets->GetPointer((PtId - NOldPoints) * 3);
 
-								IntWavelet[0] = (int)floor(V1[0] - 0.5*(P1[0] + P2[0]));
-								IntWavelet[1] = (int)floor(V1[1] - 0.5*(P1[1] + P2[1]));
-								IntWavelet[2] = (int)floor(V1[2] - 0.5*(P1[2] + P2[2]));
+								IntWavelet[0] = (int)floor(V1[0] - 0.5 * (P1[0] + P2[0]));
+								IntWavelet[1] = (int)floor(V1[1] - 0.5 * (P1[1] + P2[1]));
+								IntWavelet[2] = (int)floor(V1[2] - 0.5 * (P1[2] + P2[2]));
 							}
 						}
 						IntWavelets->Modified();
@@ -3526,9 +3481,9 @@ void vtkMultiresolutionIO::RoiIncrease(int k)
 								{
 									IntWavelet = IntWavelets->GetPointer((NonZero->j) * 3);
 
-									V[0] += NonZero->Value*IntWavelet[0];
-									V[1] += NonZero->Value*IntWavelet[1];
-									V[2] += NonZero->Value*IntWavelet[2];
+									V[0] += NonZero->Value * IntWavelet[0];
+									V[1] += NonZero->Value * IntWavelet[1];
+									V[2] += NonZero->Value * IntWavelet[2];
 
 									NonZero = NonZero->NextHor;
 								}
@@ -3597,7 +3552,7 @@ void vtkMultiresolutionIO::RoiIncrease(int k)
 					{
 						if (R_raw[PtId] == true)
 						{
-							// add v to R^j 
+							// add v to R^j
 							R_next[PtId] = true;
 
 							this->Filters[j]->GetSubdivisionInput()->GetVertexNeighbourEdges(PtId, Edges);
@@ -3720,9 +3675,9 @@ void vtkMultiresolutionIO::RoiLocal(int k)
 	int number_of_modified = 0;
 
 	// random setting
-	std::random_device rd; // obtain a random number from hardware
-	std::mt19937 eng(rd()); // seed the generator
-	std::uniform_int_distribution<> distr(0, number_of_vertices-1); // define the range
+	std::random_device rd;											  // obtain a random number from hardware
+	std::mt19937 eng(rd());											  // seed the generator
+	std::uniform_int_distribution<> distr(0, number_of_vertices - 1); // define the range
 	int PtIdR;
 
 	// choose modified local ROI vertices (init with all 0s)
@@ -3743,7 +3698,7 @@ void vtkMultiresolutionIO::RoiLocal(int k)
 		if (this->LiftingRadius >= 0)
 		{
 			bool isolated = false;
-			while ( HorizontalList->GetNumberOfIds() < (0.01 * k * number_of_vertices) )
+			while (HorizontalList->GetNumberOfIds() < (0.01 * k * number_of_vertices))
 			{
 				this->Filters[0]->GetSubdivisionInput()->GetNeighbours(HorizontalList, VerticalList);
 				if (HorizontalList->GetNumberOfIds() == VerticalList->GetNumberOfIds())
@@ -3758,7 +3713,7 @@ void vtkMultiresolutionIO::RoiLocal(int k)
 
 			if (isolated == true)
 				continue;
-			
+
 			// check ROI size < (k+0.5)%
 			if (HorizontalList->GetNumberOfIds() < (0.01 * (k + 0.5) * number_of_vertices))
 			{
@@ -3793,14 +3748,14 @@ void vtkMultiresolutionIO::RoiLocal(int k)
 				R_raw[PtId] = ModifiedTable[PtId];
 
 			//// R^finest modify ///////////////////////////////////// move 0.1
-			//double PF[3];
-			//double Bounds[6];
-			//double xdyn, ydyn, zdyn;
-			//this->Filters[0]->GetOutput()->GetPoints()->GetBounds(Bounds);
-			//xdyn = Bounds[1] - Bounds[0];
-			//ydyn = Bounds[3] - Bounds[2];
-			//zdyn = Bounds[5] - Bounds[4];
-			//for (PtId = 0; PtId < this->Filters[0]->GetOutput()->GetNumberOfPoints(); PtId++)
+			// double PF[3];
+			// double Bounds[6];
+			// double xdyn, ydyn, zdyn;
+			// this->Filters[0]->GetOutput()->GetPoints()->GetBounds(Bounds);
+			// xdyn = Bounds[1] - Bounds[0];
+			// ydyn = Bounds[3] - Bounds[2];
+			// zdyn = Bounds[5] - Bounds[4];
+			// for (PtId = 0; PtId < this->Filters[0]->GetOutput()->GetNumberOfPoints(); PtId++)
 			//{
 			//	if (R_raw[PtId] == true)
 			//	{
@@ -3836,7 +3791,7 @@ void vtkMultiresolutionIO::RoiLocal(int k)
 				bool *W_next = new bool[NNewPoints - NOldPoints]();
 
 				int lengh_of_R_curr = 0;
-				
+
 				//////////////////////////////////////
 				////  4 step rules - (a) and (b)  ////
 				//////////////////////////////////////
@@ -3844,7 +3799,7 @@ void vtkMultiresolutionIO::RoiLocal(int k)
 				{
 					if (R_raw[PtId] == true)
 					{
-						// add v to R^j 
+						// add v to R^j
 						R_next[PtId] = true;
 
 						this->Filters[j]->GetSubdivisionInput()->GetVertexNeighbourEdges(PtId, Edges);
@@ -3924,8 +3879,8 @@ void vtkMultiresolutionIO::RoiLocal(int k)
 				}
 
 				//// display before recalculate
-				//this->MeshWindow->SetInputData(this->Filters[j]->GetOutput());
-				//if (this->Display == 2)
+				// this->MeshWindow->SetInputData(this->Filters[j]->GetOutput());
+				// if (this->Display == 2)
 				//{
 				//	// test. set face colors
 				//	// fail... how...???
@@ -3947,7 +3902,7 @@ void vtkMultiresolutionIO::RoiLocal(int k)
 				//	this->MeshWindow->DisplayVerticesColors2(colors, c1, c2);
 				//	this->MeshWindow->Render();
 				//	this->MeshWindow->Interact();
-				//}
+				// }
 
 				if (this->ArithmeticType == 1)
 				{
@@ -3967,9 +3922,9 @@ void vtkMultiresolutionIO::RoiLocal(int k)
 
 							IntWavelet = IntWavelets->GetPointer((PtId - NOldPoints) * 3);
 
-							IntWavelet[0] = (int)floor(V1[0] - 0.5*(P1[0] + P2[0]));
-							IntWavelet[1] = (int)floor(V1[1] - 0.5*(P1[1] + P2[1]));
-							IntWavelet[2] = (int)floor(V1[2] - 0.5*(P1[2] + P2[2]));
+							IntWavelet[0] = (int)floor(V1[0] - 0.5 * (P1[0] + P2[0]));
+							IntWavelet[1] = (int)floor(V1[1] - 0.5 * (P1[1] + P2[1]));
+							IntWavelet[2] = (int)floor(V1[2] - 0.5 * (P1[2] + P2[2]));
 						}
 					}
 					IntWavelets->Modified();
@@ -3989,9 +3944,9 @@ void vtkMultiresolutionIO::RoiLocal(int k)
 							{
 								IntWavelet = IntWavelets->GetPointer((NonZero->j) * 3);
 
-								V[0] += NonZero->Value*IntWavelet[0];
-								V[1] += NonZero->Value*IntWavelet[1];
-								V[2] += NonZero->Value*IntWavelet[2];
+								V[0] += NonZero->Value * IntWavelet[0];
+								V[1] += NonZero->Value * IntWavelet[1];
+								V[2] += NonZero->Value * IntWavelet[2];
 
 								NonZero = NonZero->NextHor;
 							}
@@ -4012,7 +3967,7 @@ void vtkMultiresolutionIO::RoiLocal(int k)
 				{
 					// test. set face colors
 					// fail... how...???
-					vtkIntArray* colors = vtkIntArray::New();
+					vtkIntArray *colors = vtkIntArray::New();
 					colors->SetNumberOfValues(NOldPoints);
 					for (i = 0; i < NOldPoints; i++)
 					{
@@ -4025,8 +3980,8 @@ void vtkMultiresolutionIO::RoiLocal(int k)
 							colors->SetValue(i, 0);
 						}
 					}
-					double c1[3] = { 0.8,0.9,0 }; // yellow
-					double c2[3] = { 60. / 255, 63. / 255, 200. / 255 }; // blue
+					double c1[3] = {0.8, 0.9, 0};					   // yellow
+					double c2[3] = {60. / 255, 63. / 255, 200. / 255}; // blue
 					this->MeshWindow->DisplayVerticesColors2(colors, c1, c2);
 					this->MeshWindow->Render();
 					this->MeshWindow->Interact();
@@ -4035,7 +3990,7 @@ void vtkMultiresolutionIO::RoiLocal(int k)
 				this->MeshWindow->SetInputData(this->Filters[j]->GetOutput());
 				if (this->Display == 2)
 				{
-					vtkIntArray* colors = vtkIntArray::New();
+					vtkIntArray *colors = vtkIntArray::New();
 					colors->SetNumberOfValues(NNewPoints);
 					for (i = 0; i < NOldPoints; i++)
 					{
@@ -4052,8 +4007,8 @@ void vtkMultiresolutionIO::RoiLocal(int k)
 							colors->SetValue(i, 0);
 						}
 					}
-					double c1[3] = { 0.8,0.9,0 }; // yellow
-					double c2[3] = { 0. / 255, 244. / 255, 1. / 255 }; // green
+					double c1[3] = {0.8, 0.9, 0};					 // yellow
+					double c2[3] = {0. / 255, 244. / 255, 1. / 255}; // green
 					this->MeshWindow->DisplayVerticesColors2(colors, c1, c2);
 					this->MeshWindow->Render();
 					this->MeshWindow->Interact();
@@ -4112,7 +4067,7 @@ void vtkMultiresolutionIO::RoiLocal(int k)
 				{
 					if (R_raw[PtId] == true)
 					{
-						// add v to R^j 
+						// add v to R^j
 						R_next[PtId] = true;
 
 						this->Filters[j]->GetSubdivisionInput()->GetVertexNeighbourEdges(PtId, Edges);
@@ -4262,7 +4217,8 @@ void vtkMultiresolutionIO::ExportOBJ(vtkSurface *Surface)
 					p[0] = (p[0] / Factor) + Tx;
 					p[1] = (p[1] / Factor) + Ty;
 					p[2] = (p[2] / Factor) + Tz;
-					out << "v" << " " << p[0] << " " << p[1] << " " << p[2] << endl;
+					out << "v"
+						<< " " << p[0] << " " << p[1] << " " << p[2] << endl;
 				}
 			}
 			else
@@ -4270,7 +4226,8 @@ void vtkMultiresolutionIO::ExportOBJ(vtkSurface *Surface)
 				for (int i = 0; i < NumOfPoints; i++)
 				{
 					Points->GetPoint(i, p);
-					out << "v" << " " << p[0] << " " << p[1] << " " << p[2] << endl;
+					out << "v"
+						<< " " << p[0] << " " << p[1] << " " << p[2] << endl;
 				}
 			}
 
@@ -4279,8 +4236,9 @@ void vtkMultiresolutionIO::ExportOBJ(vtkSurface *Surface)
 			for (int i = 0; i < NumOfFaces; i++)
 			{
 				vtkIdType v1, v2, v3;
-				Surface->GetFaceVertices(i,v1,v2,v3);
-				out << "f" << " " << v1+1 << " " << v2+1 << " " << v3+1 << endl;
+				Surface->GetFaceVertices(i, v1, v2, v3);
+				out << "f"
+					<< " " << v1 + 1 << " " << v2 + 1 << " " << v3 + 1 << endl;
 			}
 
 			out.close();
@@ -4291,34 +4249,33 @@ void vtkMultiresolutionIO::ExportOBJ(vtkSurface *Surface)
 	}
 }
 
-
 vtkMultiresolutionIO::vtkMultiresolutionIO()
 {
-	this->EdgeAngleThreshold=0.3;
-	this->GeometricConstraint=0;
-	this->NumberOfFilters=0;
-	this->WGC=0.25;
-	this->Quantization=12;
-	this->ArithmeticType=1;
-	this->Lifting=0;
-	this->LiftingRadius=1;
-	this->DisplayEfficiency=0;
-	this->Display=0;
-	this->DisplayText=0;
-	this->WriteRepport=1;
-	this->NumberOfBitPlanes=12;
-	this->NumberOfStartBitPlanes=1;
-	this->WriteOutput=1;  // -1: print all meshes, n>0: print n finest mesh only
-	this->GeometryPrediction=0;
-	this->MaxNumberOfLevels=99;
-	this->Input=0;
-	this->Output=0;
-	this->FileType=1;
+	this->EdgeAngleThreshold = 0.3;
+	this->GeometricConstraint = 0;
+	this->NumberOfFilters = 0;
+	this->WGC = 0.25;
+	this->Quantization = 12;
+	this->ArithmeticType = 1;
+	this->Lifting = 0;
+	this->LiftingRadius = 1;
+	this->DisplayEfficiency = 0;
+	this->Display = 0;
+	this->DisplayText = 0;
+	this->WriteRepport = 1;
+	this->NumberOfBitPlanes = 12;
+	this->NumberOfStartBitPlanes = 1;
+	this->WriteOutput = 1; // -1: print all meshes, n>0: print n finest mesh only
+	this->GeometryPrediction = 0;
+	this->MaxNumberOfLevels = 99;
+	this->Input = 0;
+	this->Output = 0;
+	this->FileType = 1;
 
-	this->MeshWindow=RenderWindow::New();
-	this->PointsIds=vtkIdList::New();
-	this->SignificanceCodes=0;
-	this->Timer=vtkTimerLog::New();
+	this->MeshWindow = RenderWindow::New();
+	this->PointsIds = vtkIdList::New();
+	this->SignificanceCodes = 0;
+	this->Timer = vtkTimerLog::New();
 	this->InputFileName = NULL;
 	this->SetFileName("out.ddd");
 }
@@ -4327,12 +4284,12 @@ vtkMultiresolutionIO::~vtkMultiresolutionIO()
 {
 	this->PointsIds->Delete();
 	int i;
-	for (i=0;i<this->NumberOfFilters;i++)
+	for (i = 0; i < this->NumberOfFilters; i++)
 		this->Filters[i]->Delete();
-	
-	if (this->NumberOfFilters!=0)
+
+	if (this->NumberOfFilters != 0)
 		this->SynthesisMeshes[this->NumberOfFilters]->Delete();
-		
+
 	if (this->Input)
 		this->Input->UnRegister(this);
 

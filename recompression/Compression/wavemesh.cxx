@@ -399,6 +399,8 @@ int main( int argc, char *argv[] )
 		MIO->Write();
 		//cout << "Write. " << (double)(clock() - start) / CLOCKS_PER_SEC << " sec. elapsed" << endl;
 
+		// Mesh->Delete();
+
 		cout << "completed" << endl;
 
 		// Decompression //
@@ -427,6 +429,7 @@ int main( int argc, char *argv[] )
 		MIO->Write();
 		end = clock();
 		MIO->Delete();
+		Mesh->Delete();
 
 		cout << "completed. " << (double)(end - start) / CLOCKS_PER_SEC << " sec. elapsed" << endl;
 	}

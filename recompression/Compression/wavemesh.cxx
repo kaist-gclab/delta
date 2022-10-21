@@ -433,5 +433,76 @@ int main( int argc, char *argv[] )
 
 		cout << "completed. " << (double)(end - start) / CLOCKS_PER_SEC << " sec. elapsed" << endl;
 	}
+
+	
+	// test for 2022 test :
+	if (strcmp(argv[1], "testdev") == 0)
+	{
+		// Mesh loading //
+
+		std::string basename = MIO->GetInputFileName();
+		std::string strout = MIO->GetInputFileName(); strout += ".out";
+
+
+		///////////////// DO NOT NEED IF COMPRESSION END
+		clock_t start, end;
+		double total_elapsed = 0.;
+		double re_elapsed = 0.;
+
+		vtkSurface* Mesh = vtkSurface::New();
+		Mesh->CreateFromFile(path.c_str());
+
+		cout << "Loaded : " << path << endl;
+		cout << "File size: " << (double)fs::file_size(path) / (1024 * 1024) << " MB" << endl;
+		cout << endl;
+
+		// Compression //
+
+		cout << "Compression in progress ... " << endl;
+
+		if (Arithmetics == 1)
+			Mesh->QuantizeCoordinates(MIO->GetQuantization());
+
+		MIO->SetInput(Mesh);
+		MIO->SetFileName(strout.c_str());	// output file name (instead of '.out')
+
+		start = clock();
+		MIO->Analyse();
+		cout << "Analyse. " << (double)(clock() - start) / CLOCKS_PER_SEC << " sec. elapsed" << endl;
+
+		start = clock();
+		MIO->Synthetize();
+		cout << "Synthetize. " << (double)(clock() - start) / CLOCKS_PER_SEC << " sec. elapsed" << endl;
+
+		start = clock();
+		MIO->Approximate();
+		cout << "Approximate. " << (double)(clock() - start) / CLOCKS_PER_SEC << " sec. elapsed" << endl;
+
+		start = clock();
+		MIO->Write();
+		cout << "Write. " << (double)(clock() - start) / CLOCKS_PER_SEC << " sec. elapsed" << endl;
+
+		Mesh->Delete();
+
+		cout << "completed" << endl;
+		///////////////// DO NOT NEED IF COMPRESSION END
+
+		
+		// Decompression //
+
+		cout << "Decompression in progress ... " << endl;
+
+		vtkMultiresolutionIO* MIO_d = vtkMultiresolutionIO::New();
+
+		start = clock();
+		MIO_d->SetInputFileName(basename.c_str()); // input file name setting
+		MIO_d->SetFileName(strout.c_str());
+		MIO_d->Read();
+		end = clock();
+		MIO_d->Delete();
+
+		cout << "completed. " << (double)(end - start) / CLOCKS_PER_SEC << " sec. elapsed" << endl;
+
+	}
 }
 

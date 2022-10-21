@@ -10,7 +10,6 @@ Auteurs:   Sebastien Valette
 // .NAME vtkMultiresolutionIO
 // .SECTION Description
 
-
 #ifndef __vtkMultiresolutionIO_h
 #define __vtkMultiresolutionIO_h
 
@@ -46,34 +45,41 @@ class VTK_EXPORT vtkMultiresolutionIO : public vtkObject
 		double Max;
 		int Count;
 		char Sn;
-		
+
 		WaveletCoefficientSet()
-		{FilterId=-1;Edge=-1;Type=-1;Max=0;Count=-1;Sn=0;};
+		{
+			FilterId = -1;
+			Edge = -1;
+			Type = -1;
+			Max = 0;
+			Count = -1;
+			Sn = 0;
+		};
 	};
 
 	struct WaveletCoefficient
 	{
-		vtkIdType FilterId,N;
+		vtkIdType FilterId, N;
 		vtkIdType Edge;
 		vtkIdType WaveletId;
 		double Wavelet;
 		int Count;
 		char Sn;
 	};
+
 public:
 	static vtkMultiresolutionIO *New();
-	vtkTypeMacro(vtkMultiresolutionIO,vtkObject);
-
+	vtkTypeMacro(vtkMultiresolutionIO, vtkObject);
 
 	// Description:
 	// Returns the ith filter of the entire pyramid (no range check is performed)
 	// WARNING : filters are sorted from the finest to the coarsest one
 	// Exemple : GetFilter(0) will return the highest resolution filter.
-	vtkWaveletSubdivisionFilter *GetFilter(int i) {return (this->Filters[i]);};
+	vtkWaveletSubdivisionFilter *GetFilter(int i) { return (this->Filters[i]); };
 
 	// Description:
 	// Specify Input file name.
-	void SetInputFileName(const char* File) { this->InputFileName = File; };
+	void SetInputFileName(const char *File) { this->InputFileName = File; };
 
 	// Description:
 	// Get Input file name.
@@ -81,53 +87,54 @@ public:
 
 	// Description:
 	// Specify Output file name.
-	void SetFileName(const char* File) {this->FileName=File;};
+	void SetFileName(const char *File) { this->FileName = File; };
 
 	// Description:
 	// Specify the mesh to encode.
-	void SetInput(vtkSurface *Input) {this->Input=Input;this->Input->Register(this);};
+	void SetInput(vtkSurface *Input)
+	{
+		this->Input = Input;
+		this->Input->Register(this);
+	};
 
 	// Description:
 	// Returns the decoded mesh.
-	vtkSurface *GetOutput() {return (this->Output);};
-
+	vtkSurface *GetOutput() { return (this->Output); };
 
 	// Description:
 	// Inserts a new Filter into the hierarchy
 	void InsertNextFilter(vtkWaveletSubdivisionFilter *Filter);
 
-
 	// Description:
 	// Sets The Quantization
 	// Only for Coding (integer Wavelets)
-	void SetQuantization(int q) {this->Quantization=q;};
-	
-	int GetQuantization () {return this->Quantization;};
+	void SetQuantization(int q) { this->Quantization = q; };
+
+	int GetQuantization() { return this->Quantization; };
 
 	// Description:
 	// Sets The Number of bit planes
 	// Only for Zerotree Coding (float wavelets)
-	void SetNumberOfBitPlanes(int n) {this->NumberOfBitPlanes=n;};
+	void SetNumberOfBitPlanes(int n) { this->NumberOfBitPlanes = n; };
 
 	// Description:
 	// Sets The Number of first bitplanes encoded altogether
-	void SetNumberOfStartBitPlanes(int n) {this->NumberOfStartBitPlanes=n;};
-
+	void SetNumberOfStartBitPlanes(int n) { this->NumberOfStartBitPlanes = n; };
 
 	// Description:
 	// Sets The Geometrical Constraint mode On/Off(0 : Off; 1:On)
 	// Only for Coding
-	void SetGeometricalConstraint(int M) {this->GeometricConstraint=M;};
+	void SetGeometricalConstraint(int M) { this->GeometricConstraint = M; };
 
 	// Description:
 	// Sets The Edge Angle Threshold (usually Et=0.3 OR 0<Et<1)
 	// Only for Coding
-	void SetEdgeAngleThreshold(double Et) {this->EdgeAngleThreshold=Et;};
+	void SetEdgeAngleThreshold(double Et) { this->EdgeAngleThreshold = Et; };
 
 	// Description:
 	// Sets The Wavelet Geometrical Criterion (WGC) (Usually WGC=0.25 OR 0<WGC<1)
 	// Only For Coding
-	void SetWGC(double WGC) {this->WGC=WGC;};
+	void SetWGC(double WGC) { this->WGC = WGC; };
 
 	// Description:
 	// Sets The Lifting (0=No Lifting; 1: Lifting 2:Fast 0-ring Lifting)
@@ -145,27 +152,26 @@ public:
 
 	// Description:
 	// Sets The Display Time for non iterative Display
-	void SetDisplayTime(double Time) {this->Time=Time;};
+	void SetDisplayTime(double Time) { this->Time = Time; };
 
 	// Sets the arithmetic used for the wavelet decomposition.
 	// 0 : float arithmetics, 1 : integer arithmetics
 	// Note : for Compression, you must use integer arithmetics
-	void SetArithmeticType (int Type);
+	void SetArithmeticType(int Type);
 
 	// Description:
 	// Sets the capture of the reconstructed meshes to BMP file (0:off 1 :on)
-	void SetCapture (int s) {this->Capture=s;};
-
+	void SetCapture(int s) { this->Capture = s; };
 
 	// Description:
 	// Sets The Display (0:off 1:on 2:iterative display)
-	void SetDisplay(int type) {this->Display=type;};
+	void SetDisplay(int type) { this->Display = type; };
 
 	// Description:
 	// Sets the Display of the simplification efficiency (0: on 1: on)
-	void SetDisplayEfficiency(int D) {this->DisplayEfficiency=D;};
+	void SetDisplayEfficiency(int D) { this->DisplayEfficiency = D; };
 
-	RenderWindow *GetRenderWindow(){return (this->MeshWindow);};
+	RenderWindow *GetRenderWindow() { return (this->MeshWindow); };
 
 	// Description:
 	// Process Analysis
@@ -197,40 +203,44 @@ public:
 
 	// Description:
 	// Sets On/off the writing of reconstructed meshes
-	void SetWriteOutput(int s){this->WriteOutput=s;};
+	void SetWriteOutput(int s) { this->WriteOutput = s; };
 
 	// Description:
 	// Sets the file format for meshes output : 0 : .iv 1 :.ply
-	void SetFileType(int type){this->FileType=type;};
+	void SetFileType(int type) { this->FileType = type; };
 
 	// Description:
 	// Sets On/off the writing of compression repport (0: Off 1: On)
-	void SetWriteRepport(int s){this->WriteRepport=s;};
+	void SetWriteRepport(int s) { this->WriteRepport = s; };
 
 	// Description:
 	// Sets On/off the on screen display of text about multiresolution analysis(0: Off 1: On)
-	void SetDisplayText(int s) {this->DisplayText=s;};
+	void SetDisplayText(int s) { this->DisplayText = s; };
 
 	// Description:
 	// Computes the tree of Abs(WaveletCoefficients), needed for zerotree coding
-	void ComputeWaveletTree ();
+	void ComputeWaveletTree();
 
 	// Description:
 	// Returns the number of filters embedded in the class
-	vtkIdType GetNumberOfFilters(){return this->NumberOfFilters;};
+	vtkIdType GetNumberOfFilters() { return this->NumberOfFilters; };
 
 	// Description:
 	// Returns the number of filters embedded in the class
-	vtkSurface *GetOutput(int Level){return this->SynthesisMeshes[Level];};
+	vtkSurface *GetOutput(int Level) { return this->SynthesisMeshes[Level]; };
 
 	// Set the maximum number of resolution levels
 	// default value=99
 	void SetMaxNumberOfLevels(int N)
-	{ this->MaxNumberOfLevels=N;};
+	{
+		this->MaxNumberOfLevels = N;
+	};
 
 	// Defines wether butterfly dual lifting will be used
 	void SetGeometryPrediction(int p)
-	{this->GeometryPrediction=p;};
+	{
+		this->GeometryPrediction = p;
+	};
 
 	// Description:
 	// User Interact and decide ROI for the finest mesh
@@ -247,8 +257,9 @@ protected:
 	~vtkMultiresolutionIO();
 
 	virtual vtkWaveletSubdivisionFilter *NewFilter(int Type)
-	{ return vtkWaveletSubdivisionFilter::New();};	
-
+	{
+		return vtkWaveletSubdivisionFilter::New();
+	};
 
 	void Execute();
 	int ConnectivityBytes;
@@ -259,7 +270,6 @@ protected:
 	int NumberOfBitPlanes;
 	int NumberOfStartBitPlanes;
 	void DisplayHires();
-
 
 	void EncodeMeshConnectivity(vtkSurface *Mesh);
 	vtkSurface *DecodeMeshConnectivity();
@@ -305,17 +315,15 @@ protected:
 	void DecodeProgressivePrecision();
 
 private:
-
-	//BTX
+	// BTX
 
 	std::list<WaveletCoefficientSet> InsignificantSets[3];
 	std::list<WaveletCoefficient> InsignificantCoeffs[3];
 	std::list<WaveletCoefficient> SignificantCoeffs[3];
 
+	void GetFirstGoodEdge(vtkIdType Edge, vtkIdType FilterId, vtkIdType &Edge2, vtkIdType &FilterId2, vtkIdType &Vertex);
 
-	void GetFirstGoodEdge(vtkIdType Edge,vtkIdType FilterId, vtkIdType &Edge2, vtkIdType &FilterId2, vtkIdType &Vertex);
-
-	void EncodeSignificance(int S,int Coord);
+	void EncodeSignificance(int S, int Coord);
 
 	void EncodeCoeffRefinement(int Coeff);
 	void EncodeSign(int Sign);
@@ -324,11 +332,10 @@ private:
 	int DecodeCoeffRefinement();
 	int DecodeSign();
 
-
 	double StartTime;
 	vtkTimerLog *Timer;
 
-	int FileType; //0 :.iv output 1 : .ply output
+	int FileType; // 0 :.iv output 1 : .ply output
 	int ArithmeticType;
 
 	// Sets The Lifting (0=No Lifting; 1: Lifting 2:Fast 0-ring Lifting)
@@ -337,7 +344,6 @@ private:
 
 	double EdgeAngleThreshold;
 	double WGC;
-
 
 	//  vtkMultiresolutionIO(const vtkMultiresolutionIO&);  // Not implemented.
 	//  void operator=(const vtkMultiresolutionIO&);  // Not implemented.
@@ -350,12 +356,11 @@ private:
 	vtkDoubleArray *Wavelets[100];
 	int DataSize[100];
 
-
 	RenderWindow *MeshWindow;
 
 	vtkDoubleArray *SauvWavelets[100];
 
-	//ETX
+	// ETX
 
 	void SaveWavelets();
 	void LoadWavelets();
@@ -365,9 +370,6 @@ private:
 	void PrintInsignificantCoeffs();
 
 	int BaseMeshBitRate;
-
 };
-
-
 
 #endif

@@ -114,7 +114,7 @@ int main( int argc, char *argv[] )
 			{
 				MIO->SetLifting(1);
 				MIO->SetLiftingRadius(Lifting);
-				cout << "Lifting radius : " << Lifting << endl;
+				// cout << "Lifting radius : " << Lifting << endl;
 			}
 		}
 
@@ -283,7 +283,7 @@ int main( int argc, char *argv[] )
 				{
 					MIO->SetLifting(1);
 					MIO->SetLiftingRadius(Lifting);
-					cout << "Lifting radius : " << Lifting << endl;
+					// cout << "Lifting radius : " << Lifting << endl;
 				}
 			}
 

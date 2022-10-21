@@ -1,0 +1,1 @@
+/wavemesh test data/xyzrgb_dragon.ply -q 24 -l 1

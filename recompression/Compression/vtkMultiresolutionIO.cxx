@@ -1420,14 +1420,29 @@ void vtkMultiresolutionIO::DecodeProgressiveResolution()
 		if (j==this->NumberOfFilters-1)
 			this->DecodeScalingFactors(this->Filters[j]->GetSubdivisionInput());
 
+		/// <summary>
+		/// timing test block
+		/// </summary>
+		clock_t start;
+		clock_t end;
 
+		//start = clock();
 		this->Filters[j]->Subdivide();
+		//cout << "Subdivide. " << (double)(clock() - start) / CLOCKS_PER_SEC << " sec. elapsed" << endl;
+
 		this->SynthesisMeshes[j]=this->Filters[j]->GetOutput();
 		this->ArithmeticCoder->StopDecoding();
 		this->ArithmeticCoder->StartDecoding();
+
+		//start = clock();
 		this->Filters[j]->ReadCoefficients();
+		//cout << "ReadCoefficients. " << (double)(clock() - start) / CLOCKS_PER_SEC << " sec. elapsed" << endl;
+
 		this->ArithmeticCoder->StopDecoding();
+
+		//start = clock();
 		this->Filters[j]->Reconstruct();
+		//cout << "Reconstruct. " << (double)(clock() - start) / CLOCKS_PER_SEC << " sec. elapsed" << endl;
 
 		if (this->DisplayText)
 			cout<<"Level "<<this->NumberOfFilters-j<<": "<<this->SynthesisMeshes[j]->GetNumberOfCells()
@@ -2090,7 +2105,7 @@ void vtkMultiresolutionIO::Analyse()
 
 	i=0;
 	int merged=1;
-	while (merged==1 && i < 2)
+	while (merged==1 && i < 3)
 	{
 		std::vector<vtkIdType> bad_faces;
 		bool badfacefull_flag = false;

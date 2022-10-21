@@ -382,11 +382,22 @@ int main( int argc, char *argv[] )
 
 		MIO->SetInput(Mesh);
 		MIO->SetFileName(strout.c_str());	// output file name (instead of '.out')
+
+		//start = clock();
 		MIO->Analyse();
+		//cout << "Analyse. " << (double)(clock() - start) / CLOCKS_PER_SEC << " sec. elapsed" << endl;
+
+		//start = clock();
 		MIO->Synthetize();
+		//cout << "Synthetize. " << (double)(clock() - start) / CLOCKS_PER_SEC << " sec. elapsed" << endl;
+
+		//start = clock();
 		MIO->Approximate();
+		//cout << "Approximate. " << (double)(clock() - start) / CLOCKS_PER_SEC << " sec. elapsed" << endl;
+
+		//start = clock();
 		MIO->Write();
-		Mesh->Delete();
+		//cout << "Write. " << (double)(clock() - start) / CLOCKS_PER_SEC << " sec. elapsed" << endl;
 
 		cout << "completed" << endl;
 

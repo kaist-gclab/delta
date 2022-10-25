@@ -11,7 +11,7 @@
 SET (VTK_DIR "<path_dir>")
 '''
 * Note that <path_dir> is the path directory which contains VTK installed.
-    * check if `VTKConfig.cmake` and `VTKConfigVersion.cmake` exist in <path_dir>
+  * check if `VTKConfig.cmake` and `VTKConfigVersion.cmake` exist in <path_dir>
 * Then build it with CMake.
 
 ## Test for 2022 SWStarLab

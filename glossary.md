@@ -1,10 +1,10 @@
 # 용어 사전
 
-## 에셋
+## 애셋
 
-- Asset: 에셋
-- AssetTag: 에셋 태그
-- AssetType: 에셋 유형
+- Asset: 애셋
+- AssetTag: 애셋 태그
+- AssetType: 애셋 유형
   - Model
   - RenderedImage
   - Image

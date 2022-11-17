@@ -28,7 +28,6 @@ $ docker run kaistgclab/delta-renderer -i input.obj -o output.jpg
 
 또한 일단 빌드가 성공하면, 어떤 곳(Ubuntu, CentOS, Windows, macOS)에서 모듈을 실행시켜도 항상 같은 결과가 실행됨을 보장하기 때문에 동일한 환경 구축을 위해 수고를 하지 않아도 됩니다.
 
-
 ## 처리기 모듈의 통신 (파일 입출력)
 
 처리기 모듈은 기본적으로 입력 파일을 받아 출력 파일을 내보내는 형태로 동작합니다.  
@@ -65,11 +64,11 @@ Volume의 설정은 Docker를 실행하는 입장에서 설정해 주어야 하�
 해당 문서 작성 시점 2개의 모듈이 Docker를 통해 패키징되었습니다.
 
 - 무효 처리기 계산 노드
-    - https://github.com/kaist-gclab/delta-processor-null
-    - TypeScript로 작성
+  - <https://github.com/kaist-gclab/delta-processor-null>
+  - TypeScript로 작성
 - 미디얼 액시스 근사 계산 노드
-    - https://github.com/kaist-gclab/delta-processor-axis
-    - C++로 작성
+  - <https://github.com/kaist-gclab/delta-processor-axis>
+  - C++로 작성
 
 위의 저장소에서 README 와 `Dockerfile`을 확인하시면 전체적으로 어떤 방식으로 모듈이 작성되는지를 파악하실 수 있습니다.
 
@@ -98,6 +97,7 @@ Docker Volume을 통한 모듈 통신 방법은 빠르고 편리하지만, 자�
 이에 따라서 별도 파일에 모듈의 실행 정보와 출력 파일의 위치를 저장하도록 합니다.
 
 예시:
+
 ```json
 {
     "module_name": "delta-renderer",

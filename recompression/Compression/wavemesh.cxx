@@ -410,12 +410,17 @@ int main( int argc, char *argv[] )
 		vtkMultiresolutionIO* MIO_d = vtkMultiresolutionIO::New();
 		vtkSurface* Mesh_out;
 
+		start = clock();
 		MIO_d->SetInputFileName(basename.c_str()); // input file name setting
 		MIO_d->SetFileName(strout.c_str());
 		Mesh_out = MIO_d->Read();
+		end = clock();
+
+		cout << "completed. " << (double)(end - start) / CLOCKS_PER_SEC << " sec. elapsed" << endl;
 
 		// Write to file //
 
+		start = clock();
 		vtkPLYWriter* Writer = vtkPLYWriter::New();
 		Writer->SetFileName(reconfile.c_str());
 		Writer->SetInputData(Mesh_out);
@@ -424,6 +429,8 @@ int main( int argc, char *argv[] )
 		Writer->Delete();
 		end = clock();
 		MIO_d->Delete();
+
+		cout << "Save as file completed. " << (double)(end - start) / CLOCKS_PER_SEC << " sec. elapsed" << endl;
 
 		// Recompression //
 
@@ -437,6 +444,8 @@ int main( int argc, char *argv[] )
 		end = clock();
 		MIO->Delete();
 		Mesh->Delete();
+
+		cout << "completed. " << (double)(end - start) / CLOCKS_PER_SEC << " sec. elapsed" << endl;
 	}
 
 

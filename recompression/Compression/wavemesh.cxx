@@ -408,15 +408,22 @@ int main( int argc, char *argv[] )
 		cout << "Decompression in progress ... "  << endl;
 
 		vtkMultiresolutionIO* MIO_d = vtkMultiresolutionIO::New();
+		vtkSurface* Mesh_out;
 
-		start = clock();
 		MIO_d->SetInputFileName(basename.c_str()); // input file name setting
 		MIO_d->SetFileName(strout.c_str());
-		MIO_d->Read();
+		Mesh_out = MIO_d->Read();
+
+		// Write to file //
+
+		vtkPLYWriter* Writer = vtkPLYWriter::New();
+		Writer->SetFileName(reconfile.c_str());
+		Writer->SetInputData(Mesh_out);
+		Writer->SetFileTypeToASCII();
+		Writer->Write();
+		Writer->Delete();
 		end = clock();
 		MIO_d->Delete();
-
-		cout << "completed. " << (double)(end - start) / CLOCKS_PER_SEC << " sec. elapsed" << endl;
 
 		// Recompression //
 
@@ -430,11 +437,9 @@ int main( int argc, char *argv[] )
 		end = clock();
 		MIO->Delete();
 		Mesh->Delete();
-
-		cout << "completed. " << (double)(end - start) / CLOCKS_PER_SEC << " sec. elapsed" << endl;
 	}
 
-	
+
 	// test for 2022 test :
 	if (strcmp(argv[1], "testdev") == 0)
 	{

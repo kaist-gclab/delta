@@ -2,7 +2,6 @@
 file: decompression_ratio.py
 author: Yeonghun Kim
 '''
-import numpy as np
 import pymeshlab as ml
 import sys
 import os
@@ -39,15 +38,20 @@ ml.pmeshlab.MeshSet.normalize_current_mesh = normalize_current_mesh
 
 if __name__ == '__main__':
 
-    # if len(sys.argv) < 3:
-    #     print(sys.argv)
-    #     print('usage: distance <mesh1_path> <mesh2_path>')
-    #     sys.exit(-1)
+    if len(sys.argv) < 3:
+        print(sys.argv)
+        print('usage: python decompression_ratio.py <mesh1_path> <mesh2_path>')
+        sys.exit(-1)
 
     ply1 = sys.argv[1]
     ply2 = sys.argv[2]
     ply1_name = os.path.basename(ply1)
     ply2_name = os.path.basename(ply2)
+
+    if not os.path.exists(ply1):
+        raise FileNotFoundError(ply1)
+    if not os.path.exists(ply2):
+        raise FileNotFoundError(ply2)
 
     ms = ml.MeshSet()
 

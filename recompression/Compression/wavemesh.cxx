@@ -64,6 +64,15 @@ int main( int argc, char *argv[] )
 	inputfile = inputfile.substr(0, inputfile.size() - 4);
 	MIO->SetInputFileName(inputfile.c_str());
 
+	// default output file name setting
+	std::string strout = MIO->GetInputFileName();
+	strout += ".out";
+	MIO->SetFileName(strout.c_str());
+
+	// default reconstructed file name setting
+	std::string reconfile = MIO->GetInputFileName();
+	reconfile += "_recon.ply";
+
 	int Arithmetics = 1;
 
 	MIO->SetLifting(1);
@@ -144,6 +153,12 @@ int main( int argc, char *argv[] )
 			cout << "Output File : " << argv[ArgumentsIndex + 1] << endl;
 			MIO->SetFileName(argv[ArgumentsIndex + 1]);
 		}
+
+		if (strcmp(argv[ArgumentsIndex], "-recon") == 0)
+		{
+			cout << "Reconstructed File : " << argv[ArgumentsIndex + 1] << endl;
+			reconfile = argv[ArgumentsIndex + 1];
+		}
 		ArgumentsIndex += 2;
 	}
 
@@ -158,11 +173,6 @@ int main( int argc, char *argv[] )
 			Mesh->QuantizeCoordinates(MIO->GetQuantization());
 
 		MIO->SetInput(Mesh);
-
-		// output file name (instead of '.out')
-		std::string strout = MIO->GetInputFileName();
-		strout += ".out";
-		MIO->SetFileName(strout.c_str());
 
 		MIO->Analyse();
 		MIO->Synthetize();

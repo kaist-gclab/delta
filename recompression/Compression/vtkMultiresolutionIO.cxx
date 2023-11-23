@@ -1292,6 +1292,8 @@ vtkSurface *vtkMultiresolutionIO::Read()
 	this->Filters[this->NumberOfFilters - 1]->GetSubdivisionInput()->GetScalingFactors(Factor, Tx, Ty, Tz);
 
 	vtkSurface *Mesh_out = this->Filters[0]->GetOutput();
+	Mesh_out->SetScalingFactors(Factor, Tx, Ty, Tz);
+	Mesh_out->UnQuantizeCoordinates();
 
 	return Mesh_out;
 }

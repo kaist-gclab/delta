@@ -195,7 +195,8 @@ public:
 
 	// Description:
 	// Reads Data from disk. Depending on the arithmetic type of the file, zerotree or entropy coding will be used
-	void Read();
+	// Return reconstructed mesh
+	vtkSurface *Read();
 
 	// Description:
 	// Reads Data from disk, and print mesh info per each resolution

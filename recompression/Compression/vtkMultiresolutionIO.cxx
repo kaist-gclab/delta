@@ -1248,7 +1248,7 @@ void vtkMultiresolutionIO::Reconstruct()
 	this->Output = this->SynthesisMeshes[0];
 	this->Output->Register(this);
 }
-void vtkMultiresolutionIO::Read()
+vtkSurface *vtkMultiresolutionIO::Read()
 {
 	this->ArithmeticCoder = vtkArithmeticCoder::New();
 	this->ArithmeticCoder->OpenFile(this->FileName, 0);
@@ -1285,6 +1285,15 @@ void vtkMultiresolutionIO::Read()
 		this->DecodeProgressiveResolution();
 	else
 		this->DecodeProgressivePrecision();
+
+	// Return Reconstructed Mesh
+
+	double Factor, Tx, Ty, Tz;
+	this->Filters[this->NumberOfFilters - 1]->GetSubdivisionInput()->GetScalingFactors(Factor, Tx, Ty, Tz);
+
+	vtkSurface *Mesh_out = this->Filters[0]->GetOutput();
+
+	return Mesh_out;
 }
 
 void vtkMultiresolutionIO::ReadPerMesh()
@@ -1561,7 +1570,7 @@ void vtkMultiresolutionIO::DecodeProgressiveResolution()
 					vtkPLYWriter *Writer = vtkPLYWriter::New();
 					Writer->SetFileName(strfile.str().c_str());
 					Writer->SetInputData(this->Filters[j]->GetOutput());
-					// Writer->SetFileTypeToASCII();
+					Writer->SetFileTypeToASCII();
 					Writer->Write();
 					Writer->Delete();
 				}
@@ -1654,18 +1663,18 @@ void vtkMultiresolutionIO::DecodeProgressiveResolutionDS()
 		//			this->MeshWindow->SetInputData(this->Filters[j]->GetOutput());
 		//			this->MeshWindow->Render();
 		//
-		//#if ( (VTK_MAJOR_VERSION >= 5))
+		// #if ( (VTK_MAJOR_VERSION >= 5))
 		//			start2 = this->Timer->GetUniversalTime();
 		//			finish2 = this->Timer->GetUniversalTime();
 		//			while (finish2 - start2 < this->Time)
 		//				finish2 = this->Timer->GetUniversalTime();
 		//
-		//#else
+		// #else
 		//			start2 = this->Timer->GetCurrentTime();
 		//			finish2 = this->Timer->GetCurrentTime();
 		//			while (finish2 - start2 < this->Time)
 		//				finish2 = this->Timer->GetCurrentTime();
-		//#endif
+		// #endif
 		//			if (this->Capture == 1)
 		//			{
 		//				std::stringstream strfile;
@@ -4262,10 +4271,10 @@ vtkMultiresolutionIO::vtkMultiresolutionIO()
 	this->DisplayEfficiency = 0;
 	this->Display = 0;
 	this->DisplayText = 0;
-	this->WriteRepport = 1;
+	this->WriteRepport = 0;
 	this->NumberOfBitPlanes = 12;
 	this->NumberOfStartBitPlanes = 1;
-	this->WriteOutput = 1; // -1: print all meshes, n>0: print n finest mesh only
+	this->WriteOutput = 0; // -1: print all meshes, n>0: print n finest mesh only
 	this->GeometryPrediction = 0;
 	this->MaxNumberOfLevels = 99;
 	this->Input = 0;

@@ -40,7 +40,7 @@ if __name__ == '__main__':
 
     if len(sys.argv) < 3:
         print(sys.argv)
-        print('usage: python decompression_ratio.py <mesh1_path> <mesh2_path>')
+        print('usage: python evaluate_reconstruction_ratio.py <mesh1_path> <mesh2_path>')
         sys.exit(-1)
 
     ply1 = sys.argv[1]
@@ -73,12 +73,12 @@ if __name__ == '__main__':
 
     # Decompression ratio w.r.t. Hausdorff Distance
 
-    print('Calculating decompression ratio ...')
+    print('Calculating reconstruction ratio ...')
     start = time()
     bbox_diag = ms.current_mesh().bounding_box().diagonal()
     n_vert = ms.current_mesh().vertex_number()
     value = ms.apply_filter('get_hausdorff_distance', samplenum=n_vert)
     max_hausdorff_norm = value['max'] / bbox_diag
-    decompression_ratio = (1 - max_hausdorff_norm) * 100
+    reconstruction_ratio = (1 - max_hausdorff_norm) * 100
     end = time()
-    print(f'{end-start:10.6f} sec elapsed. Decompression ratio: {decompression_ratio:.3f}(%)')
+    print(f'{end-start:10.6f} sec elapsed. Reconstruction ratio: {reconstruction_ratio:.3f}(%)')

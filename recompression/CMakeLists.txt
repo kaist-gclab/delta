@@ -9,7 +9,7 @@ OPTION(BUILD_SHARED_LIBS "Build vtkSurface with shared libraries." ON)
 OPTION(BUILD_RANGECODING "Build Range Coder/Decoder." ON)
 OPTION(BUILD_WAVEMESH "Build Wavemesh and Compression Tools." ON)
 
-SET (VTK_DIR "~/delta/vtk-build")
+SET (VTK_DIR "~/VTK-6.3.0")
 add_compile_options(--std=c++20 -O0 -DDEBUG)
 SET (EXECUTABLE_OUTPUT_PATH ${PROJECT_BINARY_DIR}/bin CACHE PATH "Single output directory for building all executables.")
 SET (LIBRARY_OUTPUT_PATH ${PROJECT_BINARY_DIR}/bin CACHE PATH "Single output directory for building all libraries.")
